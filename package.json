@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "seed:admin": "node scripts/seedAdmin.js",
+    "generate:templates": "node scripts/generateTemplateIndex.js",
+    "prebuild": "npm run generate:templates",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

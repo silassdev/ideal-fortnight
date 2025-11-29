@@ -198,7 +198,7 @@ The implementation includes:
 - Real-time preview as you edit
 
 ### Dashboard
-- View all your saved resumes
+- View your saved resume
 - Quick access to edit or download
 - Resume management (create, update, delete)
 
@@ -258,11 +258,6 @@ Contributions are welcome! Here's how you can help:
 
 ---
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
 
 ## 👨‍💻 Author
 
