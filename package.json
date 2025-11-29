@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "seed:admin": "node scripts/seedAdmin.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -16,8 +17,7 @@
     "html2canvas": "^1.4.1",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^3.0.4",
-    "mongodb": "^5.9.2",
-    "mongoose": "^9.0.0",
+    "mongoose": "^7.8.7",
     "next": "16.0.5",
     "next-auth": "^4.24.13",
     "nodemailer": "^7.0.11",
@@ -32,8 +32,12 @@
     "@types/nodemailer": "^7.0.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "baseline-browser-mapping": "^2.8.32",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "16.0.5",
+    "mongodb": "^5.9.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

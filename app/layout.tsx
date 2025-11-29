@@ -14,12 +14,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: "Ultra-Modern Resume Builder",
   description: "Create stunning resumes using modern templates, download as PDF, and manage your profile effortlessly.",
   keywords: ["resume", "cv", "job", "builder", "template", "pdf", "career", "professional"],
   authors: [{ name: "Resume Builder Team" }],
-  viewport: "width=device-width, initial-scale=1",
   robots: {
     index: true,
     follow: true,
