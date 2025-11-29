@@ -1,35 +1,30 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+type Cached = { conn: typeof mongoose | null; promise: Promise<typeof mongoose> | null };
 
-if (!MONGODB_URI) {
-    throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+declare global {
+    var __mongoose_global__: Cached | undefined;
 }
 
-/**
- * Mongoose connection helper.
- * Caches connection across hot reloads in development.
- */
-let cached: { conn: typeof mongoose | null; promise: Promise<typeof mongoose> | null } = (global as any).__mongo__;
-if (!cached) {
-    cached = (global as any).__mongo__ = { conn: null, promise: null };
-}
+let cached: Cached = global.__mongoose_global__ ?? { conn: null, promise: null };
+if (!global.__mongoose_global__) global.__mongoose_global__ = cached;
 
-async function dbConnect() {
-    if (cached.conn) {
-        return cached.conn;
+
+export default async function dbConnect(): Promise<typeof mongoose> {
+    const MONGODB_URI = process.env.MONGODB_URI;
+
+    if (!MONGODB_URI) {
+        throw new Error(
+            'Please define the MONGODB_URI environment variable. Put it in a .env.local file or pass it inline when running the script.'
+        );
     }
+
+    if (cached.conn) return cached.conn;
+
     if (!cached.promise) {
-        const opts = {
-            bufferCommands: false,
-            // useNewUrlParser and useUnifiedTopology are default in mongoose 6+
-        };
-        cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongooseInstance) => {
-            return mongooseInstance;
-        });
+        const opts = { bufferCommands: false };
+        cached.promise = mongoose.connect(MONGODB_URI, opts).then((m) => m);
     }
     cached.conn = await cached.promise;
     return cached.conn;
 }
-
-export default dbConnect;

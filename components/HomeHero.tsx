@@ -1,13 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import ResumeDrawing from '@/components/ResumeDrawing';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import AuthForm from '@/components/auth/AuthForm';
 
 export default function HomeHero() {
-    const { data: session } = useSession();
-    const router = useRouter();
     const [template, setTemplate] = useState<'modern' | 'classic'>('modern');
     const [accent, setAccent] = useState<'indigo' | 'emerald' | 'rose'>('indigo');
     const [compact, setCompact] = useState(false);
@@ -39,57 +36,8 @@ export default function HomeHero() {
                 </p>
 
                 {/* Auth / Register box */}
-                <div className="mt-8 bg-white shadow-sm rounded-lg p-5 border">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold">Account</h3>
-                        <div className="text-sm text-slate-500">
-                            {session ? `Signed in as ${session.user?.email}` : 'Not signed in'}
-                        </div>
-                    </div>
-
-                    <div className="mt-4">
-                        {!session ? (
-                            <div className="space-y-3">
-                                <p className="text-sm text-slate-600">
-                                    Sign in to save your resumes, share public links, and download PDFs.
-                                </p>
-                                <div className="flex gap-2">
-                                    <button
-                                        className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                                        onClick={() => router.push('/auth?mode=login')}
-                                    >
-                                        Sign in
-                                    </button>
-                                    <button
-                                        className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700"
-                                        onClick={() => router.push('/auth?mode=register')}
-                                    >
-                                        Create account
-                                    </button>
-                                </div>
-                                <div className="pt-2 border-t">
-                                    <button
-                                        className="w-full px-4 py-2 border rounded hover:shadow"
-                                        onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
-                                    >
-                                        Sign in with Google
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="mt-3 flex gap-2">
-                                <button
-                                    className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                                    onClick={() => router.push('/dashboard')}
-                                >
-                                    Dashboard
-                                </button>
-                                <button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700" onClick={() => signOut()}>
-                                    Sign out
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                <div className="mt-8">
+                    <AuthForm />
                 </div>
 
                 {/* Tools / Logic visual controls */}

@@ -2,13 +2,14 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/nextAuth";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
+import type { Session } from "next-auth";
 
 export const metadata = {
     title: "Dashboard — Resume Builder",
 };
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
-    const session = await getServerSession(authOptions as any);
+    const session = await getServerSession(authOptions as any) as Session | null;
     if (!session) {
         // redirect to authentication
         redirect("/auth?mode=login");

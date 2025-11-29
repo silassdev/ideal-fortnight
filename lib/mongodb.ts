@@ -4,11 +4,13 @@ if (!process.env.MONGODB_URI) {
     throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
 }
 
-const uri = process.env.MONGODB_URI;
+const uri: string = process.env.MONGODB_URI;
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
+/* global augmentation for Node global cache in dev */
 declare global {
+    // eslint-disable-next-line no-var
     var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
@@ -24,3 +26,4 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default clientPromise;
+export type { MongoClient };

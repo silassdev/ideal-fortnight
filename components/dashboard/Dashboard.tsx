@@ -3,9 +3,9 @@
 import React from 'react';
 import useResume from '@/hooks/useResume';
 import Skeleton from '@/components/ui/Skeleton';
-import TemplatePicker from './TemplatePicker';
-import ResumeEditor from './ResumeEditor';
-import ResumePreview from './ResumePreview';
+import TemplatePicker from '@/components/dashboard/TemplatePicker';
+import ResumeEditor from '@/components/dashboard/ResumeEditor';
+import ResumePreview from '@/components/dashboard/ResumePreview';
 
 export default function Dashboard() {
     const { resume, setResume, isLoading, saveResume } = useResume();
@@ -45,8 +45,8 @@ export default function Dashboard() {
                 <div className="bg-white rounded-lg p-4 shadow">
                     <h2 className="text-lg font-semibold">Template</h2>
                     <TemplatePicker
-                        value={draft.template}
-                        onChange={(t) => setResume({ ...draft, template: t })}
+                        value={draft.template || 'apela'}
+                        onChange={(t: string) => setResume({ ...draft, template: t })}
                     />
                 </div>
 

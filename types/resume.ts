@@ -17,7 +17,7 @@ export type Education = {
 
 export type ResumeShape = {
     _id?: string;
-    template?: 'modern' | 'classic' | 'clean';
+    template?: string; // Template key (e.g., 'apela', 'modern', 'classic', etc.)
     name?: string;
     title?: string;
     summary?: string;
