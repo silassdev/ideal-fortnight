@@ -3,17 +3,31 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import AuthForm from '@/components/auth/AuthForm';
 
 export default function Header() {
     const { data: session } = useSession();
     const router = useRouter();
     const pathname = usePathname();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+
+    // Close modal when session exists (user logged in)
+    useEffect(() => {
+        if (session) {
+            setShowAuthModal(false);
+        }
+    }, [session]);
+
+    const handleAuth = (mode: 'login' | 'register') => {
+        setAuthMode(mode);
+        setShowAuthModal(true);
+        setMobileMenuOpen(false);
+    };
 
     const navLinks = [
-        { href: '/', label: 'Home' },
-        { href: '/resume', label: 'Resume' },
         { href: '/dashboard', label: 'Dashboard', authRequired: true },
     ];
 
@@ -81,13 +95,13 @@ export default function Header() {
                         ) : (
                             <>
                                 <button
-                                    onClick={() => router.push('/auth?mode=login')}
+                                    onClick={() => handleAuth('login')}
                                     className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors"
                                 >
                                     Sign in
                                 </button>
                                 <button
-                                    onClick={() => router.push('/auth?mode=register')}
+                                    onClick={() => handleAuth('register')}
                                     className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-sm hover:shadow"
                                 >
                                     Get started
@@ -168,19 +182,13 @@ export default function Header() {
                                 ) : (
                                     <>
                                         <button
-                                            onClick={() => {
-                                                setMobileMenuOpen(false);
-                                                router.push('/auth?mode=login');
-                                            }}
+                                            onClick={() => handleAuth('login')}
                                             className="w-full px-3 py-2 text-sm font-medium text-left text-slate-700 hover:bg-slate-50 rounded-lg mb-2"
                                         >
                                             Sign in
                                         </button>
                                         <button
-                                            onClick={() => {
-                                                setMobileMenuOpen(false);
-                                                router.push('/auth?mode=register');
-                                            }}
+                                            onClick={() => handleAuth('register')}
                                             className="w-full px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg"
                                         >
                                             Get started
@@ -192,6 +200,30 @@ export default function Header() {
                     </div>
                 )}
             </nav>
-        </header>
+
+            {/* Auth Modal */}
+            {
+                showAuthModal && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+                        <div
+                            className="absolute inset-0"
+                            onClick={() => setShowAuthModal(false)}
+                        />
+                        <div className="relative w-full max-w-md animate-in zoom-in-95 duration-200">
+                            <button
+                                onClick={() => setShowAuthModal(false)}
+                                className="absolute -top-10 right-0 p-2 text-white/80 hover:text-white transition-colors"
+                                aria-label="Close modal"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <AuthForm defaultMode={authMode} />
+                        </div>
+                    </div>
+                )
+            }
+        </header >
     );
 }

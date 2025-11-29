@@ -1,8 +1,10 @@
-import dynamic from "next/dynamic";
-import React from "react";
+'use client';
 
-const DashboardClient = dynamic(() => import("@/components/dashboard/Dashboard"), { ssr: false });
+import AdminShell from '@/components/admin/AdminShell';
+export const metadata = {
+    title: 'Dashboard — Resume Builder',
+};
 
 export default function Page() {
-    return <DashboardClient />;
+    return <AdminShell />;
 }

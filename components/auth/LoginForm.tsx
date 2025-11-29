@@ -17,23 +17,24 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
         setError(null);
         setLoading(true);
 
-        const res = await loginUser({ email: email.toLowerCase().trim(), password });
+        const res = await signIn('credentials', {
+            redirect: false,
+            email: email.toLowerCase().trim(),
+            password,
+        });
+
         setLoading(false);
 
-        if (!res.ok) {
-            // if server returns specific code for "not verified" show helpful message
-            if (res.status === 403) {
-                setError(res.error || 'Account not verified. Check your email for the confirmation link.');
-                return;
-            }
-            setError(res.error || `Login failed (${res.status})`);
+        if (res?.error) {
+            setError(res.error);
             return;
         }
 
-        // Server should set httpOnly cookie on success; otherwise the server may return token
-        // Redirect to dashboard
-        onSuccess?.();
-        router.replace('/dashboard');
+        if (res?.ok) {
+            // Redirect to dashboard
+            onSuccess?.();
+            router.replace('/dashboard');
+        }
     }
 
     async function handleGoogleLogin() {

@@ -150,10 +150,6 @@ export default function ResumeDrawing({ template, accent, compact, showSections 
                     </div>
                 </div>
 
-                {/* tiny legend describing "dynamic elements & logic" */}
-                <div className="mt-4 text-xs text-slate-500">
-                    <strong>Legend:</strong> Sections can be toggled, reordered, and styled. Tools include template switch, accent color, compact mode, and export.
-                </div>
             </div>
         </div>
     );
