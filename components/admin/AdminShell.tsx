@@ -20,7 +20,7 @@ export default function AdminShell() {
                 {view === 'settings' && (
                     <div className="bg-white p-4 rounded shadow">
                         <h2 className="text-lg font-semibold">Admin Settings</h2>
-                        <p className="text-sm text-slate-600">Manage admin preferences.</p>
+                        <p className="text-sm text-gray-500">Manage admin preferences.</p>
                     </div>
                 )}
             </main>

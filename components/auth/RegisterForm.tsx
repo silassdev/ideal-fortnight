@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Input from '@/components/ui/Input';
 import { useRouter } from 'next/navigation';
 import { registerUser } from './authClient';
 import { signIn } from 'next-auth/react';
@@ -56,56 +57,52 @@ export default function RegisterForm({ onSuccess }: { onSuccess?: (msg: string) 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-                <label className="block text-sm font-medium text-slate-700">Full name</label>
-                <input
+                <Input
+                    label="Full name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Jane Doe"
-                    className="mt-1 block w-full px-3 py-2 border rounded"
                     name="name"
                     autoComplete="name"
                 />
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-slate-700">Email</label>
-                <input
+                <Input
+                    label="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     type="email"
                     placeholder="you@company.com"
-                    className="mt-1 block w-full px-3 py-2 border rounded"
                     name="email"
                     autoComplete="email"
                 />
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-slate-700">Password</label>
-                <input
+                <Input
+                    label="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
                     type="password"
                     placeholder="Create a password"
-                    className="mt-1 block w-full px-3 py-2 border rounded"
                     name="password"
                     autoComplete="new-password"
                 />
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-slate-700">Confirm password</label>
-                <input
+                <Input
+                    label="Confirm password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                     minLength={6}
                     type="password"
                     placeholder="Repeat password"
-                    className="mt-1 block w-full px-3 py-2 border rounded"
                     name="confirmPassword"
                     autoComplete="new-password"
                 />

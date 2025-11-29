@@ -85,21 +85,21 @@ export default function AdminAnalytics({ tab = 'overview' as 'overview' | 'users
             <div className="bg-white p-4 rounded shadow flex items-center justify-between">
                 <div>
                     <h2 className="text-xl font-semibold">Overview</h2>
-                    <div className="text-sm text-slate-500">Quick summary of users and resume activity</div>
+                    <div className="text-sm text-gray-500">Quick summary of users and resume activity</div>
                 </div>
 
                 <div className="flex gap-4">
                     <div className="text-center">
                         <div className="text-2xl font-bold">{data.totalUsers}</div>
-                        <div className="text-xs text-slate-500">Total users</div>
+                        <div className="text-xs text-gray-500">Total users</div>
                     </div>
                     <div className="text-center">
                         <div className="text-2xl font-bold">{data.totalResumes}</div>
-                        <div className="text-xs text-slate-500">Resumes</div>
+                        <div className="text-xs text-gray-500">Resumes</div>
                     </div>
                     <div className="text-center">
                         <div className="text-2xl font-bold">{totalDownloads}</div>
-                        <div className="text-xs text-slate-500">Downloads</div>
+                        <div className="text-xs text-gray-500">Downloads</div>
                     </div>
                 </div>
             </div>
@@ -115,15 +115,15 @@ export default function AdminAnalytics({ tab = 'overview' as 'overview' | 'users
                 <h3 className="font-medium">Accounts</h3>
                 <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="p-3 border rounded">
-                        <div className="text-sm text-slate-500">Confirmed</div>
+                        <div className="text-sm text-gray-500">Confirmed</div>
                         <div className="text-lg font-semibold">{data.confirmedAccounts}</div>
                     </div>
                     <div className="p-3 border rounded">
-                        <div className="text-sm text-slate-500">Pending verification</div>
+                        <div className="text-sm text-gray-500">Pending verification</div>
                         <div className="text-lg font-semibold">{data.pendingRegistrations}</div>
                     </div>
                     <div className="p-3 border rounded">
-                        <div className="text-sm text-slate-500">By role</div>
+                        <div className="text-sm text-gray-500">By role</div>
                         <div className="text-lg font-semibold">{Object.entries(data.roleCounts).map(([r, c]) => `${r}: ${c}`).join(' • ')}</div>
                     </div>
                 </div>
@@ -135,7 +135,7 @@ export default function AdminAnalytics({ tab = 'overview' as 'overview' | 'users
                 <div className="mt-3 overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
-                            <tr className="text-left text-xs text-slate-500">
+                            <tr className="text-left text-xs text-gray-500">
                                 <th className="py-2">Name</th>
                                 <th>Email</th>
                                 <th>Country</th>

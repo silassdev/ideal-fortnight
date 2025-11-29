@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Input from '@/components/ui/Input';
 import { useRouter } from 'next/navigation';
 import { loginUser } from './authClient';
 import { signIn } from 'next-auth/react';
@@ -45,29 +46,27 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-                <label className="block text-sm font-medium text-slate-700">Email</label>
-                <input
+                <Input
+                    label="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     type="email"
                     placeholder="you@company.com"
-                    className="mt-1 block w-full px-3 py-2 border rounded"
                     name="email"
                     autoComplete="email"
                 />
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-slate-700">Password</label>
-                <input
+                <Input
+                    label="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
                     type="password"
                     placeholder="Your password"
-                    className="mt-1 block w-full px-3 py-2 border rounded"
                     name="password"
                     autoComplete="current-password"
                 />

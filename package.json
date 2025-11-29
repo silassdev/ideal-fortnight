@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "seed:admin": "npx ts-node --project tsconfig.scripts.json scripts/seedAdmin.ts",
+    "test-email": "npx ts-node --project tsconfig.scripts.json scripts/test-email.ts",
     "generate:templates": "node scripts/generateTemplateIndex.js",
     "prebuild": "npm run generate:templates",
     "dev": "next dev",
