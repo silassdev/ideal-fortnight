@@ -17,7 +17,7 @@ const PUBLIC_PATHS = [
     "/api/auth/google",
 ];
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
     const { pathname } = req.nextUrl;
 
     // Allow all static files, images, Next internal routes
