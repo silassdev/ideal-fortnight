@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
+import Header from "@/components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +15,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Resume Builder",
-  description: "Resume Builder",
+  title: "Ultra-Modern Resume Builder",
+  description: "Create stunning resumes using modern templates, download as PDF, and manage your profile effortlessly.",
+  keywords: ["resume", "cv", "job", "builder", "template", "pdf", "career", "professional"],
+  authors: [{ name: "Resume Builder Team" }],
+  viewport: "width=device-width, initial-scale=1",
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  openGraph: {
+    title: "Ultra-Modern Resume Builder",
+    description: "Create stunning resumes with templates, downloads and customization.",
+    url: "https://resume-builder.ultra-modern.com",
+    siteName: "ResumeBuilder",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -29,6 +45,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
+          <Header />
           {children}
         </AuthProvider>
       </body>
