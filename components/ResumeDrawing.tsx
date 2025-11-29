@@ -9,11 +9,7 @@ type Props = {
     showSections: { summary: boolean; experience: boolean; education: boolean; skills: boolean };
 };
 
-/**
- * A visual SVG-based "drawing" of a resume.
- * Purpose: demonstrate layout regions, dynamic elements, and which parts change when user toggles tools.
- * This is intentionally stylized and lightweight; replace with actual preview rendering when ready.
- */
+
 export default function ResumeDrawing({ template, accent, compact, showSections }: Props) {
     const accentMap: Record<string, string> = {
         indigo: 'fill-indigo-600',

@@ -20,9 +20,6 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     const user = await User.findOne({ email: (session.user.email as string).toLowerCase() }).lean();
 
     if (!user) {
-        // If user was created by NextAuth adapter but not in our User model,
-        // treat as regular user (you can also create a user record here if you prefer)
-        // For now redirect to user dashboard (no admin privileges)
         return (
             <html lang="en">
                 <body>
@@ -41,7 +38,6 @@ export default async function DashboardLayout({ children }: { children: ReactNod
         );
     }
 
-    // branch: admin vs normal user
     if (user.role === 'admin') {
         // admin shell: render admin header + children (children should be admin pages)
         return (

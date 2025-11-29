@@ -1,4 +1,3 @@
-// components/auth/AuthForm.tsx
 'use client';
 
 import React, { useState } from 'react';

@@ -15,12 +15,10 @@ export default function HomeHero() {
         skills: true,
     });
 
-    // Demo: fake public id generator (in prod generate server-side)
     const demoPublicLink = (id = 'abc123') =>
         `${typeof window !== 'undefined' ? window.location.origin : ''}/resume/${id}`;
 
     async function handleDownloadDemo() {
-        // placeholder: integrate html2canvas + jsPDF in real app
         alert('Demo download triggered — integrate html2canvas/jsPDF in DownloadPDFButton component.');
     }
 

@@ -1,4 +1,3 @@
-// components/pdf/DownloadPDFButton.tsx
 'use client';
 
 import React, { useState } from 'react';

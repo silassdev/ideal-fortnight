@@ -1,16 +1,3 @@
-// models/Resume.ts
-/**
- * Mongoose Resume model
- *
- * Represents a user's single resume document. Designed to be comprehensive
- * but extensible: templates, multi-section content, and usage metadata.
- *
- * Notes:
- * - One resume per user is enforced by a unique index on userId.
- * - publicId is a short public identifier used for shareable URLs (e.g. /resume/:publicId).
- * - downloadCount is incremented elsewhere (e.g. on download endpoint).
- */
-
 import mongoose, { Document, Model } from 'mongoose';
 
 const { Schema } = mongoose;
