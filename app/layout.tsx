@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const viewport = {
+export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
 };
@@ -24,11 +24,8 @@ export const metadata: Metadata = {
   description: "Create stunning resumes using modern templates, download as PDF, and manage your profile effortlessly.",
   keywords: ["resume", "cv", "job", "builder", "template", "pdf", "career", "professional"],
   authors: [{ name: "Resume Builder Team" }],
-  robots: {
-    index: true,
-    follow: true,
-  },
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  robots: { index: true, follow: true },
+  icons: { icon: "/favicon.ico" },
   openGraph: {
     title: "Ultra-Modern Resume Builder",
     description: "Create stunning resumes with templates, downloads and customization.",
@@ -40,14 +37,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
           <Header />
           {children}

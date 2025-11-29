@@ -14,7 +14,6 @@ export default function Header() {
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
 
-    // Close modal when session exists (user logged in)
     useEffect(() => {
         if (session) {
             setShowAuthModal(false);
@@ -53,7 +52,6 @@ export default function Header() {
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center gap-6">
                         {navLinks.map((link) => {
-                            // Skip auth-required links if not logged in
                             if (link.authRequired && !session) return null;
 
                             return (

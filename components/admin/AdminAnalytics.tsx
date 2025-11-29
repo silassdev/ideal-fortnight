@@ -1,7 +1,7 @@
-// components/admin/AdminAnalytics.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import CountryChart, { CountryDatum } from './CountryChart';
 
 type UserRow = {
     name?: string;
@@ -19,8 +19,10 @@ type Analytics = {
     confirmedAccounts: number;
     roleCounts: Record<string, number>;
     totalResumes: number;
-    totalDownloads: number;
+    totalDownloads?: number;
     users: UserRow[];
+    usersByCountry?: CountryDatum[];
+    downloadsByCountry?: CountryDatum[];
 };
 
 export default function AdminAnalytics({ tab = 'overview' as 'overview' | 'users' | 'downloads' }) {
@@ -31,17 +33,28 @@ export default function AdminAnalytics({ tab = 'overview' as 'overview' | 'users
     useEffect(() => {
         let mounted = true;
         setLoading(true);
+
         fetch('/api/admin/analytics', { credentials: 'include' })
             .then((r) => r.json())
             .then((json) => {
                 if (!mounted) return;
-                setData(json);
+                if (json?.error) {
+                    setError(json.error);
+                    setData(null);
+                } else {
+                    // normalize country arrays if present
+                    const usersByCountry = Array.isArray(json.usersByCountry) ? json.usersByCountry : json.usersByCountry || [];
+                    const downloadsByCountry = Array.isArray(json.downloadsByCountry) ? json.downloadsByCountry : json.downloadsByCountry || [];
+                    setData({ ...(json as any), usersByCountry, downloadsByCountry });
+                    setError(null);
+                }
             })
             .catch((err) => {
                 console.error(err);
                 if (mounted) setError(err.message || 'Failed to load analytics');
             })
             .finally(() => mounted && setLoading(false));
+
         return () => {
             mounted = false;
         };
@@ -64,6 +77,9 @@ export default function AdminAnalytics({ tab = 'overview' as 'overview' | 'users
     if (error) return <div className="text-red-600">{error}</div>;
     if (!data) return <div>No analytics available.</div>;
 
+    // derive small sums
+    const totalDownloads = data.totalDownloads ?? 0;
+
     return (
         <div className="space-y-6">
             <div className="bg-white p-4 rounded shadow flex items-center justify-between">
@@ -82,13 +98,19 @@ export default function AdminAnalytics({ tab = 'overview' as 'overview' | 'users
                         <div className="text-xs text-slate-500">Resumes</div>
                     </div>
                     <div className="text-center">
-                        <div className="text-2xl font-bold">{data.totalDownloads}</div>
+                        <div className="text-2xl font-bold">{totalDownloads}</div>
                         <div className="text-xs text-slate-500">Downloads</div>
                     </div>
                 </div>
             </div>
 
-            {/* Role breakdown */}
+            {/* Country charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <CountryChart data={(data.usersByCountry || []) as CountryDatum[]} title="Users by country" />
+                <CountryChart data={(data.downloadsByCountry || []) as CountryDatum[]} title="Resume downloads by country" />
+            </div>
+
+            {/* Accounts / breakdown */}
             <div className="bg-white p-4 rounded shadow">
                 <h3 className="font-medium">Accounts</h3>
                 <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -123,7 +145,7 @@ export default function AdminAnalytics({ tab = 'overview' as 'overview' | 'users
                             </tr>
                         </thead>
                         <tbody>
-                            {data.users.slice(0, 50).map((u) => (
+                            {data.users.slice(0, 200).map((u) => (
                                 <tr key={u.email} className="border-t">
                                     <td className="py-2">{u.name || '—'}</td>
                                     <td>{u.email}</td>
