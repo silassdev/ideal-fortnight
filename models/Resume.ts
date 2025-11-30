@@ -211,6 +211,13 @@ ResumeSchema.methods.incrementDownloads = async function incrementDownloads(this
 };
 
 /**
+ * Static methods interface
+ */
+interface IResumeModel extends Model<IResume> {
+    upsertByUser(userId: string | mongoose.Types.ObjectId, payload: Partial<IResume>): Promise<IResume>;
+}
+
+/**
  * Static helper: upsert resume by userId (one resume per user)
  * Usage: Resume.upsertByUser(userId, payload)
  */
@@ -223,6 +230,6 @@ ResumeSchema.statics.upsertByUser = async function upsertByUser(userId: string |
 };
 
 // Avoid model compile errors on hot-reload in dev
-const Resume: Model<IResume> = (mongoose.models.Resume as Model<IResume>) || mongoose.model<IResume>('Resume', ResumeSchema);
+const Resume: IResumeModel = (mongoose.models.Resume as IResumeModel) || mongoose.model<IResume, IResumeModel>('Resume', ResumeSchema);
 
 export default Resume;
