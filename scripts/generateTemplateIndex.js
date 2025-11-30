@@ -11,7 +11,7 @@ const dir = path.join(__dirname, '..', 'components', 'templates');
 const out = path.join(dir, 'index.ts');
 
 const files = fs.readdirSync(dir)
-    .filter(f => f.endsWith('.tsx') && f !== 'index.tsx' && f !== 'index.ts');
+    .filter(f => f.endsWith('.tsx') && f !== 'index.tsx' && f !== 'index.ts' && f !== 'TemplateRenderer.tsx');
 
 const imports = [];
 const exports = [];
