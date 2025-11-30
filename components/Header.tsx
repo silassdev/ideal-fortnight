@@ -1,9 +1,9 @@
 'use client';
 
 import { useSession, signOut } from 'next-auth/react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import AuthForm from '@/components/auth/AuthForm';
 
 export default function Header() {
@@ -222,6 +222,27 @@ export default function Header() {
                     </div>
                 )
             }
+
+            <Suspense fallback={null}>
+                <AuthUrlListener onAuth={handleAuth} />
+            </Suspense>
         </header >
     );
+}
+
+function AuthUrlListener({ onAuth }: { onAuth: (mode: 'login' | 'register') => void }) {
+    const searchParams = useSearchParams();
+    const authParam = searchParams.get('auth');
+
+    useEffect(() => {
+        if (authParam === 'login' || authParam === 'register') {
+            onAuth(authParam);
+            // Optional: Clean up URL
+            const url = new URL(window.location.href);
+            url.searchParams.delete('auth');
+            window.history.replaceState({}, '', url.toString());
+        }
+    }, [authParam, onAuth]);
+
+    return null;
 }

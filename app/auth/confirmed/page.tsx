@@ -13,7 +13,7 @@ export default function ConfirmedPage() {
                 <p className="mt-3 text-slate-600">Your email has been verified. You can now sign in and finish your profile.</p>
 
                 <div className="mt-6 flex justify-center gap-3">
-                    <Link href="/auth?mode=login" className="px-4 py-2 bg-sky-600 text-white rounded">Proceed to login</Link>
+                    <Link href="/?auth=login" className="px-4 py-2 bg-sky-600 text-white rounded">Proceed to login</Link>
                     <Link href="/" className="px-4 py-2 border rounded">Back to home</Link>
                 </div>
             </div>

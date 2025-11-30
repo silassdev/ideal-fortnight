@@ -1,4 +1,3 @@
-// components/ui/Confetti.tsx
 'use client';
 
 import React from 'react';
