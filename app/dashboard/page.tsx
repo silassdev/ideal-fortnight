@@ -9,11 +9,11 @@ export const metadata = {
     title: 'Dashboard — Resume Builder',
 };
 
-const AdminShell = dynamic(() => import('@/components/admin/AdminShell'), { ssr: false });
-const UserDashboardClient = dynamic(() => import('@/components/dashboard/UserDashboard'), { ssr: false });
+const AdminShell = dynamic(() => import('@/components/admin/AdminShell'));
+const UserDashboardClient = dynamic(() => import('@/components/dashboard/UserDashboard'));
 
 export default async function Page() {
-    const session = await getServerSession(authOptions as any);
+    const session: any = await getServerSession(authOptions as any);
     const userEmail = session?.user?.email;
 
     if (!userEmail) {
