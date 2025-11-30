@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bcrypt": "^6.0.0",
     "@types/cookie": "^0.6.0",
     "@types/file-saver": "^2.0.7",
     "@types/geoip-lite": "^1.4.4",
