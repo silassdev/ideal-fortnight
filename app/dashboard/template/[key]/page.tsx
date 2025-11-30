@@ -3,7 +3,7 @@ import React from 'react';
 
 const TemplateEditor = dynamic(() => import('@/components/dashboard/TemplateEditor'));
 
-export default function TemplatePage({ params }: { params: { key: string } }) {
-    const templateKey = params.key;
-    return <TemplateEditor templateKey={templateKey} />;
+export default async function TemplatePage({ params }: { params: Promise<{ key: string }> }) {
+    const { key } = await params;
+    return <TemplateEditor templateKey={key} />;
 }
