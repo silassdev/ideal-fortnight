@@ -21,31 +21,33 @@ if (!host || !user || !pass) {
  * Accepts optional overrides (useful for tests e.g., pointing to MailHog).
  */
 export function createTransporter(overrides?: {
-    host?: string;
-    port?: number;
-    secure?: boolean;
-    user?: string;
-    pass?: string;
+    host?: string; port?: number; secure?: boolean; user?: string; pass?: string;
 }) {
-    const cfgHost = overrides?.host ?? host;
-    const cfgPort = overrides?.port ?? port;
-    const cfgSecure = overrides?.secure ?? secure;
-    const cfgUser = overrides?.user ?? user;
-    const cfgPass = overrides?.pass ?? pass;
+    const cfgHost = overrides?.host ?? process.env.SMTP_HOST;
+    const cfgPort = overrides?.port ?? (process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587);
+    const cfgSecure = typeof overrides?.secure === "boolean"
+        ? overrides!.secure
+        : (cfgPort === 465);
 
-    return nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
         host: cfgHost,
         port: cfgPort,
         secure: cfgSecure,
         auth: {
-            user: cfgUser,
-            pass: cfgPass,
+            user: overrides?.user ?? process.env.SMTP_USER,
+            pass: overrides?.pass ?? process.env.SMTP_PASS,
         },
-        // Use rejectUnauthorized true in production; keep false for local debugging only
         tls: {
             rejectUnauthorized: process.env.NODE_ENV === "production",
         },
+        logger: process.env.NODE_ENV !== "production",
+        debug: process.env.NODE_ENV !== "production",
     });
+
+    // print config (avoid printing secrets in shared logs)
+    console.log("Transport config:", { host: cfgHost, port: cfgPort, secure: cfgSecure });
+
+    return transporter;
 }
 
 // default transporter for app usage

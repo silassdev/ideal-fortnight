@@ -1,4 +1,3 @@
-// app/api/auth/confirm/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
@@ -10,64 +9,39 @@ export async function GET(req: NextRequest) {
         const token = url.searchParams.get('token') || '';
 
         if (!token) {
-            return NextResponse.json({ error: 'Missing token' }, { status: 400 });
+            return NextResponse.redirect(new URL('/auth/confirm-failed', req.url));
         }
 
-        // validate token (JWT)
         const payload = verifyJwt(token);
         if (!payload || !payload.sub) {
-            return NextResponse.json({ error: 'Invalid or expired token' }, { status: 400 });
+            return NextResponse.redirect(new URL('/auth/confirm-failed', req.url));
         }
 
-        // connect to DB and find user by id (or email fallback)
         await dbConnect();
         const userId = payload.sub;
-        const emailFromToken = payload.email as string | undefined;
+        const emailFromToken = (payload as any).email as string | undefined;
 
-        const user = await User.findById(userId) || (emailFromToken ? await User.findOne({ email: emailFromToken }) : null);
+        const user = (await User.findById(userId)) || (emailFromToken ? await User.findOne({ email: emailFromToken }) : null);
         if (!user) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+            return NextResponse.redirect(new URL('/auth/confirm-failed', req.url));
         }
 
-        // If user already verified, just redirect / respond
-        if (user.isVerified) {
-            // clear token if present
-            if (user.verificationToken) {
-                user.verificationToken = null;
-                await user.save();
-            }
-
-            // Prefer redirect for browser clicks, JSON for API clients
-            const accept = req.headers.get('accept') || '';
-            if (accept.includes('application/json')) {
-                return NextResponse.json({ ok: true, message: 'Account already verified' });
-            }
-
-            const origin = new URL(req.url).origin;
-            return NextResponse.redirect(`${origin}/auth?mode=login&verified=1`);
-        }
-
-        // If the user record stores a verificationToken, ensure it matches the provided token
+        // if token stored on user, ensure match
         if (user.verificationToken && user.verificationToken !== token) {
-            return NextResponse.json({ error: 'Verification token does not match' }, { status: 400 });
+            return NextResponse.redirect(new URL('/auth/confirm-failed', req.url));
         }
 
-        // Mark verified and clear token
+        // mark verified
         user.isVerified = true;
         user.verificationToken = null;
         user.verifiedAt = new Date();
         await user.save();
 
-        const accept = req.headers.get('accept') || '';
-        if (accept.includes('application/json')) {
-            return NextResponse.json({ ok: true, message: 'Email verified' });
-        }
-
-        const origin = new URL(req.url).origin;
-        return NextResponse.redirect(`${origin}/auth?mode=login&verified=1`);
-    } catch (err: any) {
+        // redirect to a client success page (shows confetti + proceed to login)
+        return NextResponse.redirect(new URL('/auth/confirmed', req.url));
+    } catch (err) {
         // eslint-disable-next-line no-console
         console.error('Email confirmation error:', err);
-        return NextResponse.json({ error: err?.message || 'Server error' }, { status: 500 });
+        return NextResponse.redirect(new URL('/auth/confirm-failed', req.url));
     }
 }
