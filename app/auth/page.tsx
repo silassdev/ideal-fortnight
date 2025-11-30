@@ -1,10 +1,11 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
 import LoginForm from "@/components/LoginForm";
 import RegisterForm from "@/components/RegisterForm";
 
-export default function AuthPage() {
+function AuthContent() {
     const params = useSearchParams();
     const router = useRouter();
 
@@ -27,5 +28,13 @@ export default function AuthPage() {
                     : "Already registered? Login"}
             </button>
         </div>
+    );
+}
+
+export default function AuthPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <AuthContent />
+        </Suspense>
     );
 }
