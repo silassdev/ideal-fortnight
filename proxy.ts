@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-//
-// PUBLIC ROUTES — never blocked
-//
+
 const PUBLIC_PATHS = [
     "/",
     "/login",
@@ -12,6 +10,9 @@ const PUBLIC_PATHS = [
     "/api/auth/register",
     "/api/auth/login",
     "/api/auth/confirm",
+    "/api/auth/confirmed",
+    "/api/auth/confirm-failed",
+    "/api/auth/reset-request",
     "/api/auth/forgot",
     "/api/auth/reset",
     "/api/auth/google",
@@ -20,7 +21,6 @@ const PUBLIC_PATHS = [
 export function proxy(req: NextRequest) {
     const { pathname } = req.nextUrl;
 
-    // Allow all static files, images, Next internal routes
     if (
         pathname.startsWith("/_next") ||
         pathname.startsWith("/static") ||
@@ -33,17 +33,13 @@ export function proxy(req: NextRequest) {
         return NextResponse.next();
     }
 
-    // Allow all explicitly public paths
     if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
         return NextResponse.next();
     }
 
-    // Fetch session cookie (your JWT cookie)
     const token = req.cookies.get("session")?.value;
 
-    // If no token, block protected areas
     if (!token) {
-        // Protect dashboard, account, resume editor, admin, etc.
         if (
             pathname.startsWith("/dashboard") ||
             pathname.startsWith("/account") ||
@@ -55,9 +51,8 @@ export function proxy(req: NextRequest) {
         return NextResponse.next();
     }
 
-    // Admin route enforcement
     if (pathname.startsWith("/admin")) {
-        const role = req.cookies.get("role")?.value; // set this at login
+        const role = req.cookies.get("role")?.value;
         if (role !== "admin") {
             return NextResponse.redirect(new URL("/dashboard", req.url));
         }

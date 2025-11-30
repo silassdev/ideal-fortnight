@@ -17,6 +17,12 @@ export interface IUser extends Document {
     verifiedAt?: Date | null;
     createdAt?: Date;
     updatedAt?: Date;
+
+    // Reset Password fields
+    resetToken?: string | null;
+    resetRequestedAt?: Date | null;
+    lastResetRequestIp?: string | null;
+    lastResetRequestGeo?: any | null;
 }
 
 const UserSchema = new mongoose.Schema<IUser>({
@@ -35,6 +41,12 @@ const UserSchema = new mongoose.Schema<IUser>({
     ipInfo: { type: mongoose.Schema.Types.Mixed, default: null },
     lastLoginAt: { type: Date, default: null },
     verifiedAt: { type: Date, default: null },
+
+    // Reset Password fields
+    resetToken: { type: String, default: null },
+    resetRequestedAt: { type: Date, default: null },
+    lastResetRequestIp: { type: String, default: null },
+    lastResetRequestGeo: { type: mongoose.Schema.Types.Mixed, default: null },
 }, { timestamps: true });
 
 const User: Model<IUser> = (mongoose.models.User as Model<IUser>) || mongoose.model<IUser>('User', UserSchema);

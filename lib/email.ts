@@ -82,3 +82,32 @@ export async function sendVerificationEmail(to: string, token: string) {
 
     return transporter.sendMail(mailOptions);
 }
+
+/**
+ * Send password reset email
+ */
+export async function sendResetPasswordEmail(to: string, token: string) {
+    if (!process.env.NEXT_PUBLIC_BASE_URL) {
+        throw new Error("NEXT_PUBLIC_BASE_URL is required for reset password link generation.");
+    }
+
+    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/reset?token=${encodeURIComponent(
+        token
+    )}`;
+
+    const mailOptions = {
+        from:
+            process.env.EMAIL_FROM ||
+            `no-reply@${new URL(process.env.NEXT_PUBLIC_BASE_URL!).hostname}`,
+        to,
+        subject: "Reset your password",
+        html: `
+      <p>You requested a password reset. Click the link below to reset your password:</p>
+      <p><a href="${resetUrl}">Reset Password</a></p>
+      <p>If you did not request this, please ignore this email.</p>
+    `,
+        text: `Reset your password: ${resetUrl}`,
+    };
+
+    return transporter.sendMail(mailOptions);
+}

@@ -1,3 +1,4 @@
+// components/ui/Confetti.tsx
 'use client';
 
 import React from 'react';
@@ -5,26 +6,32 @@ import React from 'react';
 const COLORS = ['#ef4444', '#f59e0b', '#10b981', '#06b6d4', '#3b82f6', '#8b5cf6'];
 
 export default function Confetti({ pieces = 24 }: { pieces?: number }) {
-    const nodes = Array.from({ length: pieces }).map((_, i) => {
-        const style: React.CSSProperties = {
-            left: `${Math.random() * 100}%`,
-            background: COLORS[i % COLORS.length],
-            transform: `rotate(${Math.random() * 360}deg)`,
-            animationDelay: `${Math.random() * 0.8}s`,
-            width: `${6 + Math.random() * 10}px`,
-            height: `${6 + Math.random() * 10}px`,
-            opacity: 0.95,
-        };
-        return <span key={i} className="confetti-piece" style={style} />;
-    });
+  const [confettiStyles, setConfettiStyles] = React.useState<React.CSSProperties[]>([]);
 
-    return (
-        <>
-            <div className="confetti-container" aria-hidden>
-                {nodes}
-            </div>
+  React.useEffect(() => {
+    const styles = Array.from({ length: pieces }).map((_, i) => ({
+      left: `${Math.random() * 100}%`,
+      background: COLORS[i % COLORS.length],
+      transform: `rotate(${Math.random() * 360}deg)`,
+      animationDelay: `${Math.random() * 0.8}s`,
+      width: `${6 + Math.random() * 10}px`,
+      height: `${6 + Math.random() * 10}px`,
+      opacity: 0.95,
+    }));
+    setConfettiStyles(styles);
+  }, [pieces]);
 
-            <style jsx>{`
+  const nodes = confettiStyles.map((style, i) => (
+    <span key={i} className="confetti-piece" style={style} />
+  ));
+
+  return (
+    <>
+      <div className="confetti-container" aria-hidden>
+        {nodes}
+      </div>
+
+      <style jsx>{`
         .confetti-container {
           position: absolute;
           inset: 0;
@@ -43,6 +50,6 @@ export default function Confetti({ pieces = 24 }: { pieces?: number }) {
           100% { transform: translateY(120vh) rotate(360deg); opacity: 0 }
         }
       `}</style>
-        </>
-    );
+    </>
+  );
 }
