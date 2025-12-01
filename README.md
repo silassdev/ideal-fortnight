@@ -21,6 +21,7 @@ A feature-rich, professional resume builder application built with Next.js 16, T
 - ⚙️ **Settings Page** - Customize your profile and preferences
 - 🔒 **Secure Routes** - Protected routes with middleware authentication
 - 📧 **Email Integration** - Nodemailer for email notifications
+- ⚖️ **Legal Pages** - Privacy Policy and Terms of Service pages
 
 ---
 
@@ -123,20 +124,6 @@ resume-app/
    Create a `.env` file in the root directory with the following variables:
    
    ```env
-   # Database
-   MONGODB_URI=mongodb://localhost:27017/resume-app
-   # or for MongoDB Atlas:
-   # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/resume-app
-   
-   # NextAuth
-   NEXTAUTH_URL=http://localhost:3000
-   NEXTAUTH_SECRET=your-super-secret-key-here
-   
-   # JWT
-   JWT_SECRET=your-jwt-secret-key
-   
-   # Email (Optional - for Nodemailer)
-   EMAIL_SERVER=smtp://username:password@smtp.example.com:587
    EMAIL_FROM=noreply@resume-app.com
    ```
 
