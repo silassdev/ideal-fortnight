@@ -16,14 +16,11 @@ export async function POST(req: Request) {
         await dbConnect();
         const user = await User.findOne({ email });
         if (!user) {
-            // respond success to avoid user enumeration
             return NextResponse.json({ message: 'If that email exists we sent a reset link' }, { status: 200 });
         }
 
-        // generate short-lived token e.g. 1h
         const token = signJwt({ sub: user._id.toString(), email }, { expiresIn: '1h' });
 
-        // persist token for single-use validation
         user.resetToken = token;
         user.resetRequestedAt = new Date();
 
@@ -37,14 +34,11 @@ export async function POST(req: Request) {
         try {
             await sendResetPasswordEmail(email, token);
         } catch (err) {
-            // don't leak
-            // eslint-disable-next-line no-console
             console.error('sendResetPasswordEmail failed:', err);
         }
 
         return NextResponse.json({ message: 'If that email exists we sent a reset link' }, { status: 200 });
     } catch (err: any) {
-        // eslint-disable-next-line no-console
         console.error('reset-request error:', err);
         return NextResponse.json({ error: 'Server error' }, { status: 500 });
     }

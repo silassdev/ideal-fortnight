@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import nodemailer from "nodemailer";
+import { getBaseUrl } from "./url";
 
 const host = process.env.SMTP_HOST;
 const port = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587;
@@ -58,18 +59,15 @@ export const transporter = createTransporter();
  * Keeps our app-level functionality in this module.
  */
 export async function sendVerificationEmail(to: string, token: string) {
-    if (!process.env.NEXT_PUBLIC_BASE_URL) {
-        throw new Error("NEXT_PUBLIC_BASE_URL is required for verification link generation.");
-    }
-
-    const confirmUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/confirm?token=${encodeURIComponent(
+    const baseUrl = getBaseUrl();
+    const confirmUrl = `${baseUrl}/api/auth/confirm?token=${encodeURIComponent(
         token
     )}`;
 
     const mailOptions = {
         from:
             process.env.EMAIL_FROM ||
-            `no-reply@${new URL(process.env.NEXT_PUBLIC_BASE_URL!).hostname}`,
+            `no-reply@${new URL(baseUrl).hostname}`,
         to,
         subject: "Confirm your email",
         html: `
@@ -87,18 +85,15 @@ export async function sendVerificationEmail(to: string, token: string) {
  * Send password reset email
  */
 export async function sendResetPasswordEmail(to: string, token: string) {
-    if (!process.env.NEXT_PUBLIC_BASE_URL) {
-        throw new Error("NEXT_PUBLIC_BASE_URL is required for reset password link generation.");
-    }
-
-    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/reset?token=${encodeURIComponent(
+    const baseUrl = getBaseUrl();
+    const resetUrl = `${baseUrl}/auth/reset?token=${encodeURIComponent(
         token
     )}`;
 
     const mailOptions = {
         from:
             process.env.EMAIL_FROM ||
-            `no-reply@${new URL(process.env.NEXT_PUBLIC_BASE_URL!).hostname}`,
+            `no-reply@${new URL(baseUrl).hostname}`,
         to,
         subject: "Reset your password",
         html: `
