@@ -14,7 +14,7 @@ A feature-rich, professional resume builder application built with Next.js 16, T
 - 🎨 **Interactive Resume Builder** - Real-time editing with live preview
 - 📄 **Professional Templates** - Multiple pre-designed resume templates
 - 🔐 **Secure Authentication** - User authentication with NextAuth.js and MongoDB
-- 📥 **PDF Export** - High-quality PDF generation with html2canvas & jsPDF
+- 📥 **PDF & Docs Export** - High-quality PDF & Docs generation with html2canvas & jsPDF
 - 💾 **Cloud Storage** - Save and manage multiple resumes
 - 📱 **Responsive Design** - Fully optimized for all devices
 - 🎯 **Dashboard** - Personalized user dashboard to manage resumes
