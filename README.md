@@ -1,4 +1,4 @@
-# 🚀 Ultra-Modern Resume Builder
+# Ultra-Modern Resume Builder
 
 A feature-rich, professional resume builder application built with Next.js 16, TypeScript, and modern web technologies. Create stunning resumes with real-time preview, professional templates, and seamless PDF export.
 
