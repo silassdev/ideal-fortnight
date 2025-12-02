@@ -7,6 +7,7 @@ import ExperienceEditor from '../dashboard/ExperienceEditor';
 import EducationEditor from '../dashboard/EducationEditor';
 import ProjectEditor from '../dashboard/ProjectEditor';
 import EditableText from '../dashboard/EditableText';
+import CertificationsEditor from '../dashboard/CertificationsEditor';
 
 export const metadata = {
   key: 'silass',
@@ -203,15 +204,22 @@ export default function SilassDevTemplate({ resume, className = '' }: TemplateCo
 
             {/* Certifications */}
             <div className="w-full bg-white p-4 rounded border">
-              <h3 className="text-sm font-semibold text-slate-700">Certifications</h3>
-              <ul className="mt-2 text-sm list-disc list-inside text-slate-600">
-                {(resume.sections || []).filter(s => s.type === 'certifications').length > 0
-                  ? (resume.sections || []).filter(s => s.type === 'certifications').flatMap(s => s.items || []).map((c: any, i: number) => (
-                    <li key={i}>{c}</li>
-                  ))
-                  : <li>No certifications listed</li>
-                }
-              </ul>
+              <h3 className="text-sm font-semibold text-slate-700 mb-2">Certifications</h3>
+              {isEditMode && editing && setEditing ? (
+                <CertificationsEditor
+                  certifications={editing.certifications || []}
+                  onChange={(v) => setEditing({ ...editing, certifications: v })}
+                />
+              ) : (
+                <ul className="text-sm list-disc list-inside text-slate-600">
+                  {(resume.certifications && resume.certifications.length > 0)
+                    ? resume.certifications.map((c, i) => (
+                      <li key={i}>{c}</li>
+                    ))
+                    : <li>No certifications listed</li>
+                  }
+                </ul>
+              )}
             </div>
 
             <div className="text-xs text-slate-400">Template: SilasSDev</div>
@@ -318,15 +326,22 @@ export default function SilassDevTemplate({ resume, className = '' }: TemplateCo
             </section>
 
             <section className="bg-white p-6 rounded border">
-              <h2 className="text-lg font-semibold">Certifications</h2>
-              <div className="mt-3 space-y-2 text-sm text-slate-700">
-                {(resume.sections || []).filter(s => s.type === 'certifications').length > 0
-                  ? (resume.sections || []).filter(s => s.type === 'certifications').flatMap(s => s.items || []).map((c: any, i: number) => (
-                    <div key={i} className="font-medium">{c}</div>
-                  ))
-                  : <div className="text-sm text-slate-600">No certifications listed.</div>
-                }
-              </div>
+              <h2 className="text-lg font-semibold mb-3">Certifications</h2>
+              {isEditMode && editing && setEditing ? (
+                <CertificationsEditor
+                  certifications={editing.certifications || []}
+                  onChange={(v) => setEditing({ ...editing, certifications: v })}
+                />
+              ) : (
+                <div className="space-y-2 text-sm text-slate-700">
+                  {(resume.certifications && resume.certifications.length > 0)
+                    ? resume.certifications.map((c, i) => (
+                      <div key={i} className="font-medium">{c}</div>
+                    ))
+                    : <div className="text-sm text-slate-600">No certifications listed.</div>
+                  }
+                </div>
+              )}
             </section>
           </div>
 

@@ -61,24 +61,18 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     session: { strategy: 'jwt' },
     callbacks: {
-        // Redirect to dashboard after successful sign-in
         async signIn({ user, account, profile }) {
-            // Allow sign-in to proceed
             return true;
         },
         async redirect({ url, baseUrl }) {
-            // If the URL already starts with the baseUrl, it's an internal URL - use it
             if (url.startsWith(baseUrl)) {
                 return url;
             }
-            // If it's a relative URL, prepend the baseUrl
             if (url.startsWith('/')) {
                 return `${baseUrl}${url}`;
             }
-            // Default fallback to baseUrl (home page)
             return baseUrl;
         },
-        // Include user.id in JWT and session
         async jwt({ token, user }) {
             if (user) {
                 token.sub = user.id;

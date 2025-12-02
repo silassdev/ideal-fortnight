@@ -68,6 +68,7 @@ export type ResumeShape = {
     experience?: Experience[];
     education?: Education[];
     skills?: string[];
+    certifications?: string[];
     sections?: Section[];
     projects?: Project[];
     createdAt?: string;
