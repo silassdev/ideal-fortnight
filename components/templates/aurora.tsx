@@ -1,5 +1,7 @@
 import React from 'react';
 import { TemplateComponentProps } from '@/types/template';
+import EditableField from '../dashboard/EditableField';
+import { useEditing } from '../dashboard/TemplateEditor';
 
 export const metadata = {
   key: 'aurora',
@@ -12,6 +14,15 @@ export const metadata = {
 };
 
 export default function AuroraTemplate({ resume, className = '' }: TemplateComponentProps) {
+  // Check for editing context
+  let editingContext = null;
+  try {
+    editingContext = useEditing();
+  } catch {
+    // Not in editing mode
+  }
+  const isEditMode = editingContext?.isEditMode;
+
   const contact = resume.contact || {};
   const fmtRange = (s?: string, e?: string) => {
     if (!s && !e) return '';
@@ -25,8 +36,8 @@ export default function AuroraTemplate({ resume, className = '' }: TemplateCompo
       <header className="p-8 border-b border-slate-100">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">{resume.name || 'Full Name'}</h1>
-            <div className="text-slate-600 mt-1">{resume.title || 'Professional Title'}</div>
+            <EditableField field="name" as="h1" className="text-3xl font-extrabold tracking-tight" fallback="Full Name" />
+            <EditableField field="title" as="div" className="text-slate-600 mt-1" fallback="Professional Title" />
           </div>
 
           <div className="text-sm text-slate-600 flex flex-col sm:items-end gap-1">
@@ -42,7 +53,13 @@ export default function AuroraTemplate({ resume, className = '' }: TemplateCompo
         {/* Summary */}
         <section>
           <h2 className="text-sm font-semibold text-slate-700">Summary</h2>
-          <p className="mt-2 text-sm text-slate-700 leading-relaxed">{resume.summary || 'Concise summary that highlights core strengths, focus areas, and impact.'}</p>
+          <EditableField
+            field="summary"
+            as="p"
+            className="mt-2 text-sm text-slate-700 leading-relaxed"
+            fallback="Concise summary that highlights core strengths, focus areas, and impact."
+            multiline
+          />
         </section>
 
         {/* Skills */}

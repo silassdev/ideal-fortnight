@@ -14,6 +14,7 @@ export interface Experience {
     id: string;
     company?: string;
     role?: string;
+    location?: string;
     start?: string;
     end?: string;
     bullets?: string[];

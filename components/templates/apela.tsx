@@ -1,7 +1,7 @@
 import React from 'react';
 import { TemplateComponentProps } from '@/types/template';
-
-
+import EditableText from '../dashboard/EditableText';
+import { useEditing } from '../dashboard/TemplateEditor';
 
 export const metadata = {
     key: 'apela',
@@ -14,23 +14,85 @@ export const metadata = {
 };
 
 export default function ApelaTemplate({ resume, className = '' }: TemplateComponentProps) {
+    // Check if we're in editing mode
+    let editingContext = null;
+    try {
+        editingContext = useEditing();
+    } catch {
+        // Not in editing mode, render normally
+    }
+
+    const isEditMode = editingContext?.isEditMode;
+    const { editing, setEditing } = editingContext || {};
+
     return (
         <div className={`max-w-[800px] bg-white p-6 text-slate-900 ${className}`} id="resume-preview">
             <header className="flex items-center gap-4 pb-4 border-b">
                 <div className="w-20 h-20 rounded-full bg-slate-200" />
                 <div>
-                    <h1 className="text-2xl font-extrabold">{resume.name || 'Full name'}</h1>
-                    <div className="text-sm text-slate-600">{resume.title || 'Professional title'}</div>
+                    {isEditMode && editing && setEditing ? (
+                        <EditableText
+                            as="h1"
+                            className="text-2xl font-extrabold"
+                            value={editing.name || ''}
+                            onChange={(val) => setEditing({ ...editing, name: val })}
+                            placeholder="Full name"
+                        />
+                    ) : (
+                        <h1 className="text-2xl font-extrabold">{resume.name || 'Full name'}</h1>
+                    )}
+
+                    {isEditMode && editing && setEditing ? (
+                        <EditableText
+                            as="div"
+                            className="text-sm text-slate-600"
+                            value={editing.title || ''}
+                            onChange={(val) => setEditing({ ...editing, title: val })}
+                            placeholder="Professional title"
+                        />
+                    ) : (
+                        <div className="text-sm text-slate-600">{resume.title || 'Professional title'}</div>
+                    )}
                 </div>
                 <div className="ml-auto text-sm text-slate-500">
-                    <div>{resume.contact?.email}</div>
-                    <div>{resume.contact?.phone}</div>
+                    {isEditMode && editing && setEditing ? (
+                        <>
+                            <EditableText
+                                as="div"
+                                value={editing.contact?.email || ''}
+                                onChange={(val) => setEditing({ ...editing, contact: { ...editing.contact, email: val } })}
+                                placeholder="email@example.com"
+                            />
+                            <EditableText
+                                as="div"
+                                value={editing.contact?.phone || ''}
+                                onChange={(val) => setEditing({ ...editing, contact: { ...editing.contact, phone: val } })}
+                                placeholder="+1 (555) 000-0000"
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <div>{resume.contact?.email}</div>
+                            <div>{resume.contact?.phone}</div>
+                        </>
+                    )}
                 </div>
             </header>
 
             <section className="grid grid-cols-3 gap-6 mt-6">
                 <div className="col-span-2">
-                    <div className="mb-4 text-sm text-slate-700">{resume.summary}</div>
+                    {isEditMode && editing && setEditing ? (
+                        <EditableText
+                            as="div"
+                            className="mb-4 text-sm text-slate-700"
+                            value={editing.summary || ''}
+                            onChange={(val) => setEditing({ ...editing, summary: val })}
+                            placeholder="Professional summary..."
+                            multiline
+                        />
+                    ) : (
+                        <div className="mb-4 text-sm text-slate-700">{resume.summary}</div>
+                    )}
 
                     <div className="space-y-4">
                         {(resume.experience || []).map((ex) => (
