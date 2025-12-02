@@ -18,6 +18,7 @@ export const authOptions: NextAuthOptions = {
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID || '',
             clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+            allowDangerousEmailAccountLinking: true,
         }),
         CredentialsProvider({
             name: "Credentials",
@@ -74,4 +75,5 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
     },
+    debug: process.env.NODE_ENV === 'development',
 };

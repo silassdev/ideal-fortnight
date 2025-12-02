@@ -17,7 +17,6 @@ export default async function Page() {
     const userEmail = session?.user?.email;
 
     if (!userEmail) {
-        // Layout already redirects but keep safe
         return <div className="p-8">Please sign in</div>;
     }
 

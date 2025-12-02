@@ -1,5 +1,4 @@
-// scripts/generateTemplateIndex.js
-// Usage: node scripts/generateTemplateIndex.js
+
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -25,7 +24,7 @@ files.forEach((file, i) => {
     exports.push(`  { key: ${varMeta}.key, component: ${varComp}, metadata: ${varMeta} },`);
 });
 
-const content = `/* THIS FILE IS GENERATED. Run: node scripts/generateTemplateIndex.js */
+const content = `/* THIS FILE IS GENERATED. DO NOT DELETE OR MODIFY. Run: node scripts/generateTemplateIndex.js */
 ${imports.join('\n')}
 
 import type { TemplateExport } from '@/types/template';

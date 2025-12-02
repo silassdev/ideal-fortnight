@@ -1,31 +1,60 @@
-export type Experience = {
+export interface Contact {
+    email?: string;
+    phone?: string;
+    location?: string;
+    website?: string;
+    linkedin?: string;
+    github?: string;
+    twitter?: string;
+    portfolio?: string;
+    [key: string]: string | undefined;
+}
+
+export interface Experience {
     id: string;
     company?: string;
     role?: string;
     start?: string;
     end?: string;
     bullets?: string[];
-};
+}
 
-export type Education = {
+export interface Education {
     id: string;
     school?: string;
     degree?: string;
     start?: string;
     end?: string;
-};
+    notes?: string;
+}
+
+export interface Section {
+    type: string;
+    title?: string;
+    items?: any[];
+}
+
+export interface Project {
+    title?: string;
+    description?: string;
+    link?: string;
+    tech?: string[];
+}
 
 export type ResumeShape = {
     _id?: string;
     publicId?: string;
-    template?: string; // Template key (e.g., 'apela', 'modern', 'classic', etc.)
+    template?: string;
     name?: string;
     title?: string;
     summary?: string;
-    contact?: { email?: string; phone?: string; location?: string };
+    contact?: Contact;
     experience?: Experience[];
     education?: Education[];
     skills?: string[];
+    sections?: Section[];
+    projects?: Project[];
     createdAt?: string;
     updatedAt?: string;
+    [key: string]: any;
 };

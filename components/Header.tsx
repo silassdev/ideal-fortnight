@@ -39,17 +39,12 @@ export default function Header() {
         <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
-                    {/* Logo */}
                     <Link href="/" className="flex items-center gap-2 group">
-                        <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                            <span className="text-white font-bold text-lg">R</span>
-                        </div>
                         <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                             ResumeBuilder
                         </span>
                     </Link>
 
-                    {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center gap-6">
                         {navLinks.map((link) => {
                             if (link.authRequired && !session) return null;
@@ -69,7 +64,6 @@ export default function Header() {
                         })}
                     </div>
 
-                    {/* Auth Actions */}
                     <div className="hidden md:flex items-center gap-3">
                         {session ? (
                             <div className="flex items-center gap-3">
@@ -108,7 +102,6 @@ export default function Header() {
                         )}
                     </div>
 
-                    {/* Mobile menu button */}
                     <button
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                         className="md:hidden p-2 rounded-lg hover:bg-slate-100"
@@ -139,7 +132,6 @@ export default function Header() {
                     </button>
                 </div>
 
-                {/* Mobile Navigation */}
                 {mobileMenuOpen && (
                     <div className="md:hidden py-4 border-t">
                         <div className="flex flex-col gap-3">
@@ -199,7 +191,6 @@ export default function Header() {
                 )}
             </nav>
 
-            {/* Auth Modal */}
             {
                 showAuthModal && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -237,7 +228,6 @@ function AuthUrlListener({ onAuth }: { onAuth: (mode: 'login' | 'register') => v
     useEffect(() => {
         if (authParam === 'login' || authParam === 'register') {
             onAuth(authParam);
-            // Optional: Clean up URL
             const url = new URL(window.location.href);
             url.searchParams.delete('auth');
             window.history.replaceState({}, '', url.toString());
