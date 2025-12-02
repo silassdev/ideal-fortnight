@@ -2,6 +2,11 @@ import React from 'react';
 import { TemplateComponentProps } from '@/types/template';
 import EditableField from '../dashboard/EditableField';
 import { useEditing } from '../dashboard/TemplateEditor';
+import SkillsEditor from '../dashboard/SkillsEditor';
+import ExperienceEditor from '../dashboard/ExperienceEditor';
+import EducationEditor from '../dashboard/EducationEditor';
+import ProjectEditor from '../dashboard/ProjectEditor';
+import EditableText from '../dashboard/EditableText';
 
 export const metadata = {
   key: 'aurora',
@@ -13,6 +18,22 @@ export const metadata = {
   tags: ['single-column', 'modern', 'timeline'],
 };
 
+// Helper to format date range
+const fmtDate = (month?: string, year?: string) => {
+  if (!month && !year) return '';
+  if (month && year) return `${month} ${year}`;
+  return month || year || '';
+};
+
+const fmtRange = (item: any) => {
+  const start = fmtDate(item.startMonth, item.startYear) || item.start;
+  const end = item.current ? 'Present' : (fmtDate(item.endMonth, item.endYear) || item.end);
+
+  if (!start && !end) return '';
+  if (start && !end) return `${start} — Present`;
+  return `${start ?? ''} — ${end ?? ''}`;
+};
+
 export default function AuroraTemplate({ resume, className = '' }: TemplateComponentProps) {
   // Check for editing context
   let editingContext = null;
@@ -22,13 +43,9 @@ export default function AuroraTemplate({ resume, className = '' }: TemplateCompo
     // Not in editing mode
   }
   const isEditMode = editingContext?.isEditMode;
+  const { editing, setEditing } = editingContext || {};
 
   const contact = resume.contact || {};
-  const fmtRange = (s?: string, e?: string) => {
-    if (!s && !e) return '';
-    if (s && !e) return `${s} — Present`;
-    return `${s ?? ''} — ${e ?? ''}`;
-  };
 
   return (
     <div id="resume-preview" className={`max-w-[780px] mx-auto bg-white text-slate-900 ${className}`}>
@@ -41,22 +58,57 @@ export default function AuroraTemplate({ resume, className = '' }: TemplateCompo
           </div>
 
           <div className="text-sm text-slate-600 flex flex-col sm:items-end gap-1">
-            {contact.website && <a href={contact.website} target="_blank" rel="noreferrer" className="underline text-sky-600">{contact.website}</a>}
-            {contact.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
-            {contact.phone && <div>{contact.phone}</div>}
-            {contact.location && <div>{contact.location}</div>}
+            {isEditMode && editing && setEditing ? (
+              <>
+                <EditableText
+                  as="div"
+                  value={editing.contact?.website || ''}
+                  onChange={(val) => setEditing({ ...editing, contact: { ...editing.contact, website: val } })}
+                  placeholder="Website URL"
+                  className="text-right"
+                />
+                <EditableText
+                  as="div"
+                  value={editing.contact?.email || ''}
+                  onChange={(val) => setEditing({ ...editing, contact: { ...editing.contact, email: val } })}
+                  placeholder="Email Address"
+                  className="text-right"
+                />
+                <EditableText
+                  as="div"
+                  value={editing.contact?.phone || ''}
+                  onChange={(val) => setEditing({ ...editing, contact: { ...editing.contact, phone: val } })}
+                  placeholder="Phone Number"
+                  className="text-right"
+                />
+                <EditableText
+                  as="div"
+                  value={editing.contact?.location || ''}
+                  onChange={(val) => setEditing({ ...editing, contact: { ...editing.contact, location: val } })}
+                  placeholder="Location"
+                  className="text-right"
+                />
+              </>
+            ) : (
+              <>
+                {contact.website && <a href={contact.website} target="_blank" rel="noreferrer" className="underline text-sky-600">{contact.website}</a>}
+                {contact.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
+                {contact.phone && <div>{contact.phone}</div>}
+                {contact.location && <div>{contact.location}</div>}
+              </>
+            )}
           </div>
         </div>
       </header>
 
-      <main className="p-8 space-y-6">
+      <main className="p-8 space-y-8">
         {/* Summary */}
         <section>
-          <h2 className="text-sm font-semibold text-slate-700">Summary</h2>
+          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-2">Summary</h2>
           <EditableField
             field="summary"
             as="p"
-            className="mt-2 text-sm text-slate-700 leading-relaxed"
+            className="text-sm text-slate-700 leading-relaxed"
             fallback="Concise summary that highlights core strengths, focus areas, and impact."
             multiline
           />
@@ -64,97 +116,101 @@ export default function AuroraTemplate({ resume, className = '' }: TemplateCompo
 
         {/* Skills */}
         <section>
-          <h2 className="text-sm font-semibold text-slate-700">Skills</h2>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {(resume.skills && resume.skills.length > 0) ? (
-              resume.skills.map((s, i) => (
-                <span key={i} className="text-xs px-2 py-1 bg-slate-100 rounded">{s}</span>
-              ))
-            ) : (
-              <>
-                <span className="text-xs px-2 py-1 bg-slate-100 rounded">JavaScript</span>
-                <span className="text-xs px-2 py-1 bg-slate-100 rounded">TypeScript</span>
-                <span className="text-xs px-2 py-1 bg-slate-100 rounded">React</span>
-              </>
-            )}
-          </div>
+          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-3">Skills</h2>
+          {isEditMode && editing && setEditing ? (
+            <SkillsEditor
+              skills={editing.skills || []}
+              onChange={(v) => setEditing({ ...editing, skills: v })}
+            />
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {(resume.skills || []).map((s, i) => (
+                <span key={i} className="text-xs px-2 py-1 bg-slate-100 rounded text-slate-700 font-medium">{s}</span>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Experience (timeline style) */}
         <section>
-          <h2 className="text-sm font-semibold text-slate-700">Experience</h2>
-          <div className="mt-4 space-y-6">
-            {(resume.experience && resume.experience.length > 0) ? resume.experience.map((ex) => (
-              <div key={ex.id} className="relative pl-8">
-                <div className="absolute left-0 top-1 w-2 h-2 rounded-full bg-sky-600" />
-                <div className="absolute left-1 top-4 h-full w-[2px] bg-slate-100" />
-                <div className="flex items-start justify-between">
-                  <div>
-                    <div className="font-medium text-slate-900">{ex.role || 'Role'} <span className="text-slate-500">— {ex.company || 'Company'}</span></div>
-                    {ex.location && <div className="text-xs text-slate-500">{ex.location}</div>}
+          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">Experience</h2>
+          {isEditMode && editing && setEditing ? (
+            <ExperienceEditor
+              experiences={editing.experience || []}
+              onChange={(v) => setEditing({ ...editing, experience: v })}
+            />
+          ) : (
+            <div className="space-y-6">
+              {(resume.experience || []).map((ex) => (
+                <div key={ex.id} className="relative pl-6 border-l-2 border-slate-100 ml-1">
+                  <div className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-sky-500 ring-4 ring-white" />
+                  <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-1">
+                    <div className="font-bold text-slate-800">{ex.role}</div>
+                    <div className="text-xs text-slate-500 font-medium whitespace-nowrap">{fmtRange(ex)}</div>
                   </div>
-                  <div className="text-xs text-slate-500">{fmtRange(ex.start, ex.end)}</div>
-                </div>
-                {ex.bullets && ex.bullets.length > 0 && (
-                  <ul className="mt-2 list-disc list-inside text-sm text-slate-700">
-                    {ex.bullets.map((b, i) => <li key={i}>{b}</li>)}
+                  <div className="text-sm text-slate-600 font-medium mb-2">{ex.company} {ex.location ? `• ${ex.location}` : ''}</div>
+                  <ul className="list-disc ml-4 text-sm text-slate-700 space-y-1">
+                    {(ex.bullets || []).map((b, i) => <li key={i}>{b}</li>)}
                   </ul>
-                )}
-              </div>
-            )) : (
-              <div className="text-sm text-slate-600">No experience added yet.</div>
-            )}
-          </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Projects */}
         <section>
-          <h2 className="text-sm font-semibold text-slate-700">Projects</h2>
-          <div className="mt-3 space-y-3">
-            {(resume.sections || []).filter(s => s.type === 'projects').flatMap(s => s.items || []).length > 0 ? (
-              (resume.sections || []).filter(s => s.type === 'projects').flatMap(s => s.items || []).map((p: any, i: number) => (
-                <div key={i} className="p-3 border rounded bg-slate-50">
-                  <div className="flex items-center justify-between">
-                    <div className="font-medium">{p.title || p.name || 'Project'}</div>
-                    {p.link && <a href={p.link} target="_blank" rel="noreferrer" className="text-xs text-sky-600 underline">View</a>}
+          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">Projects</h2>
+          {isEditMode && editing && setEditing ? (
+            <ProjectEditor
+              projects={editing.projects || []}
+              onChange={(v) => setEditing({ ...editing, projects: v })}
+            />
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {(resume.projects || []).map((proj) => (
+                <div key={proj.id} className="p-4 border border-slate-100 rounded-lg bg-slate-50/50">
+                  <div className="flex justify-between items-baseline mb-1">
+                    <div className="font-bold text-slate-800">
+                      {proj.title}
+                      {proj.link && (
+                        <a href={proj.link} target="_blank" rel="noreferrer" className="ml-2 text-sky-600 hover:underline text-xs font-normal">
+                          View Project ↗
+                        </a>
+                      )}
+                    </div>
+                    <div className="text-xs text-slate-500">{fmtRange(proj)}</div>
                   </div>
-                  {p.description && <div className="text-sm text-slate-700 mt-2">{p.description}</div>}
+                  <div className="text-sm text-slate-700">{proj.description}</div>
                 </div>
-              ))
-            ) : (
-              <div className="text-sm text-slate-600">No projects listed.</div>
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
 
-        {/* Education & Certifications */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <section className="p-4 border rounded">
-            <h3 className="text-sm font-semibold text-slate-700">Education</h3>
-            <div className="mt-3 space-y-3 text-sm text-slate-700">
-              {(resume.education || []).length > 0 ? (resume.education || []).map((ed) => (
-                <div key={ed.id}>
-                  <div className="font-medium">{ed.school || 'School'}</div>
-                  <div className="text-xs text-slate-500">{fmtRange(ed.start, ed.end)} {ed.degree ? `• ${ed.degree}` : ''}</div>
+        {/* Education */}
+        <section>
+          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">Education</h2>
+          {isEditMode && editing && setEditing ? (
+            <EducationEditor
+              education={editing.education || []}
+              onChange={(v) => setEditing({ ...editing, education: v })}
+            />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {(resume.education || []).map((ed) => (
+                <div key={ed.id} className="p-4 border border-slate-100 rounded-lg">
+                  <div className="font-bold text-slate-800">{ed.school}</div>
+                  <div className="text-sm text-slate-600">{ed.degree}</div>
+                  <div className="text-xs text-slate-500 mt-1">{fmtRange(ed)}</div>
                 </div>
-              )) : <div className="text-sm text-slate-600">No education entries yet.</div>}
+              ))}
             </div>
-          </section>
-
-          <section className="p-4 border rounded">
-            <h3 className="text-sm font-semibold text-slate-700">Certifications</h3>
-            <div className="mt-3 text-sm text-slate-700">
-              {(resume.sections || []).filter(s => s.type === 'certifications').flatMap(s => s.items || []).length > 0 ? (
-                (resume.sections || []).filter(s => s.type === 'certifications').flatMap(s => s.items || []).map((c: any, i: number) => (
-                  <div key={i} className="py-1">{c}</div>
-                ))
-              ) : <div className="text-sm text-slate-600">No certifications listed.</div>}
-            </div>
-          </section>
-        </div>
+          )}
+        </section>
 
         {/* Footer */}
-        <footer className="text-xs text-slate-400 pt-4 border-t">
+        <footer className="text-xs text-slate-400 pt-6 border-t mt-8">
           <div className="flex items-center justify-between">
             <div>Generated with Aurora template</div>
             <div>{metadata.author}</div>

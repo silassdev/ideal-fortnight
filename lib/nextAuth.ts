@@ -67,13 +67,16 @@ export const authOptions: NextAuthOptions = {
             return true;
         },
         async redirect({ url, baseUrl }) {
-            // After sign-in, redirect to dashboard
-            // If the url is already set to a specific page, use it
+            // If the URL already starts with the baseUrl, it's an internal URL - use it
             if (url.startsWith(baseUrl)) {
                 return url;
             }
-            // Default redirect to dashboard
-            return `${baseUrl}/dashboard`;
+            // If it's a relative URL, prepend the baseUrl
+            if (url.startsWith('/')) {
+                return `${baseUrl}${url}`;
+            }
+            // Default fallback to baseUrl (home page)
+            return baseUrl;
         },
         // Include user.id in JWT and session
         async jwt({ token, user }) {

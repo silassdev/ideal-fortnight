@@ -63,17 +63,9 @@ export default function TemplateEditor({ templateKey }: { templateKey: string })
         alert('Saved — you can share this resume via your dashboard.');
     }
 
-    async function handleDownloadPdf() {
-        // We need to render the preview temporarily or use the modal's content if open
-        // For now, we'll open the preview modal to ensure the element exists, then download
-        setPreviewOpen(true);
-        // Wait for modal to render
-        setTimeout(async () => {
-            const previewEl = document.getElementById('resume-preview-modal');
-            if (!previewEl) return alert('Preview not available');
-            await downloadPdfSafe(previewEl, { filename: `${editing.name || 'resume'}.pdf` });
-            setPreviewOpen(false);
-        }, 500);
+    function handleDownloadPdf() {
+        // Use browser print for best PDF generation which respects CSS pagination
+        window.print();
     }
 
     async function handleDownloadDoc() {
@@ -84,7 +76,7 @@ export default function TemplateEditor({ templateKey }: { templateKey: string })
         <EditingContext.Provider value={{ editing, setEditing, isEditMode: true }}>
             <div className="min-h-screen bg-slate-50/50">
                 {/* Toolbar */}
-                <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4">
+                <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 toolbar">
                     <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div className="flex items-center gap-4 w-full sm:w-auto">
                             <Link href="/dashboard" className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500">
@@ -119,10 +111,10 @@ export default function TemplateEditor({ templateKey }: { templateKey: string })
                             <button
                                 onClick={handleDownloadPdf}
                                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
-                                title="Download PDF"
+                                title="Print or Save as PDF"
                             >
                                 <FileDown className="w-4 h-4" />
-                                PDF
+                                Print / PDF
                             </button>
 
                             <div className="h-6 w-px bg-slate-200 mx-1" />

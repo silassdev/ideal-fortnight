@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import templates from '@/components/templates'; // generated index
+import templates from '@/components/templates';
 import { ResumeShape } from '@/types/resume';
 
 type Props = {
@@ -11,7 +11,6 @@ type Props = {
 };
 
 export default function TemplateRenderer({ templateKey = 'apela', resume, className = '' }: Props) {
-    // find template in registry
     const tpl = templates.find((t) => t.metadata?.key === templateKey) || templates[0];
 
     if (!tpl) {

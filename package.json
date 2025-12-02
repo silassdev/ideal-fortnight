@@ -17,6 +17,7 @@
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "cookie": "^1.1.1",
+    "dayjs": "^1.11.19",
     "dotenv": "^17.2.3",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.23.25",
@@ -31,7 +32,8 @@
     "next-auth": "^4.24.13",
     "nodemailer": "^7.0.11",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "recharts": "^3.5.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

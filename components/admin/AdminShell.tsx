@@ -2,7 +2,10 @@
 
 import React, { useState } from 'react';
 import AdminSidebar from './AdminSidebar';
-import AdminAnalytics from './AdminAnalytics';
+import OverviewPanel from './OverviewPanel';
+import UserPanel from './UserPanel';
+import DownloadsPanel from './DashboardPanel';
+import AdminSettingsPanel from './AdminsSettingsPanel';
 
 export default function AdminShell() {
     const [view, setView] = useState<'overview' | 'users' | 'downloads' | 'settings'>('overview');
@@ -14,15 +17,10 @@ export default function AdminShell() {
             </aside>
 
             <main className="lg:col-span-5 space-y-6">
-                {view === 'overview' && <AdminAnalytics />}
-                {view === 'users' && <AdminAnalytics tab="users" />}
-                {view === 'downloads' && <AdminAnalytics tab="downloads" />}
-                {view === 'settings' && (
-                    <div className="bg-white p-4 rounded shadow">
-                        <h2 className="text-lg font-semibold">Admin Settings</h2>
-                        <p className="text-sm text-gray-500">Manage admin preferences.</p>
-                    </div>
-                )}
+                {view === 'overview' && <OverviewPanel />}
+                {view === 'users' && <UserPanel />}
+                {view === 'downloads' && <DownloadsPanel />}
+                {view === 'settings' && <AdminSettingsPanel />}
             </main>
         </div>
     );
