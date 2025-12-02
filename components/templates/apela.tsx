@@ -28,7 +28,9 @@ export default function ApelaTemplate({ resume, className = '' }: TemplateCompon
     return (
         <div className={`max-w-[800px] bg-white p-6 text-slate-900 ${className}`} id="resume-preview">
             <header className="flex items-center gap-4 pb-4 border-b">
-                <div className="w-20 h-20 rounded-full bg-slate-200" />
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sky-400 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-md">
+                    {resume.name ? resume.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'UN'}
+                </div>
                 <div>
                     {isEditMode && editing && setEditing ? (
                         <EditableText

@@ -1,5 +1,7 @@
 import React from 'react';
 import { TemplateComponentProps } from '@/types/template';
+import EditableField from '../dashboard/EditableField';
+import { useEditing } from '../dashboard/TemplateEditor';
 
 export const metadata = {
     key: 'fortnight',
@@ -12,6 +14,15 @@ export const metadata = {
 };
 
 export default function FortnightTemplate({ resume, className = '' }: TemplateComponentProps) {
+    // Check for editing context
+    let editingContext = null;
+    try {
+        editingContext = useEditing();
+    } catch {
+        // Not in editing mode
+    }
+    const isEditMode = editingContext?.isEditMode;
+
     const fmtRange = (start?: string, end?: string) => {
         if (!start && !end) return '';
         if (start && !end) return `${start} — Present`;
@@ -32,12 +43,18 @@ export default function FortnightTemplate({ resume, className = '' }: TemplateCo
                                     {resume.name ? resume.name.split(' ').map(n => n[0]).slice(0, 2).join('') : 'FN'}
                                 </div>
                                 <div>
-                                    <h1 className="text-2xl font-extrabold leading-tight">{resume.name || 'Full Name'}</h1>
-                                    <div className="text-sm opacity-90">{resume.title || 'Professional Title'}</div>
+                                    <EditableField field="name" as="h1" className="text-2xl font-extrabold leading-tight" fallback="Full Name" />
+                                    <EditableField field="title" as="div" className="text-sm opacity-90" fallback="Professional Title" />
                                 </div>
                             </div>
 
-                            <p className="mt-4 text-sm opacity-90">{resume.summary ? resume.summary.split('.').slice(0, 2).join('. ') + (resume.summary.endsWith('.') ? '' : '.') : 'Brief professional tagline that highlights your speciality and strengths.'}</p>
+                            <EditableField
+                                field="summary"
+                                as="p"
+                                className="mt-4 text-sm opacity-90"
+                                fallback="Brief professional tagline that highlights your speciality and strengths."
+                                multiline
+                            />
                         </div>
 
                         <div className="bg-white p-5 border-t">

@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TemplateComponentProps } from '@/types/template';
+import EditableField from '../dashboard/EditableField';
+import { useEditing } from '../dashboard/TemplateEditor';
 
 export const metadata = {
     key: 'polaris',
@@ -13,6 +15,15 @@ export const metadata = {
 };
 
 export default function PolarisTemplate({ resume, className = '' }: TemplateComponentProps) {
+    // Check for editing context
+    let editingContext = null;
+    try {
+        editingContext = useEditing();
+    } catch {
+        // Not in editing mode
+    }
+    const isEditMode = editingContext?.isEditMode;
+
     const contact = resume.contact || {};
     const skills = resume.skills || [];
     const sections = resume.sections || [];
@@ -39,14 +50,18 @@ export default function PolarisTemplate({ resume, className = '' }: TemplateComp
                                     {resume.name ? resume.name.split(' ').map(n => n[0]).slice(0, 2).join('') : 'SN'}
                                 </div>
                                 <div>
-                                    <h1 className="text-2xl font-extrabold leading-tight">{resume.name || 'Full Name'}</h1>
-                                    <div className="text-sm text-slate-600 mt-0.5">{resume.title || 'Product Engineer'}</div>
+                                    <EditableField field="name" as="h1" className="text-2xl font-extrabold leading-tight" fallback="Full Name" />
+                                    <EditableField field="title" as="div" className="text-sm text-slate-600 mt-0.5" fallback="Product Engineer" />
                                 </div>
                             </div>
 
-                            <div className="mt-4 text-sm text-slate-600">
-                                <p className="leading-relaxed">{resume.summary || 'Concise summary that highlights strengths in system design, product thinking, and shipping high-quality web experiences.'}</p>
-                            </div>
+                            <EditableField
+                                field="summary"
+                                as="p"
+                                className="mt-4 text-sm text-slate-600 leading-relaxed"
+                                fallback="Concise summary that highlights strengths in system design, product thinking, and shipping high-quality web experiences."
+                                multiline
+                            />
 
                             <div className="mt-4 border-t pt-3 text-sm text-slate-600 space-y-2">
                                 {contact.location && (

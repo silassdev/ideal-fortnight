@@ -61,6 +61,20 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     session: { strategy: 'jwt' },
     callbacks: {
+        // Redirect to dashboard after successful sign-in
+        async signIn({ user, account, profile }) {
+            // Allow sign-in to proceed
+            return true;
+        },
+        async redirect({ url, baseUrl }) {
+            // After sign-in, redirect to dashboard
+            // If the url is already set to a specific page, use it
+            if (url.startsWith(baseUrl)) {
+                return url;
+            }
+            // Default redirect to dashboard
+            return `${baseUrl}/dashboard`;
+        },
         // Include user.id in JWT and session
         async jwt({ token, user }) {
             if (user) {

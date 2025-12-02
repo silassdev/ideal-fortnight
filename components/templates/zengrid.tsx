@@ -1,5 +1,7 @@
 import React from 'react';
 import { TemplateComponentProps } from '@/types/template';
+import EditableField from '../dashboard/EditableField';
+import { useEditing } from '../dashboard/TemplateEditor';
 
 export const metadata = {
     key: 'zengrid',
@@ -12,6 +14,15 @@ export const metadata = {
 };
 
 export default function ZenGridTemplate({ resume, className = '' }: TemplateComponentProps) {
+    // Check for editing context
+    let editingContext = null;
+    try {
+        editingContext = useEditing();
+    } catch {
+        // Not in editing mode
+    }
+    const isEditMode = editingContext?.isEditMode;
+
     const fmtRange = (start?: string, end?: string) => {
         if (!start && !end) return '';
         if (start && !end) return `${start} — Present`;
@@ -24,8 +35,8 @@ export default function ZenGridTemplate({ resume, className = '' }: TemplateComp
         <div id="resume-zengrid" className={`max-w-[920px] mx-auto bg-white text-slate-900 ${className}`}>
             <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-6 border-b">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{resume.name || 'Full Name'}</h1>
-                    <div className="text-sm text-slate-600 mt-1">{resume.title || 'Professional Title'}</div>
+                    <EditableField field="name" as="h1" className="text-3xl font-bold tracking-tight" fallback="Full Name" />
+                    <EditableField field="title" as="div" className="text-sm text-slate-600 mt-1" fallback="Professional Title" />
                 </div>
                 <div className="text-sm text-slate-600 space-y-1 text-right">
                     {contact.website && <div><a href={contact.website} target="_blank" rel="noreferrer" className="underline text-sky-600">{contact.website}</a></div>}
@@ -73,7 +84,13 @@ export default function ZenGridTemplate({ resume, className = '' }: TemplateComp
                 <section className="lg:col-span-2 space-y-6">
                     <div>
                         <h2 className="text-sm font-semibold text-slate-800">Professional Summary</h2>
-                        <p className="mt-2 text-sm text-slate-700">{resume.summary || 'Concise summary describing experience, focus areas, and the value you bring.'}</p>
+                        <EditableField
+                            field="summary"
+                            as="p"
+                            className="mt-2 text-sm text-slate-700"
+                            fallback="Concise summary describing experience, focus areas, and the value you bring."
+                            multiline
+                        />
                     </div>
 
                     <div>

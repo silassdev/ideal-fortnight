@@ -1,5 +1,7 @@
 import React from 'react';
 import { TemplateComponentProps } from '@/types/template';
+import EditableField from '../dashboard/EditableField';
+import { useEditing } from '../dashboard/TemplateEditor';
 
 export const metadata = {
   key: 'silass',
@@ -12,6 +14,15 @@ export const metadata = {
 };
 
 export default function SilassDevTemplate({ resume, className = '' }: TemplateComponentProps) {
+  // Check for editing context
+  let editingContext = null;
+  try {
+    editingContext = useEditing();
+  } catch {
+    // Not in editing mode
+  }
+  const isEditMode = editingContext?.isEditMode;
+
   const fmtRange = (start?: string, end?: string) => {
     if (!start && !end) return '';
     if (start && !end) return `${start} — Present`;
@@ -27,8 +38,8 @@ export default function SilassDevTemplate({ resume, className = '' }: TemplateCo
         <aside className="col-span-12 lg:col-span-4">
           <div className="flex flex-col items-start gap-4">
             <div className="w-full bg-slate-50 p-6 rounded">
-              <h1 className="text-3xl font-extrabold tracking-tight">{resume.name || 'Full Name'}</h1>
-              <div className="text-sm text-slate-600 mt-1">{resume.title || 'Professional Title'}</div>
+              <EditableField field="name" as="h1" className="text-3xl font-extrabold tracking-tight" fallback="Full Name" />
+              <EditableField field="title" as="div" className="text-sm text-slate-600 mt-1" fallback="Professional Title" />
 
               <div className="mt-4 border-t pt-3 text-sm text-slate-600">
                 {contact.location && (
@@ -122,9 +133,13 @@ export default function SilassDevTemplate({ resume, className = '' }: TemplateCo
           {/* Summary */}
           <section className="bg-white p-6 rounded border">
             <h2 className="text-lg font-semibold">Summary</h2>
-            <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-              {resume.summary || 'A concise, impactful professional summary goes here. Mention core strengths, years of experience, and what you bring to a team.'}
-            </p>
+            <EditableField
+              field="summary"
+              as="p"
+              className="mt-3 text-sm text-slate-700 leading-relaxed"
+              fallback="A concise, impactful professional summary goes here. Mention core strengths, years of experience, and what you bring to a team."
+              multiline
+            />
           </section>
 
           {/* Experience */}
