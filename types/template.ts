@@ -1,26 +1,66 @@
-import { ResumeShape } from '@/types/resume';
-import React from 'react';
+// src/types/resume.ts
+// Define the shape of the resume object used by templates.
 
-export type TemplateKey = string;
+export interface Contact {
+  email?: string;
+  phone?: string;
+  location?: string;
+  website?: string;
+  linkedin?: string;
+  github?: string;
+  // any other contact channels you might store:
+  twitter?: string;
+  portfolio?: string;
+  // allow additional keys if you expect arbitrary contact properties
+  [key: string]: string | undefined;
+}
 
-export type TemplateMetadata = {
-    key: TemplateKey;           // unique id, e.g. 'apela'
-    title: string;              // user-facing name
-    description?: string;
-    author?: string;            // e.g. 'Jane Doe'
-    authorUrl?: string;         // e.g. 'https://github.com/janedoe'
-    thumbnail?: string;         // optional path under /public (e.g. '/templates/apela.png')
-    tags?: string[];            // e.g. ['two-column', 'modern']
-    createdAt?: string;
-    updatedAt?: string;
-};
+export interface Experience {
+  id?: string | number;
+  role?: string;
+  company?: string;
+  location?: string;
+  start?: string;
+  end?: string;
+  bullets?: string[];
+}
 
-export type TemplateComponentProps = {
-    resume: ResumeShape;
-    className?: string;
-};
+export interface Education {
+  id?: string | number;
+  school?: string;
+  degree?: string;
+  start?: string;
+  end?: string;
+  notes?: string;
+}
 
-export type TemplateExport = {
-    default: React.ComponentType<TemplateComponentProps>;
-    metadata: TemplateMetadata;
-};
+export interface Section {
+  type: string;
+  title?: string;
+  items?: any[];
+}
+
+export interface Project {
+  title?: string;
+  description?: string;
+  link?: string;
+  tech?: string[];
+}
+
+export interface ResumeShape {
+  name?: string;
+  title?: string;
+  summary?: string;
+  contact?: Contact;
+  skills?: string[];
+  experience?: Experience[];
+  education?: Education[];
+  sections?: Section[];
+  projects?: Project[];
+  [key: string]: any;
+}
+
+export interface TemplateComponentProps {
+  resume: ResumeShape;
+  className?: string;
+}

@@ -8,7 +8,7 @@ export const metadata = {
     title: 'Apela',
     description: 'Two-column profile with bold header and modern accent',
     author: 'Apela Dev',
-    authorUrl: 'https://github.com/apela-dev',
+    authorUrl: 'https://github.com/apela-x',
     thumbnail: '/templates/apela.png',
     tags: ['two-column', 'modern', 'accent'],
 };
@@ -69,7 +69,6 @@ export default function ApelaTemplate({ resume, className = '' }: TemplateCompon
                 </aside>
             </section>
 
-            {/* Credits area — visible on the public resume too */}
             <footer className="mt-6 pt-4 border-t text-xs text-slate-400 flex justify-between items-center">
                 <div>Generated with Apela template</div>
                 <div>
