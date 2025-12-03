@@ -140,7 +140,7 @@ export default function UserPanel() {
                     onDelete={() => {
                         // Refresh list
                         setPage(1);
-                        setDebouncedSearch(s => s + ' '); // trigger effect
+                        setDebouncedSearch(s => s + ' ');
                     }}
                 />
             )}

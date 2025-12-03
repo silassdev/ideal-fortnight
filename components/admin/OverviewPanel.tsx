@@ -65,7 +65,7 @@ export default function OverviewPanel() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="bg-white p-4 rounded shadow">
-                    <div className="text-sm font-medium mb-3">New users (last 14 days)</div>
+                    <div className="text-sm text-slate-400 font-medium mb-3">New users (last 14 days)</div>
                     <div style={{ width: '100%', height: 280 }}>
                         <ResponsiveContainer>
                             <LineChart data={daily}>
@@ -79,7 +79,7 @@ export default function OverviewPanel() {
                 </div>
 
                 <div className="bg-white p-4 rounded shadow">
-                    <div className="text-sm font-medium mb-3">Users by country</div>
+                    <div className="text-sm text-slate-400 font-medium mb-3">Users by country</div>
                     <div style={{ width: '100%', height: 280 }}>
                         <ResponsiveContainer>
                             <PieChart>

@@ -32,7 +32,7 @@ export default function DownloadsPanel() {
     return (
         <div className="space-y-4">
             <div className="bg-white p-4 rounded shadow">
-                <div className="text-sm font-medium mb-3">Downloads per day (recent)</div>
+                <div className="text-sm text-slate-500 font-medium mb-3">Downloads per day (recent)</div>
                 <div style={{ height: 260 }}>
                     <ResponsiveContainer>
                         <BarChart data={perDay}>
@@ -47,7 +47,7 @@ export default function DownloadsPanel() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="bg-white p-4 rounded shadow">
-                    <div className="text-sm font-medium mb-3">Downloads by year</div>
+                    <div className="text-sm text-slate-500 font-medium mb-3">Downloads by year</div>
                     <div style={{ height: 200 }}>
                         <ResponsiveContainer>
                             <BarChart data={perYear}>
@@ -61,7 +61,7 @@ export default function DownloadsPanel() {
                 </div>
 
                 <div className="bg-white p-4 rounded shadow">
-                    <div className="text-sm font-medium mb-3">Downloads by country</div>
+                    <div className="text-sm text-slate-500 font-medium mb-3">Downloads by country</div>
                     <div style={{ height: 200 }}>
                         <ResponsiveContainer>
                             <PieChart>

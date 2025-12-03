@@ -17,22 +17,22 @@ export default function AdminSettingsPanel() {
 
     return (
         <div className="bg-white p-4 rounded shadow space-y-4">
-            <h3 className="text-lg font-semibold">Admin profile</h3>
+            <h3 className="text-lg text-slate-400 font-semibold">Admin profile</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <div className="text-sm text-slate-500">Name</div>
-                    <div className="font-medium">{admin?.name}</div>
+                    <div className="text-sm text-slate-300">Name</div>
+                    <div className="text-slate-500 font-medium">{admin?.name}</div>
 
                     <div className="text-sm text-slate-500 mt-3">Email</div>
-                    <div>{admin?.email}</div>
+                    <div className="text-slate-500 font-medium">{admin?.email}</div>
                 </div>
 
                 <div>
-                    <div className="text-sm text-slate-500">Current IP</div>
-                    <div>{admin?.lastLoginIp || '—'}</div>
+                    <div className="text-sm text-slate-300">Current IP</div>
+                    <div className="text-slate-500 font-medium">{admin?.lastLoginIp || '—'}</div>
 
-                    <div className="text-sm text-slate-500 mt-3">Created</div>
-                    <div>{admin?.createdAt ? new Date(admin.createdAt).toLocaleString() : '—'}</div>
+                    <div className="text-sm text-slate-300 mt-3">Created</div>
+                    <div className="text-slate-500 font-medium">{admin?.createdAt ? new Date(admin.createdAt).toLocaleString() : '—'}</div>
                 </div>
             </div>
         </div>

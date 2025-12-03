@@ -52,7 +52,7 @@ export default function UserDashboard() {
                 <TemplateGallery />
             </section>
 
-            {/* Profile Settings Modal */}
+
             <ProfileSettingsModal
                 isOpen={showProfileModal}
                 onClose={() => setShowProfileModal(false)}

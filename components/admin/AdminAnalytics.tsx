@@ -90,15 +90,15 @@ export default function AdminAnalytics({ tab = 'overview' as 'overview' | 'users
 
                 <div className="flex gap-4">
                     <div className="text-center">
-                        <div className="text-2xl font-bold">{data.totalUsers}</div>
+                        <div className="text-2xl text-slate-600 font-bold">{data.totalUsers}</div>
                         <div className="text-xs text-gray-500">Total users</div>
                     </div>
                     <div className="text-center">
-                        <div className="text-2xl font-bold">{data.totalResumes}</div>
+                        <div className="text-2xl text-slate-600 font-bold">{data.totalResumes}</div>
                         <div className="text-xs text-gray-500">Resumes</div>
                     </div>
                     <div className="text-center">
-                        <div className="text-2xl font-bold">{totalDownloads}</div>
+                        <div className="text-2xl text-slate-700 font-bold">{totalDownloads}</div>
                         <div className="text-xs text-gray-500">Downloads</div>
                     </div>
                 </div>

@@ -14,6 +14,14 @@ export async function GET(req: NextRequest) {
     if (!requester || requester.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
     const url = new URL(req.url);
+    const userId = url.searchParams.get('userId');
+
+    if (userId) {
+        const user = await User.findById(userId).lean();
+        if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        return NextResponse.json({ user });
+    }
+
     const q = (url.searchParams.get('q') || '').trim();
     const page = parseInt(url.searchParams.get('page') || '1', 10);
     const limit = Math.min(100, parseInt(url.searchParams.get('limit') || '20', 10));

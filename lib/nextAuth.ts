@@ -62,6 +62,28 @@ export const authOptions: NextAuthOptions = {
     session: { strategy: 'jwt' },
     callbacks: {
         async signIn({ user, account, profile }) {
+            // Auto-verify users who sign in via Google OAuth
+            if (account?.provider === 'google' && user?.email) {
+                try {
+                    await dbConnect();
+                    const existingUser = await User.findOne({ email: user.email.toLowerCase() });
+
+                    if (existingUser && !existingUser.isVerified) {
+                        await User.updateOne(
+                            { _id: existingUser._id },
+                            {
+                                $set: {
+                                    isVerified: true,
+                                    verifiedAt: existingUser.verifiedAt || new Date()
+                                }
+                            }
+                        );
+                    }
+                } catch (error) {
+                    console.error('Error auto-verifying Google user:', error);
+                    // Don't block sign-in if verification update fails
+                }
+            }
             return true;
         },
         async redirect({ url, baseUrl }) {
