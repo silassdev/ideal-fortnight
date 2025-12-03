@@ -1,11 +1,10 @@
-"use client";
-import { Suspense } from "react";
+import { redirect } from 'next/navigation';
 
-
-
-export default function AuthPage() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-        </Suspense>
-    );
+export default function AuthPage({
+    searchParams,
+}: {
+    searchParams: { [key: string]: string | string[] | undefined };
+}) {
+    const mode = searchParams?.mode === 'register' ? 'register' : 'login';
+    redirect(`/?auth=${mode}`);
 }

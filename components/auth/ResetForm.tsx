@@ -153,7 +153,7 @@ export default function ResetForm({ token }: { token?: string }) {
                     </button>
 
                     <Link
-                        href="/auth?mode=login"
+                        href="/"
                         className="inline-flex items-center justify-center px-4 py-2 text-sm rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition w-full sm:w-auto"
                     >
                         Cancel
@@ -164,7 +164,7 @@ export default function ResetForm({ token }: { token?: string }) {
             {status === 'success' && (
                 <div className="mt-3 text-sm text-emerald-700" role="status">
                     Password updated.{' '}
-                    <Link href="/auth?mode=login" className="underline text-emerald-700">
+                    <Link href="/?auth=login" className="underline text-emerald-700">
                         Sign in
                     </Link>
                 </div>
