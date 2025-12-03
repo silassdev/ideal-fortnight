@@ -62,7 +62,6 @@ export default function ResetForm({ token }: { token?: string }) {
         setError(null);
         setFieldErrors({});
 
-        // client-side validation
         const newFieldErrors: typeof fieldErrors = {};
         if (password.length < 6) newFieldErrors.password = 'Password must be at least 6 characters';
         if (password !== confirm) newFieldErrors.confirm = 'Passwords do not match';
@@ -92,91 +91,90 @@ export default function ResetForm({ token }: { token?: string }) {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
-            <div className="bg-white max-w-md w-full p-6 rounded-lg shadow-md text-center">
-                <h1 className="text-xl font-semibold text-slate-900 antialiased">Set a new password</h1>
-                <p className="text-sm text-slate-600 mt-2">Enter a strong password to finish resetting your account.</p>
+        // compact, responsive card — use mx-auto to center inside any layout
+        <div className="w-full max-w-md mx-auto bg-white rounded-lg p-4 sm:p-6 shadow-sm sm:shadow-md">
+            <h1 className="text-lg sm:text-xl font-semibold text-slate-900 antialiased">Set a new password</h1>
+            <p className="text-sm text-slate-600 mt-1">Enter a strong password to finish resetting your account.</p>
 
-                <form onSubmit={handleSubmit} className="mt-5 space-y-4">
-                    <Input
-                        id="password"
-                        label="New password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="At least 6 characters"
-                        autoComplete="new-password"
-                        required
-                        error={fieldErrors.password}
-                        hint="Use a mix of letters, numbers and symbols."
-                    />
+            <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+                <Input
+                    id="password"
+                    label="New password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="At least 6 characters"
+                    autoComplete="new-password"
+                    required
+                    error={fieldErrors.password}
+                    hint="Use a mix of letters, numbers and symbols."
+                />
 
-                    <Input
-                        id="confirm"
-                        label="Confirm password"
-                        type="password"
-                        value={confirm}
-                        onChange={(e) => setConfirm(e.target.value)}
-                        placeholder="Repeat your password"
-                        autoComplete="new-password"
-                        required
-                        error={fieldErrors.confirm}
-                    />
+                <Input
+                    id="confirm"
+                    label="Confirm password"
+                    type="password"
+                    value={confirm}
+                    onChange={(e) => setConfirm(e.target.value)}
+                    placeholder="Repeat your password"
+                    autoComplete="new-password"
+                    required
+                    error={fieldErrors.confirm}
+                />
 
-                    <div className="flex justify-center gap-3 items-center">
-                        <button
-                            type="submit"
-                            className={`
-                inline-flex items-center gap-2 px-4 py-2 rounded-md
-                bg-emerald-600 text-white text-sm font-medium antialiased
-                hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-300
-                disabled:opacity-60 disabled:cursor-not-allowed transition
-              `}
-                            disabled={status === 'loading'}
-                        >
-                            {status === 'loading' ? (
-                                <>
-                                    <svg
-                                        className="w-4 h-4 animate-spin"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                    >
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                                    </svg>
-                                    Saving…
-                                </>
-                            ) : (
-                                'Set password'
-                            )}
-                        </button>
+                <div className="flex flex-col sm:flex-row sm:justify-center gap-3 mt-2">
+                    <button
+                        type="submit"
+                        className={`
+              inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md
+              bg-emerald-600 text-white text-sm font-medium antialiased
+              hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-300
+              disabled:opacity-60 disabled:cursor-not-allowed transition w-full sm:w-auto
+            `}
+                        disabled={status === 'loading'}
+                    >
+                        {status === 'loading' ? (
+                            <>
+                                <svg
+                                    className="w-4 h-4 animate-spin"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                </svg>
+                                Saving…
+                            </>
+                        ) : (
+                            'Set password'
+                        )}
+                    </button>
 
-                        <Link
-                            href="/auth?mode=login"
-                            className="px-4 py-2 text-sm rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition"
-                        >
-                            Cancel
-                        </Link>
-                    </div>
-                </form>
+                    <Link
+                        href="/auth?mode=login"
+                        className="inline-flex items-center justify-center px-4 py-2 text-sm rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition w-full sm:w-auto"
+                    >
+                        Cancel
+                    </Link>
+                </div>
+            </form>
 
-                {status === 'success' && (
-                    <div className="mt-4 text-sm text-emerald-700" role="status">
-                        Password updated.{' '}
-                        <Link href="/auth?mode=login" className="underline text-emerald-700">
-                            Sign in
-                        </Link>
-                    </div>
-                )}
+            {status === 'success' && (
+                <div className="mt-3 text-sm text-emerald-700" role="status">
+                    Password updated.{' '}
+                    <Link href="/auth?mode=login" className="underline text-emerald-700">
+                        Sign in
+                    </Link>
+                </div>
+            )}
 
-                {status === 'error' && error && (
-                    <div className="mt-4 text-sm text-red-600" role="alert">
-                        {error}
-                    </div>
-                )}
-            </div>
+            {status === 'error' && error && (
+                <div className="mt-3 text-sm text-red-600" role="alert">
+                    {error}
+                </div>
+            )}
         </div>
     );
 }
