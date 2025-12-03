@@ -11,7 +11,7 @@ export default function AuthForm({ defaultMode = 'login' as 'login' | 'register'
         <div className="bg-white rounded-lg shadow p-6 border">
             <div className="flex items-center justify-between mb-4">
                 <div>
-                    <h1 className="text-2xl font-semibold">{mode === 'login' ? 'Welcome back' : 'Create your account'}</h1>
+                    <h1 className="text-1xl text-slate-600 font-semibold">{mode === 'login' ? 'Welcome back' : 'Create your account'}</h1>
                     <p className="text-sm text-slate-500">{mode === 'login' ? 'Sign in to access your dashboard' : 'Register and confirm your email to activate'}</p>
                 </div>
                 <div className="flex gap-2 bg-slate-100 rounded p-1">

@@ -6,7 +6,7 @@ export default function HomeHero() {
     const [mounted, setMounted] = useState(false);
     const [msgIndex, setMsgIndex] = useState(0);
     const messages = [
-        '2 modern templates included',
+        '6+ modern templates included',
         'ATS-friendly formatting',
         'Export: PDF & DOCX ready',
     ];
@@ -22,7 +22,6 @@ export default function HomeHero() {
 
     return (
         <section className="relative pt-10 pb-20 lg:pt-20 lg:pb-32 overflow-hidden">
-            {/* Background decorative blobs */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none">
                 <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
                 <div className="absolute top-20 right-10 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
@@ -30,7 +29,6 @@ export default function HomeHero() {
             </div>
 
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                {/* Left Content */}
                 <div className={`transition-all duration-1000 ease-out transform ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                     <div className="inline-block px-4 py-1.5 mb-6 text-sm font-medium text-blue-700 bg-blue-50 rounded-full border border-blue-100">
                         ✨ The Ultimate Resume Builder
@@ -47,16 +45,14 @@ export default function HomeHero() {
                         Create professional, ATS-friendly resumes in minutes. Choose from modern templates, customize every detail, and land your next job faster.
                     </p>
 
-                    {/* REPLACED: non-clickable info tiles that occupy same space */}
                     <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                        {/* left: plan/status tile (non-interactive) */}
                         <div
                             aria-hidden="true"
                             className="flex-1 min-w-0 px-8 py-4 rounded-xl bg-slate-900 text-white shadow-lg flex items-center gap-4"
                         >
                             <div className="flex-1 min-w-0">
-                                <div className="text-sm text-slate-300">Plan</div>
-                                <div className="text-lg font-semibold truncate">Community</div>
+                                <div className="text-sm text-slate-300">Template</div>
+                                <div className="text-lg font-semibold truncate">Apela</div>
                             </div>
 
                             <div className="flex-none text-right">
@@ -65,7 +61,6 @@ export default function HomeHero() {
                             </div>
                         </div>
 
-                        {/* right: rotating snapshot/messages (non-interactive) */}
                         <div
                             aria-live="polite"
                             className="flex-1 min-w-0 px-8 py-4 rounded-xl bg-white border border-slate-200 flex items-center"
@@ -108,7 +103,6 @@ export default function HomeHero() {
                                     <div className="h-3 w-1/2 bg-slate-100 rounded animate-pulse"></div>
                                 </div>
                             </div>
-                            {/* Body Lines */}
                             <div className="space-y-3 flex-1">
                                 {[90, 75, 85, 60, 95, 70].map((width, i) => (
                                     <div key={i} className="h-2 bg-slate-50 rounded w-full" style={{ width: `${width}%` }}></div>
@@ -121,7 +115,6 @@ export default function HomeHero() {
                                 ))}
                             </div>
 
-                            {/* Floating Badge */}
                             <div className="absolute -right-4 top-20 bg-white p-3 rounded-xl shadow-xl border border-slate-100 flex items-center gap-3 animate-float">
                                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                                     ✓
@@ -132,7 +125,6 @@ export default function HomeHero() {
                                 </div>
                             </div>
 
-                            {/* Floating Badge 2 */}
                             <div className="absolute -left-4 bottom-20 bg-white p-3 rounded-xl shadow-xl border border-slate-100 flex items-center gap-3 animate-float animation-delay-2000">
                                 <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
                                     PDF
