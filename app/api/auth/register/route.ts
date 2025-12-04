@@ -5,6 +5,7 @@ import { hashPassword } from '@/lib/hash';
 import { signJwt } from '@/lib/jwt';
 import { sendVerificationEmail } from '@/lib/email';
 import { getClientIpFromRequest, lookupIp } from '@/lib/geoip';
+import { delMany } from '@/lib/cache';
 
 type RegisterBody = {
     name?: string;
@@ -56,7 +57,24 @@ export async function POST(req: Request) {
             await sendVerificationEmail(email, verificationToken);
         } catch (err) {
             console.error('sendVerificationEmail failed:', err);
-            return NextResponse.json({ message: 'Account created but verification email failed to send. Contact admin.' }, { status: 201 });
+
+            try {
+                await delMany(['admin:analytics:overview', 'admin:downloads:stats']);
+            } catch (e) {
+                console.warn('Cache invalidation failed after register (email failure):', e);
+            }
+
+            return NextResponse.json(
+                { message: 'Account created but verification email failed to send. Contact admin.' },
+                { status: 201 }
+            );
+        }
+
+        // Invalidate analytics caches so admin sees updated totals quickly
+        try {
+            await delMany(['admin:analytics:overview', 'admin:downloads:stats']);
+        } catch (e) {
+            console.warn('Cache invalidation failed after register:', e);
         }
 
         return NextResponse.json({ message: 'Account created. Verification email sent.' }, { status: 201 });

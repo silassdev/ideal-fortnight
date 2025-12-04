@@ -1,4 +1,3 @@
-// components/admin/AdminSettingsPanel.tsx
 'use client';
 import React, { useEffect, useState } from 'react';
 
