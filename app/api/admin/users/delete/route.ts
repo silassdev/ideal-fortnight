@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { delMany } from '@/lib/cache';
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 import Resume from '@/models/Resume';
@@ -28,6 +29,13 @@ export async function POST(req: NextRequest) {
         } catch (err) {
         }
         await User.deleteOne({ _id: id });
+
+        try {
+            await delMany(['admin:analytics:overview', 'admin:downloads:stats']);
+        } catch (e) {
+            console.warn('Cache invalidation failed after user delete:', e);
+        }
+
         return NextResponse.json({ ok: true });
     } catch (err: any) {
         console.error('delete user', err);

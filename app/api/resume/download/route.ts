@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { delMany } from '@/lib/cache';
 import clientPromise from '@/lib/mongodb';
 import dbConnect from '@/lib/dbConnect';
 import Resume from '@/models/Resume';
@@ -79,6 +80,13 @@ export async function POST(req: Request) {
             });
         } catch (err) {
             console.error('Failed to log download:', err);
+        }
+
+        // Invalidate stats cache
+        try {
+            await delMany(['admin:downloads:stats', 'admin:analytics:overview']);
+        } catch (e) {
+            console.warn('Cache invalidation failed after download:', e);
         }
 
         return NextResponse.json({ ok: true, resume: resumeDoc }, { status: 200 });

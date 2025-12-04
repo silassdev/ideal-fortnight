@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { del } from '@/lib/cache';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/nextAuth';
 import dbConnect from '@/lib/dbConnect';
@@ -33,6 +34,12 @@ export async function POST(req: Request) {
 
         // Use the static upsert method
         const resume = await Resume.upsertByUser(session.user.id, body);
+
+        try {
+            await del('admin:analytics:overview');
+        } catch (e) {
+            console.warn('Cache invalidation failed after resume save:', e);
+        }
 
         return NextResponse.json(resume);
     } catch (error) {
