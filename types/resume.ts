@@ -15,13 +15,13 @@ export interface Experience {
     company?: string;
     role?: string;
     location?: string;
-    start?: string; // Legacy: for backward compatibility
-    end?: string; // Legacy: for backward compatibility
-    startMonth?: string; // e.g., "January", "February", etc.
-    startYear?: string; // e.g., "2020"
+    start?: string;
+    end?: string;
+    startMonth?: string;
+    startYear?: string;
     endMonth?: string;
     endYear?: string;
-    current?: boolean; // If still working here
+    current?: boolean;
     bullets?: string[];
 }
 
@@ -29,8 +29,8 @@ export interface Education {
     id: string;
     school?: string;
     degree?: string;
-    start?: string; // Legacy
-    end?: string; // Legacy
+    start?: string;
+    end?: string;
     startMonth?: string;
     startYear?: string;
     endMonth?: string;

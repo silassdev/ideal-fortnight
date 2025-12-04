@@ -2,7 +2,6 @@ import { getServerSession } from 'next-auth/next';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { authOptions } from './nextAuth';
 import { verifyJwt } from './jwt';
-import clientPromise from './mongodb';
 
 /**
  * Try to obtain the currently authenticated user's id (server-side).
