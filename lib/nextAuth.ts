@@ -1,11 +1,10 @@
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import clientPromise from './mongodb';
 import GoogleProvider from 'next-auth/providers/google';
+import GithubProvider from 'next-auth/providers/github';
 import { NextAuthOptions } from 'next-auth';
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-    // Google provider is optional; NextAuth will still work for other providers if you don't use Google.
-    // Do not throw to allow alternative setups.
 }
 
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -18,6 +17,11 @@ export const authOptions: NextAuthOptions = {
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID || '',
             clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+            allowDangerousEmailAccountLinking: true,
+        }),
+        GithubProvider({
+            clientId: process.env.GITHUB_ID || '',
+            clientSecret: process.env.GITHUB_SECRET || '',
             allowDangerousEmailAccountLinking: true,
         }),
         CredentialsProvider({
@@ -62,8 +66,7 @@ export const authOptions: NextAuthOptions = {
     session: { strategy: 'jwt' },
     callbacks: {
         async signIn({ user, account, profile }) {
-            // Auto-verify users who sign in via Google OAuth
-            if (account?.provider === 'google' && user?.email) {
+            if ((account?.provider === 'google' || account?.provider === 'github') && user?.email) {
                 try {
                     await dbConnect();
                     const existingUser = await User.findOne({ email: user.email.toLowerCase() });
@@ -80,8 +83,7 @@ export const authOptions: NextAuthOptions = {
                         );
                     }
                 } catch (error) {
-                    console.error('Error auto-verifying Google user:', error);
-                    // Don't block sign-in if verification update fails
+                    console.error('Error auto-verifying OAuth user:', error);
                 }
             }
             return true;
