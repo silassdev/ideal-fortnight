@@ -22,10 +22,9 @@ export async function getOrSet<T>(key: string, ttlSeconds: number, fetcher: () =
 
         const value = await fetcher();
         try {
-            // set with expiry
             await client.set(key, JSON.stringify(value), { EX: ttlSeconds });
         } catch (e) {
-            // eslint-disable-next-line no-console
+
             console.warn('cache set failed', e);
         }
         return value;
