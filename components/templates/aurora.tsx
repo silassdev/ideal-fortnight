@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useReactToPrint } from 'react-to-print'; // <--- Import this
+import { useReactToPrint } from 'react-to-print';
 import {
   DndContext,
   closestCenter,
@@ -17,6 +17,16 @@ import {
   useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+
+export const metadata = {
+  key: 'aurora',
+  title: 'Aurora',
+  description: 'A clean, printable resume template with draggable experience items',
+  author: 'Aurora Dev',
+  authorUrl: 'https://github.com/your-org-or-user',
+  thumbnail: '/templates/aurora.png',
+  tags: ['resume', 'printable', 'drag-and-drop'],
+};
 
 // ... (Keep existing types: ExperienceItem) ...
 type ExperienceItem = {
@@ -39,7 +49,7 @@ const InlineInput = ({
 }: { value: string; onChange: (val: string) => void; className?: string; placeholder?: string; multiline?: boolean }) => {
   // Added "print:placeholder-transparent" to hide "Type here..." text on the PDF
   const baseStyles = "bg-transparent border-none outline-none focus:ring-1 focus:ring-sky-200 rounded px-1 transition-all w-full print:placeholder-transparent";
-  
+
   if (multiline) {
     return (
       <textarea
@@ -69,7 +79,7 @@ const InlineInput = ({
 
 const SortableExperienceRow = ({ item, onChange }: { item: ExperienceItem, onChange: (id: string, field: string, val: string) => void }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
-  
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -80,9 +90,9 @@ const SortableExperienceRow = ({ item, onChange }: { item: ExperienceItem, onCha
   return (
     <div ref={setNodeRef} style={style} className="group relative mb-6 break-inside-avoid">
       {/* Drag Handle - ADDED "print:hidden" so it doesn't show in PDF */}
-      <div 
-        {...attributes} 
-        {...listeners} 
+      <div
+        {...attributes}
+        {...listeners}
         className="print:hidden absolute -left-8 top-2 p-2 cursor-grab opacity-0 group-hover:opacity-100 text-slate-300 hover:text-slate-600 transition-opacity"
       >
         ⠿
@@ -122,7 +132,7 @@ export default function AuroraEditor() {
   });
 
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
-  
+
   // 1. Create a Reference to the Resume area
   const componentRef = useRef<HTMLDivElement>(null);
 
@@ -130,10 +140,6 @@ export default function AuroraEditor() {
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
     documentTitle: `${resumeData.name} - Resume`,
-    // Helper to remove header/footer injected by browser
-    onBeforeGetContent: () => {
-        // Optional: Any pre-print logic
-    }
   });
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -156,33 +162,33 @@ export default function AuroraEditor() {
 
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8 flex flex-col items-center gap-6">
-      
+
       {/* Action Bar */}
       <div className="flex justify-end w-full max-w-[210mm] gap-4">
-        <button 
+        <button
           onClick={() => handlePrint && handlePrint()}
           className="bg-slate-900 text-white px-6 py-2 rounded shadow hover:bg-slate-800 font-medium transition-colors"
         >
           Download PDF
         </button>
       </div>
-      
+
       {/* Resume Frame */}
       {/* Attached the Ref here */}
-      <div 
+      <div
         ref={componentRef}
         id="resume-frame"
         className="bg-white shadow-2xl w-full max-w-[210mm] min-h-[297mm] relative flex flex-col print:shadow-none print:w-[210mm] print:h-[297mm] print:overflow-visible"
       >
         <header className="p-12 border-b border-slate-100">
-          <InlineInput value={resumeData.name} onChange={(v) => setResumeData({...resumeData, name: v})} className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2" />
-          <InlineInput value={resumeData.title} onChange={(v) => setResumeData({...resumeData, title: v})} className="text-xl text-slate-500 font-medium" />
+          <InlineInput value={resumeData.name} onChange={(v) => setResumeData({ ...resumeData, name: v })} className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2" />
+          <InlineInput value={resumeData.title} onChange={(v) => setResumeData({ ...resumeData, title: v })} className="text-xl text-slate-500 font-medium" />
         </header>
 
         <main className="p-12 space-y-10">
           <section>
             <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Profile</h2>
-            <InlineInput value={resumeData.summary} onChange={(v) => setResumeData({...resumeData, summary: v})} multiline className="text-slate-700 leading-relaxed" />
+            <InlineInput value={resumeData.summary} onChange={(v) => setResumeData({ ...resumeData, summary: v })} multiline className="text-slate-700 leading-relaxed" />
           </section>
 
           <section>
@@ -198,8 +204,8 @@ export default function AuroraEditor() {
             </DndContext>
 
             {/* Added "print:hidden" to button */}
-            <button 
-              onClick={() => setResumeData(prev => ({...prev, experience: [...prev.experience, { id: Date.now().toString(), role: '', company: '', startDate: '', endDate: '', description: '' }] }))}
+            <button
+              onClick={() => setResumeData(prev => ({ ...prev, experience: [...prev.experience, { id: Date.now().toString(), role: '', company: '', startDate: '', endDate: '', description: '' }] }))}
               className="mt-4 text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1 opacity-50 hover:opacity-100 transition-opacity print:hidden"
             >
               + Add Experience

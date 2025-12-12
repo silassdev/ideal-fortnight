@@ -1,6 +1,14 @@
-import { getRedisClient } from '@/lib/redis';
+/**
+ * In-memory cache implementation (no Redis required).
+ * This is a simple fallback for development when Redis is not available.
+ */
 
-const client = getRedisClient();
+type CacheEntry<T> = {
+    value: T;
+    expiresAt: number;
+};
+
+const memoryCache = new Map<string, CacheEntry<unknown>>();
 
 /**
  * getOrSet JSON-serialised cache helper.
@@ -10,47 +18,28 @@ const client = getRedisClient();
  * @param fetcher async function to compute value when cache miss
  */
 export async function getOrSet<T>(key: string, ttlSeconds: number, fetcher: () => Promise<T>): Promise<T> {
-    try {
-        const raw = await client.get(key);
-        if (raw) {
-            try {
-                return JSON.parse(raw) as T;
-            } catch (e) {
-                // fallthrough to refresh cache
-            }
-        }
+    const now = Date.now();
+    const cached = memoryCache.get(key) as CacheEntry<T> | undefined;
 
-        const value = await fetcher();
-        try {
-            await client.set(key, JSON.stringify(value), { EX: ttlSeconds });
-        } catch (e) {
-
-            console.warn('cache set failed', e);
-        }
-        return value;
-    } catch (err) {
-
-        console.warn('Redis getOrSet error, fetching fresh', err);
-        return fetcher();
+    if (cached && cached.expiresAt > now) {
+        return cached.value;
     }
+
+    const value = await fetcher();
+    memoryCache.set(key, {
+        value,
+        expiresAt: now + ttlSeconds * 1000,
+    });
+    return value;
 }
 
 export async function del(key: string): Promise<void> {
-    try {
-        await client.del(key);
-    } catch (err) {
-        // eslint-disable-next-line no-console
-        console.warn('Redis del error', err);
-    }
+    memoryCache.delete(key);
 }
 
 /** convenience: invalidate multiple keys */
 export async function delMany(keys: string[]): Promise<void> {
-    try {
-        if (keys.length === 0) return;
-        await client.del(keys);
-    } catch (err) {
-        // eslint-disable-next-line no-console
-        console.warn('Redis delMany error', err);
+    for (const key of keys) {
+        memoryCache.delete(key);
     }
 }

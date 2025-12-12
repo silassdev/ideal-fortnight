@@ -5,13 +5,14 @@ import User from '@/models/User';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/nextAuth';
 import { delMany } from '@/lib/cache';
+import { Session } from 'next-auth';
 
 type ImportBody = {
     resume: any;
 };
 
 export async function POST(req: Request) {
-    const session = await getServerSession(authOptions as any);
+    const session = await getServerSession(authOptions as any) as Session | null;
     if (!session || !session.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json().catch(() => ({})) as ImportBody;
