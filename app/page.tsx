@@ -1,4 +1,5 @@
 import HomeHero from '@/components/HomeHero';
+import HomeInteractive from '@/components/HomeInteractive';
 import Features from '@/components/Features';
 import Footer from '@/components/Footer';
 
@@ -13,6 +14,7 @@ export default function Page() {
       <div className="max-w-6xl mx-auto px-6">
         <HomeHero />
       </div>
+      <HomeInteractive />
       <Features />
       <Footer />
     </main>

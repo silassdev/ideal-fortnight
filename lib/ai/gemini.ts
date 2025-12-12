@@ -63,7 +63,6 @@ Output a JSON object: { "templateKey": "<one-word-key>", "reason":"<why>", "star
         });
         const json = await res.json();
 
-        // Attempt to extract text output heuristically
         const text = json?.predictions?.[0]?.content?.[0]?.text || json?.predictions?.[0]?.candidates?.[0]?.content?.[0]?.text || json?.predictions?.[0]?.output || JSON.stringify(json);
         // try parse JSON from text
         try {
