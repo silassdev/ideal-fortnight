@@ -10,7 +10,7 @@ const dir = path.join(__dirname, '..', 'components', 'templates');
 const out = path.join(dir, 'index.ts');
 
 const files = fs.readdirSync(dir)
-    .filter(f => f.endsWith('.tsx') && f !== 'index.tsx' && f !== 'index.ts' && f !== 'TemplateRenderer.tsx');
+    .filter(f => f.endsWith('.tsx') && !['index.tsx', 'index.ts', 'TemplateRenderer.tsx', 'TemplateBase.tsx', 'TemplateWrapper.tsx'].includes(f));
 
 const imports = [];
 const exports = [];

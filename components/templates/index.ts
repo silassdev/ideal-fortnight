@@ -1,4 +1,4 @@
-/* THIS FILE IS GENERATED. DO NOT DELETE OR MODIFY. */
+/* THIS FILE IS GENERATED. DO NOT DELETE OR MODIFY. Run: node scripts/generateTemplateIndex.js */
 import T0, { metadata as M0 } from './apela';
 import T1, { metadata as M1 } from './aurora';
 import T2, { metadata as M2 } from './fortnight';
