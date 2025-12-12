@@ -1,17 +1,21 @@
+// components/dashboard/TemplateEditor.tsx
 'use client';
 
 import React, { useEffect, useState, createContext, useContext } from 'react';
 import TemplateRenderer from '@/components/templates/TemplateRenderer';
 import PreviewModal from './PreviewModal';
+import DragDropImporter from '@/components/import/DragDropImporter';
 import { saveResume as apiSave } from '@/lib/resumeClient';
 import useResume from '@/hooks/useResume';
 import { downloadPdfSafe, downloadDoc } from '@/lib/downloadResume';
-import { Eye, Save, FileText, FileDown, Share2, Loader2, ChevronLeft } from 'lucide-react';
+import { Eye, Save, FileText, FileDown, Share2, Loader2, ChevronLeft, CloudUpload, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { ResumeShape } from '@/types/template';
 import EditableText from './EditableText';
 
-// Create context for editing mode
+/**
+ * EditingContext - exposes the editing state and setter for templates and subcomponents (EditableText etc.)
+ */
 const EditingContext = createContext<{
     editing: ResumeShape;
     setEditing: (resume: ResumeShape) => void;
@@ -26,21 +30,27 @@ export function useEditing() {
 
 export default function TemplateEditor({ templateKey }: { templateKey: string }) {
     const { resume, setResume } = useResume();
-    const [editing, setEditing] = useState<ResumeShape>(() => resume ?? {
-        template: templateKey,
-        name: '',
-        title: '',
-        summary: '',
-        contact: {},
-        experience: [],
-        education: [],
-        skills: [],
-    });
+    const [editing, setEditing] = useState<ResumeShape>(() =>
+        (resume as ResumeShape) ?? {
+            template: templateKey,
+            name: '',
+            title: '',
+            summary: '',
+            contact: {},
+            experience: [],
+            education: [],
+            skills: [],
+        }
+    );
+
     const [previewOpen, setPreviewOpen] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [importOpen, setImportOpen] = useState(false);
+    const [suggesting, setSuggesting] = useState(false);
 
     useEffect(() => {
         setEditing((r) => ({ ...(r ?? {}), template: templateKey }));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [templateKey]);
 
     async function handleSave() {
@@ -49,10 +59,13 @@ export default function TemplateEditor({ templateKey }: { templateKey: string })
             const res = await apiSave(editing);
             if (res.ok && res.data) {
                 setResume(res.data);
-                // Optional: show toast
             } else {
                 console.error('Save failed', res);
+                alert('Save failed. See console.');
             }
+        } catch (err) {
+            console.error('Save error', err);
+            alert('Save error. See console.');
         } finally {
             setSaving(false);
         }
@@ -60,16 +73,102 @@ export default function TemplateEditor({ templateKey }: { templateKey: string })
 
     async function handleSaveAndLink() {
         await handleSave();
-        alert('Saved — you can share this resume via your dashboard.');
+        alert('Saved — resume link updated in your dashboard.');
     }
 
     function handleDownloadPdf() {
-        // Use browser print for best PDF generation which respects CSS pagination
-        window.print();
+        // Prefer print for CSS-aware output; you can also call downloadPdfSafe for programmatic PDF
+        try {
+            window.print();
+        } catch (err) {
+            console.warn('print fallback failed, trying programmatic pdf', err);
+            const el = document.getElementById('resume-editor-canvas');
+            if (el) downloadPdfSafe(el as HTMLElement, { filename: `${editing.name || 'resume'}.pdf` });
+            else alert('Preview not available for PDF generation.');
+        }
     }
 
     async function handleDownloadDoc() {
         await downloadDoc(editing, { filename: `${editing.name || 'resume'}.doc` });
+    }
+
+    // Import flow: receives parsed resume object from DragDropImporter and posts to server import endpoint
+    async function handleImportSubmit(parsedResume: any) {
+        try {
+            setImportOpen(false);
+            // show temporary merging into editor while server saves
+            setEditing((e) => ({ ...e, ...parsedResume }));
+
+            const res = await fetch('/api/resume/import', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ resume: parsedResume }),
+            });
+
+            const json = await res.json();
+            if (!res.ok) {
+                console.error('Import failed', json);
+                alert(json?.error || 'Import failed');
+                return;
+            }
+
+            if (json?.resume) {
+                setEditing(json.resume as ResumeShape);
+                setResume(json.resume);
+                alert('Import complete — resume upserted.');
+            } else {
+                alert('Import accepted. Merge applied locally.');
+            }
+        } catch (err) {
+            console.error('Import error', err);
+            alert('Import failed. See console.');
+        }
+    }
+
+    // AI Suggestion flow: ask server to suggest template + starter plate based on current editing data
+    async function handleSuggestTemplate() {
+        try {
+            setSuggesting(true);
+            const res = await fetch('/api/ai/suggest-template', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ details: editing }),
+            });
+            const json = await res.json();
+            if (!res.ok || json?.error) {
+                console.error('AI suggestion failed', json);
+                alert(json?.error || 'AI suggestion failed');
+                return;
+            }
+
+            const suggestion = json.suggestion;
+            if (!suggestion) {
+                alert('No suggestion returned');
+                return;
+            }
+
+            // Apply suggestion: switch template key and merge starter plate
+            const starter = suggestion.starter || {};
+            setEditing((prev) => {
+                const merged: ResumeShape = {
+                    ...prev,
+                    template: suggestion.templateKey || prev.template,
+                    name: starter.name || prev.name,
+                    title: starter.title || prev.title,
+                    summary: starter.summary || prev.summary,
+                    skills: Array.isArray(starter.skills) && starter.skills.length ? starter.skills : prev.skills,
+                    experience: Array.isArray(starter.experience) && starter.experience.length ? starter.experience : prev.experience,
+                };
+                return merged;
+            });
+
+            alert(`Suggested template: ${suggestion.templateKey}\n${suggestion.reason || ''}`);
+        } catch (err) {
+            console.error('Suggest error', err);
+            alert('AI suggestion failed. See console.');
+        } finally {
+            setSuggesting(false);
+        }
     }
 
     return (
@@ -84,7 +183,9 @@ export default function TemplateEditor({ templateKey }: { templateKey: string })
                             </Link>
                             <div>
                                 <h1 className="text-lg font-semibold text-slate-900">Editing {templateKey}</h1>
-                                <p className="text-xs text-slate-500">Click on any text to edit • Last saved: {resume?.updatedAt ? new Date(resume.updatedAt).toLocaleTimeString() : 'Unsaved'}</p>
+                                <p className="text-xs text-slate-500">
+                                    Click on any text to edit • Last saved: {resume?.updatedAt ? new Date(resume.updatedAt).toLocaleTimeString() : 'Unsaved'}
+                                </p>
                             </div>
                         </div>
 
@@ -120,6 +221,27 @@ export default function TemplateEditor({ templateKey }: { templateKey: string })
                             <div className="h-6 w-px bg-slate-200 mx-1" />
 
                             <button
+                                onClick={() => setImportOpen(true)}
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
+                                title="Import resume (JSON / TXT)"
+                            >
+                                <CloudUpload className="w-4 h-4" />
+                                Import
+                            </button>
+
+                            <button
+                                onClick={handleSuggestTemplate}
+                                disabled={suggesting}
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
+                                title="Suggest template & starter via AI"
+                            >
+                                <Sparkles className="w-4 h-4" />
+                                {suggesting ? 'Suggesting…' : 'Suggest'}
+                            </button>
+
+                            <div className="h-6 w-px bg-slate-200 mx-1" />
+
+                            <button
                                 onClick={handleSaveAndLink}
                                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
                             >
@@ -147,13 +269,29 @@ export default function TemplateEditor({ templateKey }: { templateKey: string })
                     </div>
 
                     <div id="resume-editor-canvas" className="bg-white shadow-xl rounded-lg overflow-hidden">
-                        <TemplateRenderer templateKey={templateKey} resume={editing} />
+                        {/* TemplateRenderer should use EditableText / useEditing() internally */}
+                        <TemplateRenderer templateKey={editing.template || templateKey} resume={editing} />
                     </div>
                 </main>
 
+                {/* Import Modal */}
+                <PreviewModal open={importOpen} onClose={() => setImportOpen(false)}>
+                    <div className="p-4 bg-white max-w-2xl mx-auto">
+                        <h3 className="text-lg font-medium mb-3">Import resume</h3>
+                        <DragDropImporter
+                            onImported={(r) => {
+                                // r is parsed resume payload — pass to server import route
+                                handleImportSubmit(r);
+                            }}
+                        />
+                        <div className="mt-4 text-sm text-slate-500">Supported: JSON Resume, plain text. DOCX support can be added.</div>
+                    </div>
+                </PreviewModal>
+
+                {/* Preview Modal */}
                 <PreviewModal open={previewOpen} onClose={() => setPreviewOpen(false)}>
                     <div id="resume-preview-modal" className="p-4 bg-white min-h-[800px]">
-                        <TemplateRenderer templateKey={templateKey} resume={editing} />
+                        <TemplateRenderer templateKey={editing.template || templateKey} resume={editing} />
                     </div>
                 </PreviewModal>
             </div>
@@ -161,5 +299,5 @@ export default function TemplateEditor({ templateKey }: { templateKey: string })
     );
 }
 
-// Export the context for use in templates
+// export context for templates to consume
 export { EditingContext };

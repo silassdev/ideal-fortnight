@@ -30,8 +30,7 @@ export async function getOrSet<T>(key: string, ttlSeconds: number, fetcher: () =
         }
         return value;
     } catch (err) {
-        // If redis is down, fallback to fetching fresh
-        // eslint-disable-next-line no-console
+
         console.warn('Redis getOrSet error, fetching fresh', err);
         return fetcher();
     }
