@@ -388,8 +388,6 @@ const ContactItem = ({ value, icon, onChange, placeholder, isPreview }: any) => 
 
 // --- Main Component ---
 
-// --- Main Component ---
-
 interface AuroraEditorProps {
   initialData?: ResumeData | null;
 }

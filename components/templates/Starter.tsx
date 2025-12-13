@@ -27,6 +27,16 @@ interface StarterProps {
     editorState: any;
 }
 
+export const metadata = {
+    key: 'starter',
+    title: 'Starter',
+    description: 'A minimal, clean template perfect for juniors or concise resumes.',
+    author: 'Aurora Dev',
+    authorUrl: 'https://github.com/your-org-or-user',
+    thumbnail: '/templates/starter.png', // Placeholder or use a generic one
+    tags: ['minimal', 'clean', 'junior'],
+};
+
 // Row Components (Simplified Logic, can be extracted further if needed, but defining here for template-specific styling if needed)
 const ExperienceRow = ({ item, update, remove, isPreview }: any) => (
     <SortableItemWrapper id={item.id} onDelete={() => remove(item.id)} isPreview={isPreview}>
