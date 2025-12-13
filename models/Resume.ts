@@ -6,13 +6,17 @@ const { Schema } = mongoose;
  * Experience subdocument
  */
 export type ExperienceSubdoc = {
-    id: string; // client-side id (timestamp or uuid)
+    id: string;
     company?: string;
     role?: string;
-    start?: string; // e.g. "Jan 2020"
-    end?: string; // e.g. "Present" or "Dec 2021"
+    start?: string;
+    end?: string;
+    startMonth?: string;
+    startYear?: string;
+    endMonth?: string;
+    endYear?: string;
     location?: string;
-    bullets?: string[]; // list of achievements / responsibilities
+    bullets?: string[];
     currentlyWorking?: boolean;
 };
 
@@ -25,6 +29,10 @@ export type EducationSubdoc = {
     degree?: string;
     start?: string;
     end?: string;
+    startMonth?: string;
+    startYear?: string;
+    endMonth?: string;
+    endYear?: string;
     location?: string;
     notes?: string;
 };
@@ -34,15 +42,11 @@ export type EducationSubdoc = {
  */
 export type ExtraSection = {
     id: string;
-    type?: string; // 'projects' | 'certifications' | custom
+    type?: string;
     title?: string;
-    items?: any[]; // flexible shape (array of objects or strings)
-    content?: string; // free HTML/markdown (sanitize before rendering!)
+    items?: any[];
+    content?: string;
 };
-
-/**
- * Contact object
- */
 export type ContactInfo = {
     email?: string;
     phone?: string;
@@ -52,9 +56,7 @@ export type ContactInfo = {
     github?: string;
 };
 
-/**
- * Resume document interface
- */
+
 export interface IResume extends Document {
     userId: mongoose.Types.ObjectId | string;
     template?: string;
@@ -68,18 +70,14 @@ export interface IResume extends Document {
     education?: EducationSubdoc[];
     skills?: string[];
     sections?: ExtraSection[];
-    pages?: any[]; // reserved for page-level content/metadata
+    pages?: any[];
     meta?: Record<string, any>;
     downloadCount?: number;
-    // timestamps:
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-/**
- * Helper to generate a reasonably-unique short public id.
- * Combines a time-based component + random chars.
- */
+
 function generatePublicId(length = 6) {
     const timePart = Date.now().toString(36).slice(-4);
     const randPart = Math.random().toString(36).slice(2, 2 + length);
@@ -238,6 +236,11 @@ ResumeSchema.statics.upsertByUser = async function upsertByUser(userId: string |
 };
 
 // Avoid model compile errors on hot-reload in dev
+if (process.env.NODE_ENV === 'development') {
+    if (mongoose.models.Resume) {
+        delete mongoose.models.Resume;
+    }
+}
 const Resume: IResumeModel = (mongoose.models.Resume as IResumeModel) || mongoose.model<IResume, IResumeModel>('Resume', ResumeSchema);
 
 export default Resume;

@@ -163,20 +163,25 @@ const InlineInput = ({
     );
   }
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  }, [value, multiline]);
+
   if (multiline) {
     return (
       <textarea
+        ref={textareaRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={`${baseStyles} resize-none overflow-hidden ${className}`}
         placeholder={placeholder}
         rows={1}
-        onInput={(e) => {
-          const target = e.target as HTMLTextAreaElement;
-          target.style.height = 'auto';
-          target.style.height = target.scrollHeight + 'px';
-        }}
       />
     );
   }
@@ -263,7 +268,7 @@ const SortableItemWrapper = ({ id, children, onDelete, isPreview }: { id: string
   );
 };
 
-const ExperienceRow = ({ item, update, remove, isPreview }: { item: ExperienceItem, update: (id: string, field: string, val: any) => void, remove: (id: string) => void, isPreview: boolean }) => (
+const ExperienceRow = ({ item, update, remove, isPreview }: { item: ExperienceItem, update: (id: string, field: string | object, val: any) => void, remove: (id: string) => void, isPreview: boolean }) => (
   <SortableItemWrapper id={item.id} onDelete={() => remove(item.id)} isPreview={isPreview}>
     <div className="grid grid-cols-1 gap-1 items-baseline">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-baseline gap-2">
@@ -284,7 +289,7 @@ const ExperienceRow = ({ item, update, remove, isPreview }: { item: ExperienceIt
             endYear={item.endYear}
             current={item.current}
             onChange={(d) => {
-              Object.entries(d).forEach(([key, val]) => update(item.id, key, val));
+              update(item.id, d, undefined);
             }}
             className="scale-90 origin-top-right transform"
           />
@@ -297,7 +302,7 @@ const ExperienceRow = ({ item, update, remove, isPreview }: { item: ExperienceIt
   </SortableItemWrapper>
 );
 
-const EducationRow = ({ item, update, remove, isPreview }: { item: EducationItem, update: (id: string, field: string, val: any) => void, remove: (id: string) => void, isPreview: boolean }) => (
+const EducationRow = ({ item, update, remove, isPreview }: { item: EducationItem, update: (id: string, field: string | object, val: any) => void, remove: (id: string) => void, isPreview: boolean }) => (
   <SortableItemWrapper id={item.id} onDelete={() => remove(item.id)} isPreview={isPreview}>
     <div className="grid grid-cols-1 gap-1 items-baseline">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-baseline gap-2">
@@ -318,7 +323,7 @@ const EducationRow = ({ item, update, remove, isPreview }: { item: EducationItem
             endYear={item.endYear}
             current={item.current}
             onChange={(d) => {
-              Object.entries(d).forEach(([key, val]) => update(item.id, key, val));
+              update(item.id, d, undefined);
             }}
             className="scale-90 origin-top-right transform"
           />
@@ -532,10 +537,16 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
     }
   };
 
-  const updateItem = (listKey: keyof ResumeData, id: string, field: string, val: any) => {
+  const updateItem = (listKey: keyof ResumeData, id: string, field: string | object, val?: any) => {
     handleDataChange({
       ...data,
-      [listKey]: (data[listKey] as any[]).map(item => item.id === id ? { ...item, [field]: val } : item)
+      [listKey]: (data[listKey] as any[]).map(item => {
+        if (item.id !== id) return item;
+        if (typeof field === 'object') {
+          return { ...item, ...field };
+        }
+        return { ...item, [field]: val };
+      })
     });
   };
 
