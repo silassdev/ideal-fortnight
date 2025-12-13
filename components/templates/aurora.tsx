@@ -331,7 +331,14 @@ interface AuroraEditorProps {
 }
 
 export default function AuroraEditor({ initialData }: AuroraEditorProps) {
-  const [data, setData] = useState<ResumeData>(initialData || INITIAL_DATA);
+  const [data, setData] = useState<ResumeData>({
+    ...INITIAL_DATA,
+    ...initialData,
+    sectionTitles: {
+      ...DEFAULT_TITLES,
+      ...(initialData?.sectionTitles || {})
+    }
+  });
   const [isPreview, setIsPreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
