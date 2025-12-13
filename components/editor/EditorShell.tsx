@@ -5,7 +5,7 @@ import { EditorToolbar } from '@/components/ui/EditorToolbar';
 import SaveStatusModal from '@/components/ui/SaveStatusModal';
 
 interface EditorShellProps {
-    editorState: any; // Return type of useResumeEditor
+    editorState: any;
     children: React.ReactNode;
 }
 

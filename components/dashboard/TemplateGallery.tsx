@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 
 export default function TemplateGallery() {
     const [items, setItems] = useState(templates);
-    const [visible, setVisible] = useState(8); // Start with more items since they are smaller (A4)
+    const [visible, setVisible] = useState(8);
     const [loadingMore, setLoadingMore] = useState(false);
     const observerRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();

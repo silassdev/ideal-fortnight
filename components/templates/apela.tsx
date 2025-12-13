@@ -1,11 +1,26 @@
 import React from 'react';
-import { TemplateComponentProps } from '@/types/template';
-import EditableText from '../dashboard/EditableText';
-import { useEditing } from '../dashboard/TemplateEditor';
-import SkillsEditor from '../dashboard/SkillsEditor';
-import ExperienceEditor from '../dashboard/ExperienceEditor';
-import EducationEditor from '../dashboard/EducationEditor';
-import ProjectEditor from '../dashboard/ProjectEditor';
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent,
+} from '@dnd-kit/core';
+import {
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { TemplateComponentProps } from '@/types/template'; // Still useful for types, but we rely on editorState
+import {
+    InlineInput,
+    ContactItem,
+    SortableItemWrapper,
+    SectionHeader
+} from '../editor/SharedComponents';
+import { DateRangePicker } from '@/components/ui/DateRangePicker';
 
 export const metadata = {
     key: 'apela',
@@ -17,211 +32,237 @@ export const metadata = {
     tags: ['two-column', 'modern', 'accent'],
 };
 
-// Helper to format date range
-const fmtDate = (month?: string, year?: string) => {
-    if (!month && !year) return '';
-    if (month && year) return `${month} ${year}`;
-    return month || year || '';
-};
+// --- Row Components for Apela Styling ---
 
-const fmtRange = (item: any) => {
-    const start = fmtDate(item.startMonth, item.startYear) || item.start;
-    const end = item.current ? 'Present' : (fmtDate(item.endMonth, item.endYear) || item.end);
+const ApelaExperienceRow = ({ item, update, remove, isPreview }: any) => (
+    <SortableItemWrapper id={item.id} onDelete={() => remove(item.id)} isPreview={isPreview}>
+        <div className="mb-4">
+            <div className="flex justify-between items-baseline">
+                <div className="font-bold text-slate-800 text-md">
+                    <InlineInput value={item.role} onChange={(v) => update(item.id, 'role', v)} placeholder="Role" className="font-bold" isPreview={isPreview} />
+                </div>
+                {!isPreview ? (
+                    <DateRangePicker
+                        startMonth={item.startMonth}
+                        startYear={item.startYear}
+                        endMonth={item.endMonth}
+                        endYear={item.endYear}
+                        current={item.current}
+                        onChange={(d) => update(item.id, d, undefined)}
+                        className="scale-90 origin-top-right transform"
+                    />
+                ) : (
+                    <div className="text-xs text-slate-500 font-medium whitespace-nowrap">
+                        {item.startMonth} {item.startYear} - {item.current ? "Present" : `${item.endMonth} ${item.endYear}`}
+                    </div>
+                )}
+            </div>
+            <div className="text-sm text-slate-600 font-medium mb-1 flex items-center gap-1">
+                <InlineInput value={item.company} onChange={(v) => update(item.id, 'company', v)} placeholder="Company" isPreview={isPreview} />
+                {item.location && <span>•</span>}
+                <InlineInput value={item.location} onChange={(v) => update(item.id, 'location', v)} placeholder="Location" isPreview={isPreview} />
+            </div>
+            <InlineInput value={item.description} onChange={(v) => update(item.id, 'description', v)} className="text-sm text-slate-700 leading-relaxed" placeholder="Description/Bullets..." multiline isPreview={isPreview} />
+        </div>
+    </SortableItemWrapper>
+);
 
-    if (!start && !end) return '';
-    if (start && !end) return `${start} — Present`;
-    return `${start ?? ''} — ${end ?? ''}`;
-};
+const ApelaProjectRow = ({ item, update, remove, isPreview }: any) => (
+    <SortableItemWrapper id={item.id} onDelete={() => remove(item.id)} isPreview={isPreview}>
+        <div className="mb-4">
+            <div className="flex justify-between items-baseline">
+                <div className="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <InlineInput value={item.title || item.name} onChange={(v) => update(item.id, 'title', v)} placeholder="Project Title" className="font-bold" isPreview={isPreview} />
+                    {/* Link logic */}
+                    <InlineInput value={item.link} onChange={(v) => update(item.id, 'link', v)} placeholder="Link" className="text-xs text-sky-600 font-normal" isPreview={isPreview} />
+                </div>
+                <div className="text-xs text-slate-500 font-medium">
+                    {/* Simplified date for projects if needed, or just remove if not in schema for proj */}
+                </div>
+            </div>
+            <InlineInput value={item.description} onChange={(v) => update(item.id, 'description', v)} className="text-sm text-slate-700 leading-relaxed" placeholder="Description..." multiline isPreview={isPreview} />
+        </div>
+    </SortableItemWrapper>
+);
 
-export default function ApelaTemplate({ resume, className = '' }: TemplateComponentProps) {
-    // Check if we're in editing mode
-    let editingContext = null;
-    try {
-        editingContext = useEditing();
-    } catch {
-        // Not in editing mode, render normally
-    }
+const ApelaEducationRow = ({ item, update, remove, isPreview }: any) => (
+    <SortableItemWrapper id={item.id} onDelete={() => remove(item.id)} isPreview={isPreview}>
+        <div className="mb-4 text-sm">
+            <div className="font-bold text-slate-800">
+                <InlineInput value={item.school} onChange={(v) => update(item.id, 'school', v)} placeholder="School" className="font-bold" isPreview={isPreview} />
+            </div>
+            <div className="text-slate-600">
+                <InlineInput value={item.degree} onChange={(v) => update(item.id, 'degree', v)} placeholder="Degree" isPreview={isPreview} />
+            </div>
+            {!isPreview ? (
+                <div className="mt-1">
+                    <DateRangePicker
+                        startMonth={item.startMonth}
+                        startYear={item.startYear}
+                        endMonth={item.endMonth}
+                        endYear={item.endYear}
+                        current={item.current}
+                        onChange={(d) => update(item.id, d, undefined)}
+                        className="scale-90 origin-left transform"
+                    />
+                </div>
+            ) : (
+                <div className="text-xs text-slate-500 mt-0.5">
+                    {item.startMonth} {item.startYear} - {item.current ? "Present" : `${item.endMonth} ${item.endYear}`}
+                </div>
+            )}
+        </div>
+    </SortableItemWrapper>
+);
 
-    const isEditMode = editingContext?.isEditMode;
-    const { editing, setEditing } = editingContext || {};
+
+// --- Main Component ---
+
+export default function ApelaTemplate({ resume, editorState, className = '' }: TemplateComponentProps & { editorState?: any }) {
+    // Legacy Bridge: If editorState not provided (e.g. strict preview mode without editor), use 'resume' prop.
+    // However, for the dashboard editor, editorState is key.
+
+    // We favor editorState.data if available, else resume.
+    const data = editorState?.data || resume;
+    const isPreview = editorState?.isPreview || false;
+
+    // Handlers
+    const updateRoot = editorState?.updateRoot || (() => { });
+    const updateItem = editorState?.updateItem || (() => { });
+    const addItem = editorState?.addItem || (() => { });
+    const removeItem = editorState?.removeItem || (() => { });
+    const handleDragEnd = editorState?.handleDragEnd || (() => { });
+    const updateSectionTitle = editorState?.updateSectionTitle || (() => { });
+
+    // DnD Sensors
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    );
 
     return (
-        <div className={`max-w-[800px] bg-white p-6 text-slate-900 ${className}`} id="resume-preview">
-            <header className="flex items-center gap-4 pb-4 border-b">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sky-400 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-md">
-                    {resume.name ? resume.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'UN'}
-                </div>
-                <div>
-                    {isEditMode && editing && setEditing ? (
-                        <EditableText
-                            as="h1"
-                            className="text-2xl font-extrabold"
-                            value={editing.name || ''}
-                            onChange={(val) => setEditing({ ...editing, name: val })}
-                            placeholder="Full name"
-                        />
-                    ) : (
-                        <h1 className="text-2xl font-extrabold">{resume.name || 'Full name'}</h1>
-                    )}
+        <div className={`max-w-[800px] bg-white p-6 text-slate-900 min-h-[1100px] ${className}`} id="resume-preview">
 
-                    {isEditMode && editing && setEditing ? (
-                        <EditableText
-                            as="div"
-                            className="text-sm text-slate-600"
-                            value={editing.title || ''}
-                            onChange={(val) => setEditing({ ...editing, title: val })}
-                            placeholder="Professional title"
-                        />
-                    ) : (
-                        <div className="text-sm text-slate-600">{resume.title || 'Professional title'}</div>
-                    )}
+            {/* Header */}
+            <header className="flex items-center gap-4 pb-4 border-b border-slate-200">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sky-400 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-md shrink-0">
+                    {data.name ? data.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase() : 'UN'}
                 </div>
-                <div className="ml-auto text-sm text-slate-500 text-right">
-                    {isEditMode && editing && setEditing ? (
-                        <>
-                            <EditableText
-                                as="div"
-                                value={editing.contact?.email || ''}
-                                onChange={(val) => setEditing({ ...editing, contact: { ...editing.contact, email: val } })}
-                                placeholder="email@example.com"
-                            />
-                            <EditableText
-                                as="div"
-                                value={editing.contact?.phone || ''}
-                                onChange={(val) => setEditing({ ...editing, contact: { ...editing.contact, phone: val } })}
-                                placeholder="+1 (555) 000-0000"
-                            />
-                            <EditableText
-                                as="div"
-                                value={editing.contact?.location || ''}
-                                onChange={(val) => setEditing({ ...editing, contact: { ...editing.contact, location: val } })}
-                                placeholder="City, Country"
-                            />
-                        </>
-                    ) : (
-                        <>
-                            <div>{resume.contact?.email}</div>
-                            <div>{resume.contact?.phone}</div>
-                            <div>{resume.contact?.location}</div>
-                        </>
-                    )}
+                <div className="flex-grow">
+                    <InlineInput value={data.name} onChange={(v) => updateRoot('name', v)} className="text-2xl font-extrabold text-slate-900" placeholder="Full Name" isPreview={isPreview} />
+                    <InlineInput value={data.title} onChange={(v) => updateRoot('title', v)} className="text-sm text-slate-600" placeholder="Professional Title" isPreview={isPreview} />
+                </div>
+                <div className="text-right text-sm text-slate-500 space-y-1">
+                    <InlineInput value={data.email} onChange={(v) => updateRoot('email', v)} placeholder="Email" className="text-right w-full" isPreview={isPreview} />
+                    <InlineInput value={data.phone} onChange={(v) => updateRoot('phone', v)} placeholder="Phone" className="text-right w-full" isPreview={isPreview} />
+                    <InlineInput value={data.location} onChange={(v) => updateRoot('location', v)} placeholder="Location" className="text-right w-full" isPreview={isPreview} />
                 </div>
             </header>
 
-            <section className="grid grid-cols-3 gap-6 mt-6">
-                <div className="col-span-2 space-y-6">
+            <section className="grid grid-cols-3 gap-8 mt-8">
+                {/* Left Column (Main) */}
+                <div className="col-span-2 space-y-8">
+
                     {/* Summary */}
                     <div>
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Summary</h3>
-                        {isEditMode && editing && setEditing ? (
-                            <EditableText
-                                as="div"
-                                className="text-sm text-slate-700"
-                                value={editing.summary || ''}
-                                onChange={(val) => setEditing({ ...editing, summary: val })}
-                                placeholder="Professional summary..."
-                                multiline
-                            />
-                        ) : (
-                            <div className="text-sm text-slate-700">{resume.summary}</div>
-                        )}
+                        <SectionHeader title={data.sectionTitles?.summary || "Summary"} onChange={(v) => updateSectionTitle('summary', v)} isPreview={isPreview} className="border-none mb-2 text-slate-400 text-sm font-bold uppercase tracking-wider" />
+                        <InlineInput value={data.summary} onChange={(v) => updateRoot('summary', v)} multiline className="text-sm text-slate-700 leading-relaxed" placeholder="Professional summary..." isPreview={isPreview} />
                     </div>
 
                     {/* Experience */}
                     <div>
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Experience</h3>
-                        {isEditMode && editing && setEditing ? (
-                            <ExperienceEditor
-                                experiences={editing.experience || []}
-                                onChange={(v) => setEditing({ ...editing, experience: v })}
-                            />
-                        ) : (
-                            <div className="space-y-4">
-                                {(resume.experience || []).map((ex) => (
-                                    <div key={ex.id}>
-                                        <div className="flex justify-between items-baseline">
-                                            <div className="font-bold text-slate-800">{ex.role}</div>
-                                            <div className="text-xs text-slate-500 font-medium">{fmtRange(ex)}</div>
-                                        </div>
-                                        <div className="text-sm text-slate-600 font-medium mb-1">{ex.company} {ex.location ? `• ${ex.location}` : ''}</div>
-                                        <ul className="list-disc ml-4 text-sm text-slate-700 space-y-0.5">
-                                            {(ex.bullets || []).map((b, i) => <li key={i}>{b}</li>)}
-                                        </ul>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                        <div className="flex justify-between items-center mb-3">
+                            <SectionHeader title={data.sectionTitles?.experience || "Experience"} onChange={(v) => updateSectionTitle('experience', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-400 text-sm font-bold uppercase tracking-wider" />
+                            {!isPreview && (
+                                <button onClick={() => addItem('experience', { role: '', company: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+                            )}
+                        </div>
+                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
+                            <SortableContext items={data.experience || []} strategy={verticalListSortingStrategy}>
+                                <div>
+                                    {(data.experience || []).map((item: any) => (
+                                        <ApelaExperienceRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('experience', id, f, v)} remove={(id: string) => removeItem('experience', id)} isPreview={isPreview} />
+                                    ))}
+                                </div>
+                            </SortableContext>
+                        </DndContext>
                     </div>
 
                     {/* Projects */}
                     <div>
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Projects</h3>
-                        {isEditMode && editing && setEditing ? (
-                            <ProjectEditor
-                                projects={editing.projects || []}
-                                onChange={(v) => setEditing({ ...editing, projects: v })}
-                            />
-                        ) : (
-                            <div className="space-y-4">
-                                {(resume.projects || []).map((proj) => (
-                                    <div key={proj.id}>
-                                        <div className="flex justify-between items-baseline">
-                                            <div className="font-bold text-slate-800">
-                                                {proj.title}
-                                                {proj.link && (
-                                                    <a href={proj.link} target="_blank" rel="noreferrer" className="ml-2 text-sky-600 hover:underline text-xs font-normal">
-                                                        Link ↗
-                                                    </a>
-                                                )}
-                                            </div>
-                                            <div className="text-xs text-slate-500 font-medium">{fmtRange(proj)}</div>
-                                        </div>
-                                        <div className="text-sm text-slate-700 mb-1">{proj.description}</div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                        <div className="flex justify-between items-center mb-3">
+                            <SectionHeader title={data.sectionTitles?.projects || "Projects"} onChange={(v) => updateSectionTitle('projects', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-400 text-sm font-bold uppercase tracking-wider" />
+                            {!isPreview && (
+                                <button onClick={() => addItem('projects', { title: '', link: '', description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+                            )}
+                        </div>
+                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'projects')}>
+                            <SortableContext items={data.projects || []} strategy={verticalListSortingStrategy}>
+                                <div>
+                                    {(data.projects || []).map((item: any) => (
+                                        <ApelaProjectRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('projects', id, f, v)} remove={(id: string) => removeItem('projects', id)} isPreview={isPreview} />
+                                    ))}
+                                </div>
+                            </SortableContext>
+                        </DndContext>
                     </div>
                 </div>
 
-                <aside className="col-span-1 space-y-6">
+                {/* Right Column (Sidebar) */}
+                <aside className="col-span-1 space-y-8">
+
                     {/* Education */}
                     <div>
-                        <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Education</h4>
-                        {isEditMode && editing && setEditing ? (
-                            <EducationEditor
-                                education={editing.education || []}
-                                onChange={(v) => setEditing({ ...editing, education: v })}
-                            />
-                        ) : (
-                            <div className="space-y-4">
-                                {(resume.education || []).map((ed) => (
-                                    <div key={ed.id} className="text-sm">
-                                        <div className="font-bold text-slate-800">{ed.school}</div>
-                                        <div className="text-slate-600">{ed.degree}</div>
-                                        <div className="text-xs text-slate-500 mt-0.5">{fmtRange(ed)}</div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                        <div className="flex justify-between items-center mb-3">
+                            <SectionHeader title={data.sectionTitles?.education || "Education"} onChange={(v) => updateSectionTitle('education', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-400 text-sm font-bold uppercase tracking-wider" />
+                            {!isPreview && (
+                                <button onClick={() => addItem('education', { school: '', degree: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+                            )}
+                        </div>
+                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
+                            <SortableContext items={data.education || []} strategy={verticalListSortingStrategy}>
+                                <div>
+                                    {(data.education || []).map((item: any) => (
+                                        <ApelaEducationRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('education', id, f, v)} remove={(id: string) => removeItem('education', id)} isPreview={isPreview} />
+                                    ))}
+                                </div>
+                            </SortableContext>
+                        </DndContext>
                     </div>
 
                     {/* Skills */}
                     <div>
-                        <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Skills</h4>
-                        {isEditMode && editing && setEditing ? (
-                            <SkillsEditor
-                                skills={editing.skills || []}
-                                onChange={(v) => setEditing({ ...editing, skills: v })}
-                            />
-                        ) : (
-                            <div className="flex flex-wrap gap-2">
-                                {(resume.skills || []).map((s, i) => (
-                                    <div key={i} className="text-xs px-2 py-1 bg-slate-100 text-slate-700 rounded font-medium">{s}</div>
-                                ))}
-                            </div>
+                        <SectionHeader title={data.sectionTitles?.skills || "Skills"} onChange={(v) => updateSectionTitle('skills', v)} isPreview={isPreview} className="border-none mb-3 text-slate-400 text-sm font-bold uppercase tracking-wider" />
+
+                        {/* Apela style skills: Freeform list tags? Or Structured?
+                             Original Apela iterate strings.
+                             Global data schema uses complex objects.
+                             We need to adapt.
+                             If data.skills is array of strings (Legacy): map them.
+                             If data.skills is array of objects {id, name, skills} (New): map them.
+                         */}
+                        <div className="flex flex-wrap gap-2">
+                            {(data.skills || []).map((cat: any, i: number) => {
+                                // Handle both string (Legacy Apela) and Object (New Schema)
+                                if (typeof cat === 'string') {
+                                    // Legacy string
+                                    return <span key={i} className="text-xs px-2 py-1 bg-slate-100 text-slate-700 rounded font-medium">{cat}</span>
+                                }
+                                // New Object Schema
+                                return (
+                                    <div key={cat.id} className="w-full mb-2">
+                                        <InlineInput value={cat.name} onChange={(v) => updateItem('skills', cat.id, 'name', v)} className="font-bold text-xs text-slate-800 mb-1" placeholder="Category" isPreview={isPreview} />
+                                        <InlineInput value={cat.skills} onChange={(v) => updateItem('skills', cat.id, 'skills', v)} className="text-xs text-slate-600" placeholder="Skills..." multiline isPreview={isPreview} />
+                                        {!isPreview && <button onClick={() => removeItem('skills', cat.id)} className="text-[10px] text-red-500">Remove</button>}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        {!isPreview && (
+                            <button onClick={() => addItem('skills', { name: '', skills: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 mt-2">+ Category</button>
                         )}
                     </div>
+
                 </aside>
             </section>
 

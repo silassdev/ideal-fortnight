@@ -5,7 +5,6 @@ import { useReactToPrint } from 'react-to-print';
 import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 
-// Default Data (You might want to move this to a shared constant file if used elsewhere)
 const INITIAL_DATA = {
     name: '',
     title: '',
@@ -232,6 +231,7 @@ export const useResumeEditor = (initialData?: ResumeData | null) => {
 
     return {
         data,
+        setData, // Expose raw setter for legacy bridges
         historyIndex,
         history,
         isPreview,
@@ -243,6 +243,8 @@ export const useResumeEditor = (initialData?: ResumeData | null) => {
         componentRef,
         handleUndo,
         handleRedo,
+        undo: handleUndo, // Alias
+        redo: handleRedo, // Alias
         handleSave,
         handlePrint,
         handleDragEnd,
