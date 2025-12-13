@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-import { useReactToPrint } from 'react-to-print';
 import {
   DndContext,
   closestCenter,
@@ -18,9 +17,7 @@ import {
   useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { EditorToolbar } from '@/components/ui/EditorToolbar';
 import { DateRangePicker } from '@/components/ui/DateRangePicker';
-import SaveStatusModal from '@/components/ui/SaveStatusModal';
 
 // --- Types ---
 type ExperienceItem = {
@@ -388,32 +385,20 @@ const ContactItem = ({ value, icon, onChange, placeholder, isPreview }: any) => 
 
 // --- Main Component ---
 
-interface AuroraEditorProps {
-  initialData?: ResumeData | null;
-}
+// --- Main Component ---
 
-export default function AuroraEditor({ initialData }: AuroraEditorProps) {
-  // State
-  const [data, setData] = useState<ResumeData>({
-    ...INITIAL_DATA,
-    ...initialData,
-    sectionTitles: {
-      ...DEFAULT_TITLES,
-      ...(initialData?.sectionTitles || {})
-    }
-  });
+export default function AuroraEditor({ resume, editorState }: { resume?: ResumeData, editorState?: any }) {
+  // Favor editorState data, fallback to resume prop
+  const data = editorState?.data || resume || INITIAL_DATA;
+  const isPreview = editorState?.isPreview || false;
 
-  const [history, setHistory] = useState<ResumeData[]>([data]);
-  const [historyIndex, setHistoryIndex] = useState(0);
-
-  const [isPreview, setIsPreview] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDirty, setIsDirty] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<{ isOpen: boolean; status: 'success' | 'error'; }>({ isOpen: false, status: 'success' });
-
-  // Refs
-  const componentRef = useRef<HTMLDivElement>(null);
-  const historyDebounceRef = useRef<NodeJS.Timeout | null>(null);
+  // Handlers
+  const updateRoot = editorState?.updateRoot || (() => { });
+  const updateItem = editorState?.updateItem || (() => { });
+  const addItem = editorState?.addItem || (() => { });
+  const removeItem = editorState?.removeItem || (() => { });
+  const handleDragEnd = editorState?.handleDragEnd || (() => { });
+  const updateSectionTitle = editorState?.updateSectionTitle || (() => { });
 
   // Sensors for Drag & Drop
   const sensors = useSensors(
@@ -421,183 +406,16 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  // Persistence (Legacy LS)
-  useEffect(() => {
-    if (!initialData) {
-      const saved = localStorage.getItem('aurora_resume_data');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          const merged = {
-            ...INITIAL_DATA,
-            ...parsed,
-            sectionTitles: { ...DEFAULT_TITLES, ...parsed.sectionTitles }
-          };
-          setData(merged);
-          setHistory([merged]);
-        } catch (e) { console.error("LS Load Error", e); }
-      }
-    }
-  }, [initialData]);
-
-  // History Management
-  const addToHistory = (newData: ResumeData) => {
-    setHistory(prev => {
-      const newHistory = prev.slice(0, historyIndex + 1);
-      // Avoid duplicates
-      if (JSON.stringify(newHistory[newHistory.length - 1]) === JSON.stringify(newData)) return prev;
-      newHistory.push(newData);
-      if (newHistory.length > 50) newHistory.shift(); // Limit
-      return newHistory;
-    });
-    setHistoryIndex(prev => Math.min(prev + 1, 49)); // Adjust index logic if shifting
-  };
-
-  // Central Update Handler
-  const handleDataChange = (newData: ResumeData, immediateHistory = false) => {
-    setData(newData);
-    setIsDirty(true);
-    localStorage.setItem('aurora_resume_data', JSON.stringify(newData));
-
-    if (historyDebounceRef.current) clearTimeout(historyDebounceRef.current);
-
-    if (immediateHistory) {
-      addToHistory(newData);
-    } else {
-      historyDebounceRef.current = setTimeout(() => {
-        addToHistory(newData);
-      }, 1000);
-    }
-  };
-
-  // Actions
-  const handleUndo = () => {
-    if (historyIndex > 0) {
-      const newIndex = historyIndex - 1;
-      setHistoryIndex(newIndex);
-      setData(history[newIndex]);
-    }
-  };
-
-  const handleRedo = () => {
-    if (historyIndex < history.length - 1) {
-      const newIndex = historyIndex + 1;
-      setHistoryIndex(newIndex);
-      setData(history[newIndex]);
-    }
-  };
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      const res = await fetch('/api/resume', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error('Save failed');
-      setIsDirty(false);
-      setSaveStatus({ isOpen: true, status: 'success' });
-    } catch (error) {
-      console.error(error);
-      setSaveStatus({ isOpen: true, status: 'error' });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handlePrint = useReactToPrint({
-    contentRef: componentRef,
-    documentTitle: `${data.name} - Resume`,
-    onBeforeGetContent: async () => {
-      if (isDirty) {
-        // We allow print but warn. Or we could auto-save.
-        // For now, let's auto-save? No, safer to alert.
-        const confirm = window.confirm("You have unsaved changes. It is recommended to SAVE before downloading. Continue anyway?");
-        if (!confirm) throw new Error("Unsaved changes");
-      }
-      setIsPreview(true);
-      return new Promise((resolve) => setTimeout(resolve, 300));
-    },
-    onAfterPrint: () => setIsPreview(false),
-    onPrintError: (errorLocation: any, error: any) => {
-      if (error.message !== "Unsaved changes") console.error(error);
-    }
-  } as any);
-
-
-  // CRUD Helpers
-  const handleDragEnd = (event: DragEndEvent, listKey: keyof ResumeData) => {
-    const { active, over } = event;
-    if (active.id !== over?.id && Array.isArray(data[listKey])) {
-      const list = data[listKey] as any[];
-      const oldIndex = list.findIndex((item) => item.id === active.id);
-      const newIndex = list.findIndex((item) => item.id === over?.id);
-      handleDataChange({ ...data, [listKey]: arrayMove(list, oldIndex, newIndex) }, true);
-    }
-  };
-
-  const updateItem = (listKey: keyof ResumeData, id: string, field: string | object, val?: any) => {
-    handleDataChange({
-      ...data,
-      [listKey]: (data[listKey] as any[]).map(item => {
-        if (item.id !== id) return item;
-        if (typeof field === 'object') {
-          return { ...item, ...field };
-        }
-        return { ...item, [field]: val };
-      })
-    });
-  };
-
-  const addItem = (listKey: keyof ResumeData, newItem: any) => {
-    handleDataChange({
-      ...data,
-      [listKey]: [...(data[listKey] as any[]), { ...newItem, id: Date.now().toString() }]
-    }, true);
-  };
-
-  const removeItem = (listKey: keyof ResumeData, id: string) => {
-    handleDataChange({
-      ...data,
-      [listKey]: (data[listKey] as any[]).filter(item => item.id !== id)
-    }, true);
-  };
-
-  const updateRoot = (field: keyof ResumeData, value: any) => {
-    handleDataChange({ ...data, [field]: value });
-  };
-
-  const updateSectionTitle = (key: keyof SectionTitles, val: string) => {
-    handleDataChange({ ...data, sectionTitles: { ...data.sectionTitles, [key]: val } });
-  };
+  // If we are in "read-only" (no editorState), we just render
+  // If editorState is missing, we can't edit.
 
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8 flex flex-col items-center gap-6 font-sans">
 
-      <SaveStatusModal
-        isOpen={saveStatus.isOpen}
-        status={saveStatus.status}
-        onClose={() => setSaveStatus(prev => ({ ...prev, isOpen: false }))}
-      />
-
-      {/* Action Bar */}
-      <EditorToolbar
-        onUndo={handleUndo}
-        onRedo={handleRedo}
-        canUndo={historyIndex > 0}
-        canRedo={historyIndex < history.length - 1}
-        onSave={handleSave}
-        isSaving={isSaving}
-        isDirty={isDirty}
-        onPreviewToggle={() => setIsPreview(!isPreview)}
-        isPreview={isPreview}
-        onDownload={handlePrint || (() => { })}
-      />
+      {/* NO Internal Toolbar - We use the Global one now */}
 
       {/* Resume Frame */}
       <div
-        ref={componentRef}
         id="resume-frame"
         className={`bg-white shadow-xl w-full max-w-[210mm] min-h-[297mm] relative flex flex-col print:shadow-none print:mx-auto print:w-full print:h-auto print:overflow-visible ${isPreview ? 'pointer-events-none' : ''}`}
         style={{ padding: '40px 50px' }}
@@ -635,13 +453,13 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
           </div>
           {isPreview ? (
             <div className="space-y-4">
-              {data.experience.map((item) => <ExperienceRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
+              {data.experience.map((item: ExperienceItem) => <ExperienceRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
             </div>
           ) : (
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
+            <DndContext id="aurora-dnd-experience" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
               <SortableContext items={data.experience} strategy={verticalListSortingStrategy}>
                 <div className="space-y-4">
-                  {data.experience.map((item) => (
+                  {data.experience.map((item: ExperienceItem) => (
                     <ExperienceRow key={item.id} item={item} update={(id, f, v) => updateItem('experience', id, f, v)} remove={(id) => removeItem('experience', id)} isPreview={false} />
                   ))}
                 </div>
@@ -662,13 +480,13 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
           </div>
           {isPreview ? (
             <div className="space-y-4">
-              {data.education.map((item) => <EducationRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
+              {data.education.map((item: EducationItem) => <EducationRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
             </div>
           ) : (
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
+            <DndContext id="aurora-dnd-education" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
               <SortableContext items={data.education} strategy={verticalListSortingStrategy}>
                 <div className="space-y-4">
-                  {data.education.map((item) => (
+                  {data.education.map((item: EducationItem) => (
                     <EducationRow key={item.id} item={item} update={(id, f, v) => updateItem('education', id, f, v)} remove={(id) => removeItem('education', id)} isPreview={false} />
                   ))}
                 </div>
@@ -690,13 +508,13 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
             </div>
             {isPreview ? (
               <div className="space-y-4">
-                {data.projects.map((item) => <ProjectRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
+                {data.projects.map((item: ProjectItem) => <ProjectRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
               </div>
             ) : (
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'projects')}>
+              <DndContext id="aurora-dnd-projects" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'projects')}>
                 <SortableContext items={data.projects} strategy={verticalListSortingStrategy}>
                   <div className="space-y-4">
-                    {data.projects.map((item) => (
+                    {data.projects.map((item: ProjectItem) => (
                       <ProjectRow key={item.id} item={item} update={(id, f, v) => updateItem('projects', id, f, v)} remove={(id) => removeItem('projects', id)} isPreview={false} />
                     ))}
                   </div>
@@ -720,13 +538,13 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
             </div>
             {isPreview ? (
               <div className="space-y-2">
-                {data.skills.map((item) => <SkillRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
+                {data.skills.map((item: SkillCategory) => <SkillRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
               </div>
             ) : (
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'skills')}>
+              <DndContext id="aurora-dnd-skills" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'skills')}>
                 <SortableContext items={data.skills} strategy={verticalListSortingStrategy}>
                   <div className="space-y-2">
-                    {data.skills.map((item) => (
+                    {data.skills.map((item: SkillCategory) => (
                       <SkillRow key={item.id} item={item} update={(id, f, v) => updateItem('skills', id, f, v)} remove={(id) => removeItem('skills', id)} isPreview={false} />
                     ))}
                   </div>
@@ -747,13 +565,13 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
             </div>
             {isPreview ? (
               <div className="space-y-2">
-                {data.certifications.map((item) => <CertificationRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
+                {data.certifications.map((item: CertificationItem) => <CertificationRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
               </div>
             ) : (
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'certifications')}>
+              <DndContext id="aurora-dnd-certs" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'certifications')}>
                 <SortableContext items={data.certifications} strategy={verticalListSortingStrategy}>
                   <div className="space-y-2">
-                    {data.certifications.map((item) => (
+                    {data.certifications.map((item: CertificationItem) => (
                       <CertificationRow key={item.id} item={item} update={(id, f, v) => updateItem('certifications', id, f, v)} remove={(id) => removeItem('certifications', id)} isPreview={false} />
                     ))}
                   </div>

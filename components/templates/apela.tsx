@@ -175,7 +175,7 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
                                 <button onClick={() => addItem('experience', { role: '', company: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
                             )}
                         </div>
-                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
+                        <DndContext id="apela-dnd-experience" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
                             <SortableContext items={data.experience || []} strategy={verticalListSortingStrategy}>
                                 <div>
                                     {(data.experience || []).map((item: any) => (
@@ -194,7 +194,7 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
                                 <button onClick={() => addItem('projects', { title: '', link: '', description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
                             )}
                         </div>
-                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'projects')}>
+                        <DndContext id="apela-dnd-projects" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'projects')}>
                             <SortableContext items={data.projects || []} strategy={verticalListSortingStrategy}>
                                 <div>
                                     {(data.projects || []).map((item: any) => (
@@ -217,7 +217,7 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
                                 <button onClick={() => addItem('education', { school: '', degree: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
                             )}
                         </div>
-                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
+                        <DndContext id="apela-dnd-education" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
                             <SortableContext items={data.education || []} strategy={verticalListSortingStrategy}>
                                 <div>
                                     {(data.education || []).map((item: any) => (

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, createContext, useContext } from 'react';
+import { flushSync } from 'react-dom';
 import TemplateRenderer from '@/components/templates/TemplateRenderer';
 import PreviewModal from './PreviewModal';
 import SaveStatusModal from '@/components/ui/SaveStatusModal';
@@ -109,13 +110,22 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
         alert('Saved — resume link updated in your dashboard.');
     }
 
+
+
     function handleDownloadPdf() {
         try {
+            flushSync(() => {
+                editorState.setIsPreview(true);
+            });
             window.print();
         } catch (err) {
             console.warn('print fallback failed', err);
             const el = document.getElementById('resume-editor-canvas');
             if (el) downloadPdfSafe(el as HTMLElement, { filename: `${data.name || 'resume'}.pdf` });
+        } finally {
+            setTimeout(() => {
+                editorState.setIsPreview(false);
+            }, 500);
         }
     }
 

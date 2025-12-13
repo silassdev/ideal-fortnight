@@ -36,7 +36,7 @@ export default function ResumeEditorClient({ initialData }: ResumeEditorClientPr
                         <option value="starter">Starter (New)</option>
                     </select>
                 </div>
-                <AuroraEditor initialData={initialData} />
+                <AuroraEditor resume={initialData} />
             </div>
         );
     }

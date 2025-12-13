@@ -137,7 +137,7 @@ export default function Starter({ editorState }: StarterProps) {
                         <button onClick={() => addItem('experience', { role: '', company: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
                     )}
                 </div>
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
+                <DndContext id="starter-dnd-experience" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
                     <SortableContext items={data.experience} strategy={verticalListSortingStrategy}>
                         <div>
                             {data.experience.map((item: any) => (
@@ -156,7 +156,7 @@ export default function Starter({ editorState }: StarterProps) {
                         <button onClick={() => addItem('education', { school: '', degree: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
                     )}
                 </div>
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
+                <DndContext id="starter-dnd-education" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
                     <SortableContext items={data.education} strategy={verticalListSortingStrategy}>
                         <div>
                             {data.education.map((item: any) => (
