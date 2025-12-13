@@ -3,6 +3,7 @@
 import React, { useEffect, useState, createContext, useContext } from 'react';
 import TemplateRenderer from '@/components/templates/TemplateRenderer';
 import PreviewModal from './PreviewModal';
+import SaveStatusModal from '@/components/ui/SaveStatusModal';
 
 import { useResumeEditor } from '@/hooks/useResumeEditor';
 import useResume from '@/hooks/useResume'; // Keeping for initial fetch if needed, OR we can utilize useResumeEditor's fetch? 
@@ -221,6 +222,12 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
                         <TemplateRenderer templateKey={templateKey} resume={data} editorState={editorState} />
                     </div>
                 </PreviewModal>
+
+                <SaveStatusModal
+                    isOpen={saveStatus.isOpen}
+                    status={saveStatus.status}
+                    onClose={() => editorState.handleSaveStatusClose()}
+                />
             </div>
         </EditingContext.Provider>
     );

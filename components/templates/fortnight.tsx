@@ -55,9 +55,7 @@ export default function FortnightTemplate({ resume, className = '' }: TemplateCo
                     <div className="h-full rounded-lg overflow-hidden">
                         <div className="bg-gradient-to-b from-indigo-600 via-violet-500 to-pink-500 text-white p-6">
                             <div className="flex items-center gap-4">
-                                <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-bold">
-                                    {resume.name ? resume.name.split(' ').map(n => n[0]).slice(0, 2).join('') : 'FN'}
-                                </div>
+
                                 <div>
                                     <EditableField field="name" as="h1" className="text-2xl font-extrabold leading-tight" fallback="Full Name" />
                                     <EditableField field="title" as="div" className="text-sm opacity-90" fallback="Professional Title" />
@@ -298,14 +296,7 @@ export default function FortnightTemplate({ resume, className = '' }: TemplateCo
                     </div>
 
                     <footer className="text-xs text-slate-400">
-                        <div className="flex items-center justify-between">
-                            <div>Generated with Fortnight template</div>
-                            <div>
-                                {metadata.authorUrl ? (
-                                    <a href={metadata.authorUrl} target="_blank" rel="noreferrer" className="underline text-indigo-600">{metadata.author}</a>
-                                ) : metadata.author}
-                            </div>
-                        </div>
+                        {/* Footer Removed */}
                     </footer>
                 </main>
             </div>

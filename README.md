@@ -59,75 +59,6 @@ A professional, modern resume builder enhanced with AI capabilities. Build ATS-f
 
 ---
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+
-- MongoDB URI (local or Atlas)
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/resume-app.git
-   cd resume-app
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   Create a `.env` file in the root directory:
-   ```env
-   # Database
-   MONGODB_URI=mongodb://localhost:27017/resume-app
-   
-   # Auth
-   NEXTAUTH_URL=http://localhost:3000
-   NEXTAUTH_SECRET=your_super_secret_key
-   
-   # Email (Optional)
-   EMAIL_SERVER=smtp://...
-   EMAIL_FROM=noreply@resume-app.com
-   
-   # AI / Other
-   # Add any specific API keys if needed
-   ```
-
-4. **Run the development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
----
-
-## 📁 Project Structure
-
-```
-resume-app/
-├── app/
-│   ├── api/                  # API endpoints (auth, resume, ai)
-│   ├── auth/                 # Login/Register pages
-│   ├── dashboard/            # User Dashboard (AI Suggest, Import, Gallery)
-│   ├── resume/               # Public resume view
-│   └── page.tsx              # Homepage
-├── components/
-│   ├── dashboard/            # Dashboard components (SuggestResumeFlow, etc.)
-│   ├── templates/            # Resume Templates (Aurora, Apela, etc.)
-│   ├── ui/                   # Shared UI components
-│   └── ...
-├── lib/                      # Utilities (db, auth, ai)
-├── models/                   # Mongoose schemas
-└── public/                   # Static assets
-```
-
----
-
 ## 🤝 Contributing
 
 1. Fork the repo.
@@ -136,8 +67,4 @@ resume-app/
 4. Push to the branch.
 5. Submit a pull request.
 
----
 
-## 📄 License
-
-This project is licensed under the MIT License.

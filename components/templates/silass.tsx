@@ -347,14 +347,7 @@ export default function SilassDevTemplate({ resume, className = '' }: TemplateCo
 
           {/* Footer / meta */}
           <footer className="mt-2 text-xs text-slate-400">
-            <div className="flex items-center justify-between">
-              <div>Generated with SilasSDev template</div>
-              <div>
-                {metadata.authorUrl ? (
-                  <a href={metadata.authorUrl} target="_blank" rel="noreferrer" className="underline">{metadata.author}</a>
-                ) : metadata.author}
-              </div>
-            </div>
+            {/* Footer Removed */}
           </footer>
         </main>
       </div>

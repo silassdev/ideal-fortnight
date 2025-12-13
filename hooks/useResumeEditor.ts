@@ -229,6 +229,8 @@ export const useResumeEditor = (initialData?: ResumeData | null) => {
         handleDataChange({ ...data, sectionTitles: { ...data.sectionTitles, [key]: val } });
     };
 
+    const handleSaveStatusClose = () => setSaveStatus(prev => ({ ...prev, isOpen: false }));
+
     return {
         data,
         setData, // Expose raw setter for legacy bridges
@@ -252,6 +254,7 @@ export const useResumeEditor = (initialData?: ResumeData | null) => {
         addItem,
         removeItem,
         updateRoot,
-        updateSectionTitle
+        updateSectionTitle,
+        handleSaveStatusClose
     };
 };

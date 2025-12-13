@@ -57,9 +57,7 @@ export default function PolarisTemplate({ resume, className = '' }: TemplateComp
                             className="rounded-2xl p-6 bg-gradient-to-b from-sky-50 to-white shadow-md"
                         >
                             <div className="flex items-center gap-4">
-                                <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center text-xl font-semibold text-slate-700">
-                                    {resume.name ? resume.name.split(' ').map(n => n[0]).slice(0, 2).join('') : 'SN'}
-                                </div>
+
                                 <div>
                                     <EditableField field="name" as="h1" className="text-2xl font-extrabold leading-tight" fallback="Full Name" />
                                     <EditableField field="title" as="div" className="text-sm text-slate-600 mt-0.5" fallback="Product Engineer" />
@@ -323,9 +321,7 @@ export default function PolarisTemplate({ resume, className = '' }: TemplateComp
 
                     {/* Footer */}
                     <footer className="mt-2 text-xs text-slate-400 text-center">
-                        Generated with Polaris template • {metadata.author ? (
-                            <a href={metadata.authorUrl} target="_blank" rel="noreferrer" className="underline">{metadata.author}</a>
-                        ) : metadata.author}
+                        {/* Footer Removed */}
                     </footer>
                 </main>
             </div>

@@ -216,12 +216,7 @@ export default function ZenGridTemplate({ resume, className = '' }: TemplateComp
                     </div>
 
                     <div className="flex items-center justify-between text-xs text-slate-400 pt-4 border-t">
-                        <div>Generated with ZenGrid template</div>
-                        <div>
-                            {metadata.authorUrl ? (
-                                <a href={metadata.authorUrl} target="_blank" rel="noreferrer" className="underline">{metadata.author}</a>
-                            ) : metadata.author}
-                        </div>
+                        {/* Footer Removed */}
                     </div>
                 </section>
             </main>

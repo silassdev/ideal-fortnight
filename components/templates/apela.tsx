@@ -13,7 +13,7 @@ import {
     sortableKeyboardCoordinates,
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { TemplateComponentProps } from '@/types/template'; // Still useful for types, but we rely on editorState
+import { TemplateComponentProps } from '@/types/template';
 import {
     InlineInput,
     ContactItem,
@@ -145,9 +145,7 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
 
             {/* Header */}
             <header className="flex items-center gap-4 pb-4 border-b border-slate-200">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sky-400 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-md shrink-0">
-                    {data.name ? data.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase() : 'UN'}
-                </div>
+
                 <div className="flex-grow">
                     <InlineInput value={data.name} onChange={(v) => updateRoot('name', v)} className="text-2xl font-extrabold text-slate-900" placeholder="Full Name" isPreview={isPreview} />
                     <InlineInput value={data.title} onChange={(v) => updateRoot('title', v)} className="text-sm text-slate-600" placeholder="Professional Title" isPreview={isPreview} />
@@ -266,16 +264,6 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
                 </aside>
             </section>
 
-            <footer className="mt-8 pt-6 border-t border-slate-100 text-xs text-slate-400 flex justify-between items-center">
-                <div>Generated with Apela template</div>
-                <div>
-                    {metadata.author && metadata.authorUrl ? (
-                        <a href={metadata.authorUrl} target="_blank" rel="noopener noreferrer" className="hover:text-slate-600 transition-colors">
-                            {metadata.author}
-                        </a>
-                    ) : metadata.author}
-                </div>
-            </footer>
         </div>
     );
 }
