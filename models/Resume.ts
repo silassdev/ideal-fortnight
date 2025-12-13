@@ -96,6 +96,10 @@ const ExperienceSchema = new Schema<ExperienceSubdoc>(
         role: { type: String, default: '' },
         start: { type: String, default: '' },
         end: { type: String, default: '' },
+        startMonth: { type: String, default: '' },
+        startYear: { type: String, default: '' },
+        endMonth: { type: String, default: '' },
+        endYear: { type: String, default: '' },
         location: { type: String, default: '' },
         bullets: { type: [String], default: [] },
         currentlyWorking: { type: Boolean, default: false },
@@ -110,6 +114,10 @@ const EducationSchema = new Schema<EducationSubdoc>(
         degree: { type: String, default: '' },
         start: { type: String, default: '' },
         end: { type: String, default: '' },
+        startMonth: { type: String, default: '' },
+        startYear: { type: String, default: '' },
+        endMonth: { type: String, default: '' },
+        endYear: { type: String, default: '' },
         location: { type: String, default: '' },
         notes: { type: String, default: '' },
     },
@@ -157,7 +165,7 @@ const ResumeSchema = new Schema<IResume>(
         // sections
         experience: { type: [ExperienceSchema], default: [] },
         education: { type: [EducationSchema], default: [] },
-        skills: { type: [String], default: [] },
+        skills: { type: [Schema.Types.Mixed], default: [] },
         sections: { type: [ExtraSectionSchema], default: [] }, // custom sections like projects, awards
 
         // pages or additional layout info

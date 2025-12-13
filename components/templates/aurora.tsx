@@ -18,13 +18,19 @@ import {
   useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { EditorToolbar } from '@/components/ui/EditorToolbar';
+import { DateRangePicker } from '@/components/ui/DateRangePicker';
 
 // --- Types ---
 type ExperienceItem = {
   id: string;
   role: string;
   company: string;
-  date: string;
+  startMonth: string;
+  startYear: string;
+  endMonth: string;
+  endYear: string;
+  current: boolean;
   description: string;
 };
 
@@ -32,7 +38,11 @@ type EducationItem = {
   id: string;
   school: string;
   degree: string;
-  date: string;
+  startMonth: string;
+  startYear: string;
+  endMonth: string;
+  endYear: string;
+  current: boolean;
   description: string;
 };
 
@@ -132,6 +142,7 @@ const InlineInput = ({
   placeholder = "...",
   multiline = false,
   isPreview = false,
+  onBlur,
 }: {
   value: string;
   onChange: (val: string) => void;
@@ -139,6 +150,7 @@ const InlineInput = ({
   placeholder?: string;
   multiline?: boolean;
   isPreview?: boolean;
+  onBlur?: () => void;
 }) => {
   const baseStyles = "bg-transparent border-none outline-none focus:ring-1 focus:ring-indigo-200 rounded px-1 transition-all w-full leading-normal";
 
@@ -156,6 +168,7 @@ const InlineInput = ({
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         className={`${baseStyles} resize-none overflow-hidden ${className}`}
         placeholder={placeholder}
         rows={1}
@@ -172,6 +185,7 @@ const InlineInput = ({
       type="text"
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onBlur={onBlur}
       className={`${baseStyles} ${className}`}
       placeholder={placeholder}
     />
@@ -249,14 +263,33 @@ const SortableItemWrapper = ({ id, children, onDelete, isPreview }: { id: string
   );
 };
 
-const ExperienceRow = ({ item, update, remove, isPreview }: { item: ExperienceItem, update: (id: string, field: string, val: string) => void, remove: (id: string) => void, isPreview: boolean }) => (
+const ExperienceRow = ({ item, update, remove, isPreview }: { item: ExperienceItem, update: (id: string, field: string, val: any) => void, remove: (id: string) => void, isPreview: boolean }) => (
   <SortableItemWrapper id={item.id} onDelete={() => remove(item.id)} isPreview={isPreview}>
-    <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-1 items-baseline">
-      <div className="flex flex-col">
-        <InlineInput value={item.role} onChange={(v) => update(item.id, 'role', v)} className="text-lg font-bold text-slate-800 leading-tight" placeholder="Job Title" isPreview={isPreview} />
-        <InlineInput value={item.company} onChange={(v) => update(item.id, 'company', v)} className="text-md font-medium text-slate-600" placeholder="Company Name" isPreview={isPreview} />
+    <div className="grid grid-cols-1 gap-1 items-baseline">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-baseline gap-2">
+        <div className="flex flex-col">
+          <InlineInput value={item.role} onChange={(v) => update(item.id, 'role', v)} className="text-lg font-bold text-slate-800 leading-tight" placeholder="Job Title" isPreview={isPreview} />
+          <InlineInput value={item.company} onChange={(v) => update(item.id, 'company', v)} className="text-md font-medium text-slate-600" placeholder="Company Name" isPreview={isPreview} />
+        </div>
+
+        {isPreview ? (
+          <div className="text-sm font-semibold text-slate-400 whitespace-nowrap">
+            {item.startMonth} {item.startYear} - {item.current ? "Present" : `${item.endMonth} ${item.endYear}`}
+          </div>
+        ) : (
+          <DateRangePicker
+            startMonth={item.startMonth}
+            startYear={item.startYear}
+            endMonth={item.endMonth}
+            endYear={item.endYear}
+            current={item.current}
+            onChange={(d) => {
+              Object.entries(d).forEach(([key, val]) => update(item.id, key, val));
+            }}
+            className="scale-90 origin-top-right transform"
+          />
+        )}
       </div>
-      <InlineInput value={item.date} onChange={(v) => update(item.id, 'date', v)} className="text-sm font-semibold text-slate-400 md:text-right" placeholder="Jan 2020 - Present" isPreview={isPreview} />
     </div>
     <div className={`mt-2 ${isPreview ? 'pl-0 border-l-0' : 'pl-0 md:pl-0 border-l-2 border-slate-100 ml-1 md:ml-0 md:border-l-0'}`}>
       <InlineInput value={item.description} onChange={(v) => update(item.id, 'description', v)} className="text-sm text-slate-600 leading-relaxed" placeholder="• Achievements and responsibilities..." multiline isPreview={isPreview} />
@@ -264,14 +297,33 @@ const ExperienceRow = ({ item, update, remove, isPreview }: { item: ExperienceIt
   </SortableItemWrapper>
 );
 
-const EducationRow = ({ item, update, remove, isPreview }: { item: EducationItem, update: (id: string, field: string, val: string) => void, remove: (id: string) => void, isPreview: boolean }) => (
+const EducationRow = ({ item, update, remove, isPreview }: { item: EducationItem, update: (id: string, field: string, val: any) => void, remove: (id: string) => void, isPreview: boolean }) => (
   <SortableItemWrapper id={item.id} onDelete={() => remove(item.id)} isPreview={isPreview}>
-    <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-1 items-baseline">
-      <div className="flex flex-col">
-        <InlineInput value={item.school} onChange={(v) => update(item.id, 'school', v)} className="text-md font-bold text-slate-800" placeholder="School / University" isPreview={isPreview} />
-        <InlineInput value={item.degree} onChange={(v) => update(item.id, 'degree', v)} className="text-sm text-slate-600 italic" placeholder="Degree / Field of Study" isPreview={isPreview} />
+    <div className="grid grid-cols-1 gap-1 items-baseline">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-baseline gap-2">
+        <div className="flex flex-col">
+          <InlineInput value={item.school} onChange={(v) => update(item.id, 'school', v)} className="text-md font-bold text-slate-800" placeholder="School / University" isPreview={isPreview} />
+          <InlineInput value={item.degree} onChange={(v) => update(item.id, 'degree', v)} className="text-sm text-slate-600 italic" placeholder="Degree / Field of Study" isPreview={isPreview} />
+        </div>
+
+        {isPreview ? (
+          <div className="text-sm font-semibold text-slate-400 whitespace-nowrap">
+            {item.startMonth} {item.startYear} - {item.current ? "Present" : `${item.endMonth} ${item.endYear}`}
+          </div>
+        ) : (
+          <DateRangePicker
+            startMonth={item.startMonth}
+            startYear={item.startYear}
+            endMonth={item.endMonth}
+            endYear={item.endYear}
+            current={item.current}
+            onChange={(d) => {
+              Object.entries(d).forEach(([key, val]) => update(item.id, key, val));
+            }}
+            className="scale-90 origin-top-right transform"
+          />
+        )}
       </div>
-      <InlineInput value={item.date} onChange={(v) => update(item.id, 'date', v)} className="text-sm font-semibold text-slate-400 md:text-right" placeholder="Graduation Year" isPreview={isPreview} />
     </div>
   </SortableItemWrapper>
 );
@@ -301,14 +353,18 @@ const SkillRow = ({ item, update, remove, isPreview }: { item: SkillCategory, up
 
 const CertificationRow = ({ item, update, remove, isPreview }: { item: CertificationItem, update: (id: string, field: string, val: string) => void, remove: (id: string) => void, isPreview: boolean }) => (
   <SortableItemWrapper id={item.id} onDelete={() => remove(item.id)} isPreview={isPreview}>
-    <div className="flex justify-between items-baseline">
-      <div className="flex gap-2 items-baseline">
-        <InlineInput value={item.name} onChange={(v) => update(item.id, 'name', v)} className="text-sm font-bold text-slate-700" placeholder="Certificate Name" isPreview={isPreview} />
-        {!isPreview && <span className="text-slate-400 text-sm">-</span>}
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-baseline gap-2 w-full">
+      <div className="flex flex-wrap gap-2 items-baseline w-full">
+        <div className="flex-shrink-0">
+          <InlineInput value={item.name} onChange={(v) => update(item.id, 'name', v)} className="text-sm font-bold text-slate-700 min-w-[150px]" placeholder="Certificate Name" isPreview={isPreview} />
+        </div>
+        {!isPreview && <span className="text-slate-400 text-sm hidden md:inline">-</span>}
         {isPreview && item.name && item.issuer && <span className="text-slate-400 text-sm">-</span>}
-        <InlineInput value={item.issuer} onChange={(v) => update(item.id, 'issuer', v)} className="text-sm text-slate-500" placeholder="Issuer" isPreview={isPreview} />
+        <div className="flex-grow min-w-0">
+          <InlineInput value={item.issuer} onChange={(v) => update(item.id, 'issuer', v)} className="text-sm text-slate-500 break-words w-full" placeholder="Issuer" isPreview={isPreview} multiline={true} />
+        </div>
       </div>
-      <InlineInput value={item.date} onChange={(v) => update(item.id, 'date', v)} className="text-xs font-semibold text-slate-400 text-right w-24" placeholder="Date" isPreview={isPreview} />
+      <InlineInput value={item.date} onChange={(v) => update(item.id, 'date', v)} className="text-xs font-semibold text-slate-400 md:text-right w-full md:w-auto" placeholder="Date" isPreview={isPreview} />
     </div>
   </SortableItemWrapper>
 );
@@ -326,11 +382,14 @@ const ContactItem = ({ value, icon, onChange, placeholder, isPreview }: any) => 
 
 // --- Main Component ---
 
+// --- Main Component ---
+
 interface AuroraEditorProps {
   initialData?: ResumeData | null;
 }
 
 export default function AuroraEditor({ initialData }: AuroraEditorProps) {
+  // State
   const [data, setData] = useState<ResumeData>({
     ...INITIAL_DATA,
     ...initialData,
@@ -339,63 +398,89 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
       ...(initialData?.sectionTitles || {})
     }
   });
+
+  const [history, setHistory] = useState<ResumeData[]>([data]);
+  const [historyIndex, setHistoryIndex] = useState(0);
+
   const [isPreview, setIsPreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
 
+  // Refs
+  const componentRef = useRef<HTMLDivElement>(null);
+  const historyDebounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Sensors for Drag & Drop
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const componentRef = useRef<HTMLDivElement>(null);
-
-  const handlePrint = useReactToPrint({
-    contentRef: componentRef,
-    documentTitle: `${data.name} - Resume`,
-    onBeforeGetContent: async () => {
-      // Guard: Check if saved
-      if (isDirty) {
-        alert("Please SAVE your changes before downloading to ensure you have the latest version.");
-        // We throw an error to cancel the print process, though react-to-print might log it
-        throw new Error("Unsaved changes");
-      }
-      setIsPreview(true);
-      // Wait for React to render the preview state
-      return new Promise((resolve) => setTimeout(resolve, 200));
-    },
-    onAfterPrint: () => setIsPreview(false),
-    // Handle error if we blocked it
-    onPrintError: (errorLocation: any, error: any) => {
-      if (error.message === "Unsaved changes") {
-        // Already alerted user
-      } else {
-        console.error("Print failed", error);
-      }
-    }
-  } as any);
-
-  // Load local storage if no initial data provided (legacy behavior support)
+  // Persistence (Legacy LS)
   useEffect(() => {
     if (!initialData) {
       const saved = localStorage.getItem('aurora_resume_data');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          setData(prev => ({ ...prev, ...parsed, sectionTitles: { ...DEFAULT_TITLES, ...parsed.sectionTitles } }));
+          const merged = {
+            ...INITIAL_DATA,
+            ...parsed,
+            sectionTitles: { ...DEFAULT_TITLES, ...parsed.sectionTitles }
+          };
+          setData(merged);
+          setHistory([merged]);
         } catch (e) { console.error("LS Load Error", e); }
       }
     }
   }, [initialData]);
 
-  // Mark dirty on change
-  const handleDataChange = (newData: ResumeData) => {
-    setData(newData);
-    setIsDirty(true);
-    // Still sync to LS for safety
-    localStorage.setItem('aurora_resume_data', JSON.stringify(newData));
+  // History Management
+  const addToHistory = (newData: ResumeData) => {
+    setHistory(prev => {
+      const newHistory = prev.slice(0, historyIndex + 1);
+      // Avoid duplicates
+      if (JSON.stringify(newHistory[newHistory.length - 1]) === JSON.stringify(newData)) return prev;
+      newHistory.push(newData);
+      if (newHistory.length > 50) newHistory.shift(); // Limit
+      return newHistory;
+    });
+    setHistoryIndex(prev => Math.min(prev + 1, 49)); // Adjust index logic if shifting
   };
 
+  // Central Update Handler
+  const handleDataChange = (newData: ResumeData, immediateHistory = false) => {
+    setData(newData);
+    setIsDirty(true);
+    localStorage.setItem('aurora_resume_data', JSON.stringify(newData));
+
+    if (historyDebounceRef.current) clearTimeout(historyDebounceRef.current);
+
+    if (immediateHistory) {
+      addToHistory(newData);
+    } else {
+      historyDebounceRef.current = setTimeout(() => {
+        addToHistory(newData);
+      }, 1000);
+    }
+  };
+
+  // Actions
+  const handleUndo = () => {
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1;
+      setHistoryIndex(newIndex);
+      setData(history[newIndex]);
+    }
+  };
+
+  const handleRedo = () => {
+    if (historyIndex < history.length - 1) {
+      const newIndex = historyIndex + 1;
+      setHistoryIndex(newIndex);
+      setData(history[newIndex]);
+    }
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -403,34 +488,51 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
       const res = await fetch('/api/resume', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data), // Sending full data object
+        body: JSON.stringify(data),
       });
-
       if (!res.ok) throw new Error('Save failed');
-
       setIsDirty(false);
-      alert('Resume saved successfully!');
+      // alert('Saved!'); // Optional: toast notification is better but alert is fine for now
     } catch (error) {
       console.error(error);
-      alert('Failed to save resume. Please try again.');
+      alert('Failed to save.');
     } finally {
       setIsSaving(false);
     }
   };
 
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    documentTitle: `${data.name} - Resume`,
+    onBeforeGetContent: async () => {
+      if (isDirty) {
+        // We allow print but warn. Or we could auto-save.
+        // For now, let's auto-save? No, safer to alert.
+        const confirm = window.confirm("You have unsaved changes. It is recommended to SAVE before downloading. Continue anyway?");
+        if (!confirm) throw new Error("Unsaved changes");
+      }
+      setIsPreview(true);
+      return new Promise((resolve) => setTimeout(resolve, 300));
+    },
+    onAfterPrint: () => setIsPreview(false),
+    onPrintError: (errorLocation: any, error: any) => {
+      if (error.message !== "Unsaved changes") console.error(error);
+    }
+  } as any);
 
-  // --- Helpers ---
+
+  // CRUD Helpers
   const handleDragEnd = (event: DragEndEvent, listKey: keyof ResumeData) => {
     const { active, over } = event;
     if (active.id !== over?.id && Array.isArray(data[listKey])) {
       const list = data[listKey] as any[];
       const oldIndex = list.findIndex((item) => item.id === active.id);
       const newIndex = list.findIndex((item) => item.id === over?.id);
-      handleDataChange({ ...data, [listKey]: arrayMove(list, oldIndex, newIndex) });
+      handleDataChange({ ...data, [listKey]: arrayMove(list, oldIndex, newIndex) }, true);
     }
   };
 
-  const updateItem = (listKey: keyof ResumeData, id: string, field: string, val: string) => {
+  const updateItem = (listKey: keyof ResumeData, id: string, field: string, val: any) => {
     handleDataChange({
       ...data,
       [listKey]: (data[listKey] as any[]).map(item => item.id === id ? { ...item, [field]: val } : item)
@@ -441,14 +543,14 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
     handleDataChange({
       ...data,
       [listKey]: [...(data[listKey] as any[]), { ...newItem, id: Date.now().toString() }]
-    });
+    }, true);
   };
 
   const removeItem = (listKey: keyof ResumeData, id: string) => {
     handleDataChange({
       ...data,
       [listKey]: (data[listKey] as any[]).filter(item => item.id !== id)
-    });
+    }, true);
   };
 
   const updateRoot = (field: keyof ResumeData, value: any) => {
@@ -459,52 +561,22 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
     handleDataChange({ ...data, sectionTitles: { ...data.sectionTitles, [key]: val } });
   };
 
-
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8 flex flex-col items-center gap-6 font-sans">
 
       {/* Action Bar */}
-      <div className="flex justify-between w-full max-w-[210mm] gap-4 mb-2 sticky top-4 z-50 bg-slate-100/90 backdrop-blur p-2 rounded-xl shadow-sm border border-slate-200">
-        <div className="flex items-center gap-4">
-          <div className="text-sm text-slate-500 font-mono self-center hidden md:block">Aurora Editor</div>
-
-          <div className="bg-slate-200 rounded-lg p-1 flex text-xs font-semibold">
-            <button
-              onClick={() => setIsPreview(false)}
-              className={`px-3 py-1 rounded ${!isPreview ? 'bg-white shadow text-slate-800' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => setIsPreview(true)}
-              className={`px-3 py-1 rounded ${isPreview ? 'bg-white shadow text-slate-800' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Preview
-            </button>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleSave}
-            disabled={isSaving || !isDirty}
-            className={`px-4 py-2 rounded text-sm font-medium transition-colors ${isDirty
-              ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md transform hover:-translate-y-0.5'
-              : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-              }`}
-          >
-            {isSaving ? 'Saving...' : isDirty ? 'Save Changes' : 'Saved'}
-          </button>
-
-          <button
-            onClick={() => handlePrint && handlePrint()}
-            className="bg-slate-900 text-white px-4 py-2 rounded text-sm font-medium shadow hover:bg-slate-800 transition-colors flex items-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-            <span className="hidden md:inline">Download PDF</span>
-          </button>
-        </div>
-      </div>
+      <EditorToolbar
+        onUndo={handleUndo}
+        onRedo={handleRedo}
+        canUndo={historyIndex > 0}
+        canRedo={historyIndex < history.length - 1}
+        onSave={handleSave}
+        isSaving={isSaving}
+        isDirty={isDirty}
+        onPreviewToggle={() => setIsPreview(!isPreview)}
+        isPreview={isPreview}
+        onDownload={handlePrint || (() => { })}
+      />
 
       {/* Resume Frame */}
       <div
@@ -541,7 +613,7 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
               <SectionHeader title={data.sectionTitles.experience} onChange={(v) => updateSectionTitle('experience', v)} className="mb-0 border-b-0" isPreview={isPreview} />
             </div>
             {!isPreview && (
-              <button onClick={() => addItem('experience', { role: '', company: '', date: '', description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+              <button onClick={() => addItem('experience', { role: '', company: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
             )}
           </div>
           {isPreview ? (
@@ -568,7 +640,7 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
               <SectionHeader title={data.sectionTitles.education} onChange={(v) => updateSectionTitle('education', v)} className="mb-0 border-b-0" isPreview={isPreview} />
             </div>
             {!isPreview && (
-              <button onClick={() => addItem('education', { school: '', degree: '', date: '', description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+              <button onClick={() => addItem('education', { school: '', degree: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
             )}
           </div>
           {isPreview ? (
@@ -590,29 +662,31 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
 
         {/* Projects */}
         <section className="mb-8 break-inside-avoid">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex-grow">
-              <SectionHeader title={data.sectionTitles.projects} onChange={(v) => updateSectionTitle('projects', v)} className="mb-0 border-b-0" isPreview={isPreview} />
+          <div> {/* Wrapper to prevent fragment issues */}
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex-grow">
+                <SectionHeader title={data.sectionTitles.projects} onChange={(v) => updateSectionTitle('projects', v)} className="mb-0 border-b-0" isPreview={isPreview} />
+              </div>
+              {!isPreview && (
+                <button onClick={() => addItem('projects', { name: '', link: '', tech: '', description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+              )}
             </div>
-            {!isPreview && (
-              <button onClick={() => addItem('projects', { name: '', link: '', tech: '', description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+            {isPreview ? (
+              <div className="space-y-4">
+                {data.projects.map((item) => <ProjectRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
+              </div>
+            ) : (
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'projects')}>
+                <SortableContext items={data.projects} strategy={verticalListSortingStrategy}>
+                  <div className="space-y-4">
+                    {data.projects.map((item) => (
+                      <ProjectRow key={item.id} item={item} update={(id, f, v) => updateItem('projects', id, f, v)} remove={(id) => removeItem('projects', id)} isPreview={false} />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
             )}
           </div>
-          {isPreview ? (
-            <div className="space-y-4">
-              {data.projects.map((item) => <ProjectRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
-            </div>
-          ) : (
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'projects')}>
-              <SortableContext items={data.projects} strategy={verticalListSortingStrategy}>
-                <div className="space-y-4">
-                  {data.projects.map((item) => (
-                    <ProjectRow key={item.id} item={item} update={(id, f, v) => updateItem('projects', id, f, v)} remove={(id) => removeItem('projects', id)} isPreview={false} />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-          )}
         </section>
 
         {/* Compact Sections: Skills & Certs */}
