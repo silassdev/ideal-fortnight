@@ -20,6 +20,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { EditorToolbar } from '@/components/ui/EditorToolbar';
 import { DateRangePicker } from '@/components/ui/DateRangePicker';
+import SaveStatusModal from '@/components/ui/SaveStatusModal';
 
 // --- Types ---
 type ExperienceItem = {
@@ -410,6 +411,7 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
   const [isPreview, setIsPreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<{ isOpen: boolean; status: 'success' | 'error'; }>({ isOpen: false, status: 'success' });
 
   // Refs
   const componentRef = useRef<HTMLDivElement>(null);
@@ -497,10 +499,10 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
       });
       if (!res.ok) throw new Error('Save failed');
       setIsDirty(false);
-      // alert('Saved!'); // Optional: toast notification is better but alert is fine for now
+      setSaveStatus({ isOpen: true, status: 'success' });
     } catch (error) {
       console.error(error);
-      alert('Failed to save.');
+      setSaveStatus({ isOpen: true, status: 'error' });
     } finally {
       setIsSaving(false);
     }
@@ -574,6 +576,12 @@ export default function AuroraEditor({ initialData }: AuroraEditorProps) {
 
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8 flex flex-col items-center gap-6 font-sans">
+
+      <SaveStatusModal
+        isOpen={saveStatus.isOpen}
+        status={saveStatus.status}
+        onClose={() => setSaveStatus(prev => ({ ...prev, isOpen: false }))}
+      />
 
       {/* Action Bar */}
       <EditorToolbar
