@@ -68,10 +68,12 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
     // Auto-scale for mobile
     useEffect(() => {
         const handleResize = () => {
-            const containerWidth = Math.min(window.innerWidth - 32, 900); // 32px padding, max 900px
-            const targetWidth = 900; // Base width of resumes usually
-            if (window.innerWidth < 1024) {
-                const newScale = Math.min(containerWidth / targetWidth, 1);
+            const containerWidth = Math.min(window.innerWidth - 32, 900);
+            // Target width should be A4 width in pixels (approx 794px) to ensure correct layout reflow is avoided
+            const targetWidth = 794;
+
+            if (containerWidth < targetWidth) {
+                const newScale = containerWidth / targetWidth;
                 setScale(newScale);
             } else {
                 setScale(1);
@@ -178,7 +180,7 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 scrollbar-hide">
+                        <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
                             {/* Undo/Redo */}
                             <div className="flex bg-slate-100 rounded-lg p-1 mr-2 shrink-0">
                                 <button onClick={undo} disabled={historyIndex <= 0} className="p-1.5 text-slate-600 hover:text-indigo-600 disabled:opacity-30 transition-colors">
@@ -253,14 +255,12 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
                             style={{
                                 transform: `scale(${scale})`,
                                 transformOrigin: 'top center',
-                                width: '100%',
-                                maxWidth: '900px', // Ensure it doesn't stretch too wide initially
-                                height: scale < 1 ? `calc(100% * ${1 / scale})` : 'auto', // Hack to prevent clipping? No, this is tricky.
-                                // Better approach: The container has overflow visible or we manually set height.
-                                // Actually, if we scale down, the visual height shrinks, but DOM height remains '100%'.
-                                // We might have excess whitespace at the bottom.
-                                marginBottom: scale < 1 ? `-${(1 - scale) * 100}%` : '0px' // Negative margin to pull footer up? Tricky with dynamic height.
+                                width: '210mm', // Force desktop width for layout
+                                minWidth: '794px', // Fallback pixel width for A4
+                                height: 'auto',
+                                marginBottom: scale < 1 ? `-${(1 - scale) * 100}%` : '0px'
                             }}
+                            className="transition-transform duration-200 ease-out"
                         >
                             <div id="resume-editor-canvas" className="bg-white shadow-xl rounded-lg overflow-hidden min-h-[1000px]">
                                 {/* 
