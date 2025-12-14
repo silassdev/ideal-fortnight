@@ -124,67 +124,75 @@ export default function Starter({ editorState }: StarterProps) {
             </div>
 
             {/* Summary */}
-            <div className="mb-8">
-                <SectionHeader title={data.sectionTitles.summary} onChange={(v) => updateSectionTitle('summary', v)} isPreview={isPreview} className="border-none mb-2 text-slate-900" />
-                <InlineInput value={data.summary} onChange={(v) => updateRoot('summary', v)} multiline className="text-slate-600 leading-relaxed" placeholder="Professional summary..." isPreview={isPreview} />
-            </div>
+            {(data.summary || !isPreview) && (
+                <div className="mb-8">
+                    <SectionHeader title={data.sectionTitles.summary} onChange={(v) => updateSectionTitle('summary', v)} isPreview={isPreview} className="border-none mb-2 text-slate-900" />
+                    <InlineInput value={data.summary} onChange={(v) => updateRoot('summary', v)} multiline className="text-slate-600 leading-relaxed" placeholder="Professional summary..." isPreview={isPreview} />
+                </div>
+            )}
 
             {/* Experience */}
-            <div className="mb-8">
-                <div className="flex justify-between items-center mb-4 border-b border-slate-200 pb-2">
-                    <SectionHeader title={data.sectionTitles.experience} onChange={(v) => updateSectionTitle('experience', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-900" />
-                    {!isPreview && (
-                        <button onClick={() => addItem('experience', { role: '', company: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
-                    )}
+            {(data.experience?.length > 0 || !isPreview) && (
+                <div className="mb-8">
+                    <div className="flex justify-between items-center mb-4 border-b border-slate-200 pb-2">
+                        <SectionHeader title={data.sectionTitles.experience} onChange={(v) => updateSectionTitle('experience', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-900" />
+                        {!isPreview && (
+                            <button onClick={() => addItem('experience', { role: '', company: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+                        )}
+                    </div>
+                    <DndContext id="starter-dnd-experience" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
+                        <SortableContext items={data.experience} strategy={verticalListSortingStrategy}>
+                            <div>
+                                {data.experience.map((item: any) => (
+                                    <ExperienceRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('experience', id, f, v)} remove={(id: string) => removeItem('experience', id)} isPreview={isPreview} />
+                                ))}
+                            </div>
+                        </SortableContext>
+                    </DndContext>
                 </div>
-                <DndContext id="starter-dnd-experience" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
-                    <SortableContext items={data.experience} strategy={verticalListSortingStrategy}>
-                        <div>
-                            {data.experience.map((item: any) => (
-                                <ExperienceRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('experience', id, f, v)} remove={(id: string) => removeItem('experience', id)} isPreview={isPreview} />
-                            ))}
-                        </div>
-                    </SortableContext>
-                </DndContext>
-            </div>
+            )}
 
             {/* Education */}
-            <div className="mb-8">
-                <div className="flex justify-between items-center mb-4 border-b border-slate-200 pb-2">
-                    <SectionHeader title={data.sectionTitles.education} onChange={(v) => updateSectionTitle('education', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-900" />
-                    {!isPreview && (
-                        <button onClick={() => addItem('education', { school: '', degree: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
-                    )}
+            {(data.education?.length > 0 || !isPreview) && (
+                <div className="mb-8">
+                    <div className="flex justify-between items-center mb-4 border-b border-slate-200 pb-2">
+                        <SectionHeader title={data.sectionTitles.education} onChange={(v) => updateSectionTitle('education', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-900" />
+                        {!isPreview && (
+                            <button onClick={() => addItem('education', { school: '', degree: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+                        )}
+                    </div>
+                    <DndContext id="starter-dnd-education" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
+                        <SortableContext items={data.education} strategy={verticalListSortingStrategy}>
+                            <div>
+                                {data.education.map((item: any) => (
+                                    <EducationRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('education', id, f, v)} remove={(id: string) => removeItem('education', id)} isPreview={isPreview} />
+                                ))}
+                            </div>
+                        </SortableContext>
+                    </DndContext>
                 </div>
-                <DndContext id="starter-dnd-education" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
-                    <SortableContext items={data.education} strategy={verticalListSortingStrategy}>
-                        <div>
-                            {data.education.map((item: any) => (
-                                <EducationRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('education', id, f, v)} remove={(id: string) => removeItem('education', id)} isPreview={isPreview} />
-                            ))}
-                        </div>
-                    </SortableContext>
-                </DndContext>
-            </div>
+            )}
 
             {/* Skills (Simple Text Area for Minimal) */}
-            <div className="mb-8">
-                <SectionHeader title={data.sectionTitles.skills} onChange={(v) => updateSectionTitle('skills', v)} isPreview={isPreview} className="border-none mb-2 pb-2 border-b border-slate-200 text-slate-900" />
-                {!isPreview && <p className="text-xs text-slate-400 mb-2">Hack for Starter: Use 'Skills' input as a free-form list.</p>}
-                {/* Since Starter is minimal, let's just use the first skill category as a big list, or just a custom implementation. 
+            {(data.skills?.length > 0 || !isPreview) && (
+                <div className="mb-8">
+                    <SectionHeader title={data.sectionTitles.skills} onChange={(v) => updateSectionTitle('skills', v)} isPreview={isPreview} className="border-none mb-2 pb-2 border-b border-slate-200 text-slate-900" />
+                    {!isPreview && <p className="text-xs text-slate-400 mb-2">Hack for Starter: Use 'Skills' input as a free-form list.</p>}
+                    {/* Since Starter is minimal, let's just use the first skill category as a big list, or just a custom implementation. 
              But to keep it compatible with data schema, we should probably iterate categories. 
              Let's just show categories simply. */}
-                <div className="flex flex-wrap gap-4">
-                    {data.skills.map((cat: any) => (
-                        <div key={cat.id} className="bg-slate-50 p-2 rounded">
-                            <InlineInput value={cat.name} onChange={(v) => updateItem('skills', cat.id, 'name', v)} className="font-bold text-sm mb-1" placeholder="Category" isPreview={isPreview} />
-                            <InlineInput value={cat.skills} onChange={(v) => updateItem('skills', cat.id, 'skills', v)} className="text-sm text-slate-600" placeholder="List skills..." multiline isPreview={isPreview} />
-                            {!isPreview && <button onClick={() => removeItem('skills', cat.id)} className="text-xs text-red-500 mt-1">Remove</button>}
-                        </div>
-                    ))}
-                    {!isPreview && <button onClick={() => addItem('skills', { name: '', skills: '' })} className="bg-slate-100 p-2 rounded text-xs text-slate-500 hover:bg-slate-200">+ Category</button>}
+                    <div className="flex flex-wrap gap-4">
+                        {data.skills.map((cat: any) => (
+                            <div key={cat.id} className="bg-slate-50 p-2 rounded">
+                                <InlineInput value={cat.name} onChange={(v) => updateItem('skills', cat.id, 'name', v)} className="font-bold text-sm mb-1" placeholder="Category" isPreview={isPreview} />
+                                <InlineInput value={cat.skills} onChange={(v) => updateItem('skills', cat.id, 'skills', v)} className="text-sm text-slate-600" placeholder="List skills..." multiline isPreview={isPreview} />
+                                {!isPreview && <button onClick={() => removeItem('skills', cat.id)} className="text-xs text-red-500 mt-1">Remove</button>}
+                            </div>
+                        ))}
+                        {!isPreview && <button onClick={() => addItem('skills', { name: '', skills: '' })} className="bg-slate-100 p-2 rounded text-xs text-slate-500 hover:bg-slate-200">+ Category</button>}
+                    </div>
                 </div>
-            </div>
+            )}
 
         </div>
     );

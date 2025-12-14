@@ -436,149 +436,161 @@ export default function AuroraEditor({ resume, editorState }: { resume?: ResumeD
         </header>
 
         {/* Summary */}
-        <section className="mb-8">
-          <SectionHeader title={data.sectionTitles.summary} onChange={(v) => updateSectionTitle('summary', v)} isPreview={isPreview} />
-          <InlineInput value={data.summary} onChange={(v) => updateRoot('summary', v)} multiline className="text-sm text-slate-700 leading-relaxed text-justify" placeholder="Professional summary..." isPreview={isPreview} />
-        </section>
+        {(data.summary || !isPreview) && (
+          <section className="mb-8">
+            <SectionHeader title={data.sectionTitles.summary} onChange={(v) => updateSectionTitle('summary', v)} isPreview={isPreview} />
+            <InlineInput value={data.summary} onChange={(v) => updateRoot('summary', v)} multiline className="text-sm text-slate-700 leading-relaxed text-justify" placeholder="Professional summary..." isPreview={isPreview} />
+          </section>
+        )}
 
         {/* Experience */}
-        <section className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex-grow">
-              <SectionHeader title={data.sectionTitles.experience} onChange={(v) => updateSectionTitle('experience', v)} className="mb-0 border-b-0" isPreview={isPreview} />
-            </div>
-            {!isPreview && (
-              <button onClick={() => addItem('experience', { role: '', company: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
-            )}
-          </div>
-          {isPreview ? (
-            <div className="space-y-4">
-              {data.experience.map((item: ExperienceItem) => <ExperienceRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
-            </div>
-          ) : (
-            <DndContext id="aurora-dnd-experience" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
-              <SortableContext items={data.experience} strategy={verticalListSortingStrategy}>
-                <div className="space-y-4">
-                  {data.experience.map((item: ExperienceItem) => (
-                    <ExperienceRow key={item.id} item={item} update={(id, f, v) => updateItem('experience', id, f, v)} remove={(id) => removeItem('experience', id)} isPreview={false} />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-          )}
-        </section>
-
-        {/* Education */}
-        <section className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex-grow">
-              <SectionHeader title={data.sectionTitles.education} onChange={(v) => updateSectionTitle('education', v)} className="mb-0 border-b-0" isPreview={isPreview} />
-            </div>
-            {!isPreview && (
-              <button onClick={() => addItem('education', { school: '', degree: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
-            )}
-          </div>
-          {isPreview ? (
-            <div className="space-y-4">
-              {data.education.map((item: EducationItem) => <EducationRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
-            </div>
-          ) : (
-            <DndContext id="aurora-dnd-education" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
-              <SortableContext items={data.education} strategy={verticalListSortingStrategy}>
-                <div className="space-y-4">
-                  {data.education.map((item: EducationItem) => (
-                    <EducationRow key={item.id} item={item} update={(id, f, v) => updateItem('education', id, f, v)} remove={(id) => removeItem('education', id)} isPreview={false} />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-          )}
-        </section>
-
-        {/* Projects */}
-        <section className="mb-8 break-inside-avoid">
-          <div> {/* Wrapper to prevent fragment issues */}
+        {(data.experience?.length > 0 || !isPreview) && (
+          <section className="mb-8">
             <div className="flex justify-between items-center mb-4">
               <div className="flex-grow">
-                <SectionHeader title={data.sectionTitles.projects} onChange={(v) => updateSectionTitle('projects', v)} className="mb-0 border-b-0" isPreview={isPreview} />
+                <SectionHeader title={data.sectionTitles.experience} onChange={(v) => updateSectionTitle('experience', v)} className="mb-0 border-b-0" isPreview={isPreview} />
               </div>
               {!isPreview && (
-                <button onClick={() => addItem('projects', { name: '', link: '', tech: '', description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+                <button onClick={() => addItem('experience', { role: '', company: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
               )}
             </div>
             {isPreview ? (
               <div className="space-y-4">
-                {data.projects.map((item: ProjectItem) => <ProjectRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
+                {data.experience.map((item: ExperienceItem) => <ExperienceRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
               </div>
             ) : (
-              <DndContext id="aurora-dnd-projects" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'projects')}>
-                <SortableContext items={data.projects} strategy={verticalListSortingStrategy}>
+              <DndContext id="aurora-dnd-experience" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
+                <SortableContext items={data.experience} strategy={verticalListSortingStrategy}>
                   <div className="space-y-4">
-                    {data.projects.map((item: ProjectItem) => (
-                      <ProjectRow key={item.id} item={item} update={(id, f, v) => updateItem('projects', id, f, v)} remove={(id) => removeItem('projects', id)} isPreview={false} />
+                    {data.experience.map((item: ExperienceItem) => (
+                      <ExperienceRow key={item.id} item={item} update={(id, f, v) => updateItem('experience', id, f, v)} remove={(id) => removeItem('experience', id)} isPreview={false} />
                     ))}
                   </div>
                 </SortableContext>
               </DndContext>
             )}
-          </div>
-        </section>
+          </section>
+        )}
+
+        {/* Education */}
+        {(data.education?.length > 0 || !isPreview) && (
+          <section className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex-grow">
+                <SectionHeader title={data.sectionTitles.education} onChange={(v) => updateSectionTitle('education', v)} className="mb-0 border-b-0" isPreview={isPreview} />
+              </div>
+              {!isPreview && (
+                <button onClick={() => addItem('education', { school: '', degree: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+              )}
+            </div>
+            {isPreview ? (
+              <div className="space-y-4">
+                {data.education.map((item: EducationItem) => <EducationRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
+              </div>
+            ) : (
+              <DndContext id="aurora-dnd-education" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
+                <SortableContext items={data.education} strategy={verticalListSortingStrategy}>
+                  <div className="space-y-4">
+                    {data.education.map((item: EducationItem) => (
+                      <EducationRow key={item.id} item={item} update={(id, f, v) => updateItem('education', id, f, v)} remove={(id) => removeItem('education', id)} isPreview={false} />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            )}
+          </section>
+        )}
+
+        {/* Projects */}
+        {(data.projects?.length > 0 || !isPreview) && (
+          <section className="mb-8 break-inside-avoid">
+            <div> {/* Wrapper to prevent fragment issues */}
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex-grow">
+                  <SectionHeader title={data.sectionTitles.projects} onChange={(v) => updateSectionTitle('projects', v)} className="mb-0 border-b-0" isPreview={isPreview} />
+                </div>
+                {!isPreview && (
+                  <button onClick={() => addItem('projects', { name: '', link: '', tech: '', description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+                )}
+              </div>
+              {isPreview ? (
+                <div className="space-y-4">
+                  {data.projects.map((item: ProjectItem) => <ProjectRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
+                </div>
+              ) : (
+                <DndContext id="aurora-dnd-projects" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'projects')}>
+                  <SortableContext items={data.projects} strategy={verticalListSortingStrategy}>
+                    <div className="space-y-4">
+                      {data.projects.map((item: ProjectItem) => (
+                        <ProjectRow key={item.id} item={item} update={(id, f, v) => updateItem('projects', id, f, v)} remove={(id) => removeItem('projects', id)} isPreview={false} />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Compact Sections: Skills & Certs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 break-inside-avoid">
           {/* Skills */}
-          <section>
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex-grow">
-                <SectionHeader title={data.sectionTitles.skills} onChange={(v) => updateSectionTitle('skills', v)} className="mb-0 border-b-0" isPreview={isPreview} />
+          {(data.skills?.length > 0 || !isPreview) && (
+            <section>
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex-grow">
+                  <SectionHeader title={data.sectionTitles.skills} onChange={(v) => updateSectionTitle('skills', v)} className="mb-0 border-b-0" isPreview={isPreview} />
+                </div>
+                {!isPreview && (
+                  <button onClick={() => addItem('skills', { name: '', skills: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+                )}
               </div>
-              {!isPreview && (
-                <button onClick={() => addItem('skills', { name: '', skills: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+              {isPreview ? (
+                <div className="space-y-2">
+                  {data.skills.map((item: SkillCategory) => <SkillRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
+                </div>
+              ) : (
+                <DndContext id="aurora-dnd-skills" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'skills')}>
+                  <SortableContext items={data.skills} strategy={verticalListSortingStrategy}>
+                    <div className="space-y-2">
+                      {data.skills.map((item: SkillCategory) => (
+                        <SkillRow key={item.id} item={item} update={(id, f, v) => updateItem('skills', id, f, v)} remove={(id) => removeItem('skills', id)} isPreview={false} />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
               )}
-            </div>
-            {isPreview ? (
-              <div className="space-y-2">
-                {data.skills.map((item: SkillCategory) => <SkillRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
-              </div>
-            ) : (
-              <DndContext id="aurora-dnd-skills" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'skills')}>
-                <SortableContext items={data.skills} strategy={verticalListSortingStrategy}>
-                  <div className="space-y-2">
-                    {data.skills.map((item: SkillCategory) => (
-                      <SkillRow key={item.id} item={item} update={(id, f, v) => updateItem('skills', id, f, v)} remove={(id) => removeItem('skills', id)} isPreview={false} />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
-            )}
-          </section>
+            </section>
+          )}
 
           {/* Certifications */}
-          <section>
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex-grow">
-                <SectionHeader title={data.sectionTitles.certifications} onChange={(v) => updateSectionTitle('certifications', v)} className="mb-0 border-b-0" isPreview={isPreview} />
+          {(data.certifications?.length > 0 || !isPreview) && (
+            <section>
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex-grow">
+                  <SectionHeader title={data.sectionTitles.certifications} onChange={(v) => updateSectionTitle('certifications', v)} className="mb-0 border-b-0" isPreview={isPreview} />
+                </div>
+                {!isPreview && (
+                  <button onClick={() => addItem('certifications', { name: '', issuer: '', date: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+                )}
               </div>
-              {!isPreview && (
-                <button onClick={() => addItem('certifications', { name: '', issuer: '', date: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+              {isPreview ? (
+                <div className="space-y-2">
+                  {data.certifications.map((item: CertificationItem) => <CertificationRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
+                </div>
+              ) : (
+                <DndContext id="aurora-dnd-certs" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'certifications')}>
+                  <SortableContext items={data.certifications} strategy={verticalListSortingStrategy}>
+                    <div className="space-y-2">
+                      {data.certifications.map((item: CertificationItem) => (
+                        <CertificationRow key={item.id} item={item} update={(id, f, v) => updateItem('certifications', id, f, v)} remove={(id) => removeItem('certifications', id)} isPreview={false} />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
               )}
-            </div>
-            {isPreview ? (
-              <div className="space-y-2">
-                {data.certifications.map((item: CertificationItem) => <CertificationRow key={item.id} item={item} update={() => { }} remove={() => { }} isPreview={true} />)}
-              </div>
-            ) : (
-              <DndContext id="aurora-dnd-certs" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'certifications')}>
-                <SortableContext items={data.certifications} strategy={verticalListSortingStrategy}>
-                  <div className="space-y-2">
-                    {data.certifications.map((item: CertificationItem) => (
-                      <CertificationRow key={item.id} item={item} update={(id, f, v) => updateItem('certifications', id, f, v)} remove={(id) => removeItem('certifications', id)} isPreview={false} />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
-            )}
-          </section>
+            </section>
+          )}
         </div>
 
       </div>

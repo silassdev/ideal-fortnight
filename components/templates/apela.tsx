@@ -162,104 +162,114 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
                 <div className="col-span-2 space-y-8">
 
                     {/* Summary */}
-                    <div>
-                        <SectionHeader title={data.sectionTitles?.summary || "Summary"} onChange={(v) => updateSectionTitle('summary', v)} isPreview={isPreview} className="border-none mb-2 text-slate-400 text-sm font-bold uppercase tracking-wider" />
-                        <InlineInput value={data.summary} onChange={(v) => updateRoot('summary', v)} multiline className="text-sm text-slate-700 leading-relaxed" placeholder="Professional summary..." isPreview={isPreview} />
-                    </div>
+                    {(data.summary || !isPreview) && (
+                        <div>
+                            <SectionHeader title={data.sectionTitles?.summary || "Summary"} onChange={(v) => updateSectionTitle('summary', v)} isPreview={isPreview} className="border-none mb-2 text-slate-400 text-sm font-bold uppercase tracking-wider" />
+                            <InlineInput value={data.summary} onChange={(v) => updateRoot('summary', v)} multiline className="text-sm text-slate-700 leading-relaxed" placeholder="Professional summary..." isPreview={isPreview} />
+                        </div>
+                    )}
 
                     {/* Experience */}
-                    <div>
-                        <div className="flex justify-between items-center mb-3">
-                            <SectionHeader title={data.sectionTitles?.experience || "Experience"} onChange={(v) => updateSectionTitle('experience', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-400 text-sm font-bold uppercase tracking-wider" />
-                            {!isPreview && (
-                                <button onClick={() => addItem('experience', { role: '', company: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
-                            )}
+                    {(data.experience?.length > 0 || !isPreview) && (
+                        <div>
+                            <div className="flex justify-between items-center mb-3">
+                                <SectionHeader title={data.sectionTitles?.experience || "Experience"} onChange={(v) => updateSectionTitle('experience', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-400 text-sm font-bold uppercase tracking-wider" />
+                                {!isPreview && (
+                                    <button onClick={() => addItem('experience', { role: '', company: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+                                )}
+                            </div>
+                            <DndContext id="apela-dnd-experience" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
+                                <SortableContext items={data.experience || []} strategy={verticalListSortingStrategy}>
+                                    <div>
+                                        {(data.experience || []).map((item: any) => (
+                                            <ApelaExperienceRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('experience', id, f, v)} remove={(id: string) => removeItem('experience', id)} isPreview={isPreview} />
+                                        ))}
+                                    </div>
+                                </SortableContext>
+                            </DndContext>
                         </div>
-                        <DndContext id="apela-dnd-experience" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'experience')}>
-                            <SortableContext items={data.experience || []} strategy={verticalListSortingStrategy}>
-                                <div>
-                                    {(data.experience || []).map((item: any) => (
-                                        <ApelaExperienceRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('experience', id, f, v)} remove={(id: string) => removeItem('experience', id)} isPreview={isPreview} />
-                                    ))}
-                                </div>
-                            </SortableContext>
-                        </DndContext>
-                    </div>
+                    )}
 
                     {/* Projects */}
-                    <div>
-                        <div className="flex justify-between items-center mb-3">
-                            <SectionHeader title={data.sectionTitles?.projects || "Projects"} onChange={(v) => updateSectionTitle('projects', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-400 text-sm font-bold uppercase tracking-wider" />
-                            {!isPreview && (
-                                <button onClick={() => addItem('projects', { title: '', link: '', description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
-                            )}
+                    {(data.projects?.length > 0 || !isPreview) && (
+                        <div>
+                            <div className="flex justify-between items-center mb-3">
+                                <SectionHeader title={data.sectionTitles?.projects || "Projects"} onChange={(v) => updateSectionTitle('projects', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-400 text-sm font-bold uppercase tracking-wider" />
+                                {!isPreview && (
+                                    <button onClick={() => addItem('projects', { title: '', link: '', description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+                                )}
+                            </div>
+                            <DndContext id="apela-dnd-projects" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'projects')}>
+                                <SortableContext items={data.projects || []} strategy={verticalListSortingStrategy}>
+                                    <div>
+                                        {(data.projects || []).map((item: any) => (
+                                            <ApelaProjectRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('projects', id, f, v)} remove={(id: string) => removeItem('projects', id)} isPreview={isPreview} />
+                                        ))}
+                                    </div>
+                                </SortableContext>
+                            </DndContext>
                         </div>
-                        <DndContext id="apela-dnd-projects" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'projects')}>
-                            <SortableContext items={data.projects || []} strategy={verticalListSortingStrategy}>
-                                <div>
-                                    {(data.projects || []).map((item: any) => (
-                                        <ApelaProjectRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('projects', id, f, v)} remove={(id: string) => removeItem('projects', id)} isPreview={isPreview} />
-                                    ))}
-                                </div>
-                            </SortableContext>
-                        </DndContext>
-                    </div>
+                    )}
                 </div>
 
                 {/* Right Column (Sidebar) */}
                 <aside className="col-span-1 space-y-8">
 
                     {/* Education */}
-                    <div>
-                        <div className="flex justify-between items-center mb-3">
-                            <SectionHeader title={data.sectionTitles?.education || "Education"} onChange={(v) => updateSectionTitle('education', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-400 text-sm font-bold uppercase tracking-wider" />
-                            {!isPreview && (
-                                <button onClick={() => addItem('education', { school: '', degree: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
-                            )}
+                    {(data.education?.length > 0 || !isPreview) && (
+                        <div>
+                            <div className="flex justify-between items-center mb-3">
+                                <SectionHeader title={data.sectionTitles?.education || "Education"} onChange={(v) => updateSectionTitle('education', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-400 text-sm font-bold uppercase tracking-wider" />
+                                {!isPreview && (
+                                    <button onClick={() => addItem('education', { school: '', degree: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add</button>
+                                )}
+                            </div>
+                            <DndContext id="apela-dnd-education" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
+                                <SortableContext items={data.education || []} strategy={verticalListSortingStrategy}>
+                                    <div>
+                                        {(data.education || []).map((item: any) => (
+                                            <ApelaEducationRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('education', id, f, v)} remove={(id: string) => removeItem('education', id)} isPreview={isPreview} />
+                                        ))}
+                                    </div>
+                                </SortableContext>
+                            </DndContext>
                         </div>
-                        <DndContext id="apela-dnd-education" sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'education')}>
-                            <SortableContext items={data.education || []} strategy={verticalListSortingStrategy}>
-                                <div>
-                                    {(data.education || []).map((item: any) => (
-                                        <ApelaEducationRow key={item.id} item={item} update={(id: string, f: any, v: any) => updateItem('education', id, f, v)} remove={(id: string) => removeItem('education', id)} isPreview={isPreview} />
-                                    ))}
-                                </div>
-                            </SortableContext>
-                        </DndContext>
-                    </div>
+                    )}
 
                     {/* Skills */}
-                    <div>
-                        <SectionHeader title={data.sectionTitles?.skills || "Skills"} onChange={(v) => updateSectionTitle('skills', v)} isPreview={isPreview} className="border-none mb-3 text-slate-400 text-sm font-bold uppercase tracking-wider" />
+                    {(data.skills?.length > 0 || !isPreview) && (
+                        <div>
+                            <SectionHeader title={data.sectionTitles?.skills || "Skills"} onChange={(v) => updateSectionTitle('skills', v)} isPreview={isPreview} className="border-none mb-3 text-slate-400 text-sm font-bold uppercase tracking-wider" />
 
-                        {/* Apela style skills: Freeform list tags? Or Structured?
+                            {/* Apela style skills: Freeform list tags? Or Structured?
                              Original Apela iterate strings.
                              Global data schema uses complex objects.
                              We need to adapt.
                              If data.skills is array of strings (Legacy): map them.
                              If data.skills is array of objects {id, name, skills} (New): map them.
                          */}
-                        <div className="flex flex-wrap gap-2">
-                            {(data.skills || []).map((cat: any, i: number) => {
-                                // Handle both string (Legacy Apela) and Object (New Schema)
-                                if (typeof cat === 'string') {
-                                    // Legacy string
-                                    return <span key={i} className="text-xs px-2 py-1 bg-slate-100 text-slate-700 rounded font-medium">{cat}</span>
-                                }
-                                // New Object Schema
-                                return (
-                                    <div key={cat.id} className="w-full mb-2">
-                                        <InlineInput value={cat.name} onChange={(v) => updateItem('skills', cat.id, 'name', v)} className="font-bold text-xs text-slate-800 mb-1" placeholder="Category" isPreview={isPreview} />
-                                        <InlineInput value={cat.skills} onChange={(v) => updateItem('skills', cat.id, 'skills', v)} className="text-xs text-slate-600" placeholder="Skills..." multiline isPreview={isPreview} />
-                                        {!isPreview && <button onClick={() => removeItem('skills', cat.id)} className="text-[10px] text-red-500">Remove</button>}
-                                    </div>
-                                );
-                            })}
+                            <div className="flex flex-wrap gap-2">
+                                {(data.skills || []).map((cat: any, i: number) => {
+                                    // Handle both string (Legacy Apela) and Object (New Schema)
+                                    if (typeof cat === 'string') {
+                                        // Legacy string
+                                        return <span key={i} className="text-xs px-2 py-1 bg-slate-100 text-slate-700 rounded font-medium">{cat}</span>
+                                    }
+                                    // New Object Schema
+                                    return (
+                                        <div key={cat.id} className="w-full mb-2">
+                                            <InlineInput value={cat.name} onChange={(v) => updateItem('skills', cat.id, 'name', v)} className="font-bold text-xs text-slate-800 mb-1" placeholder="Category" isPreview={isPreview} />
+                                            <InlineInput value={cat.skills} onChange={(v) => updateItem('skills', cat.id, 'skills', v)} className="text-xs text-slate-600" placeholder="Skills..." multiline isPreview={isPreview} />
+                                            {!isPreview && <button onClick={() => removeItem('skills', cat.id)} className="text-[10px] text-red-500">Remove</button>}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            {!isPreview && (
+                                <button onClick={() => addItem('skills', { name: '', skills: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 mt-2">+ Category</button>
+                            )}
                         </div>
-                        {!isPreview && (
-                            <button onClick={() => addItem('skills', { name: '', skills: '' })} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 mt-2">+ Category</button>
-                        )}
-                    </div>
+                    )}
 
                 </aside>
             </section>

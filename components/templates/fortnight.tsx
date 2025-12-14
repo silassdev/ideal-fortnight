@@ -158,9 +158,7 @@ export default function FortnightTemplate({ resume, className = '' }: TemplateCo
                                                 ? resume.skills.map((s, i) => (
                                                     <span key={i} className="text-xs px-2 py-1 bg-indigo-50 text-indigo-700 rounded-full">{s}</span>
                                                 ))
-                                                : ['JavaScript', 'React', 'Node.js', 'TypeScript'].map((s, i) => (
-                                                    <span key={i} className="text-xs px-2 py-1 bg-indigo-50 text-indigo-700 rounded-full">{s}</span>
-                                                ))
+                                                : <div className="text-xs text-slate-500 italic">No skills loaded</div>
                                             }
                                         </div>
                                     )}
@@ -209,90 +207,98 @@ export default function FortnightTemplate({ resume, className = '' }: TemplateCo
 
                 {/* Right content area */}
                 <main className="col-span-12 lg:col-span-8 space-y-5">
-                    <section className="p-5 rounded border">
-                        <h2 className="text-base font-semibold text-slate-800 mb-3">Experience</h2>
-                        {isEditMode && editing && setEditing ? (
-                            <ExperienceEditor
-                                experiences={editing.experience || []}
-                                onChange={(v) => setEditing({ ...editing, experience: v })}
-                            />
-                        ) : (
-                            <div className="space-y-4 text-sm text-slate-700">
-                                {(resume.experience || []).length > 0 ? (resume.experience || []).map((ex) => (
-                                    <div key={ex.id} className="pt-2 border-t first:pt-0 first:border-0">
-                                        <div className="flex items-start justify-between">
-                                            <div>
-                                                <div className="font-medium text-slate-900">{ex.role || 'Role'} <span className="text-slate-500">· {ex.company || 'Company'}</span></div>
-                                                <div className="text-xs text-slate-500">{ex.location || ''}</div>
-                                            </div>
-                                            <div className="text-xs text-slate-500">{fmtRange(ex)}</div>
-                                        </div>
-                                        {ex.bullets && ex.bullets.length > 0 && (
-                                            <ul className="list-disc list-inside mt-2 text-sm text-slate-700">
-                                                {ex.bullets.map((b: any, i: number) => <li key={i}>{b}</li>)}
-                                            </ul>
-                                        )}
-                                    </div>
-                                )) : <div className="text-sm text-slate-500">No experience yet</div>}
-                            </div>
-                        )}
-                    </section>
-
-                    <section className="p-5 rounded border">
-                        <h2 className="text-base font-semibold text-slate-800 mb-3">Projects</h2>
-                        {isEditMode && editing && setEditing ? (
-                            <ProjectEditor
-                                projects={editing.projects || []}
-                                onChange={(v) => setEditing({ ...editing, projects: v })}
-                            />
-                        ) : (
-                            <div className="space-y-3 text-sm">
-                                {(resume.projects || []).length > 0
-                                    ? (resume.projects || []).map((p: any, i: number) => (
-                                        <div key={i}>
-                                            <div className="font-medium text-slate-900">{p.title || p.name || 'Project'}</div>
-                                            {p.link && <div className="text-xs text-indigo-600"><a href={p.link} target="_blank" rel="noreferrer" className="underline">{p.link}</a></div>}
-                                            <div className="mt-1 text-slate-700">{p.description}</div>
-                                        </div>
-                                    ))
-                                    : <div className="text-sm text-slate-500">No projects listed</div>
-                                }
-                            </div>
-                        )}
-                    </section>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {((resume.experience || []).length > 0 || (isEditMode && editing)) && (
                         <section className="p-5 rounded border">
-                            <h2 className="text-sm font-semibold text-slate-800 mb-2">Education</h2>
+                            <h2 className="text-base font-semibold text-slate-800 mb-3">Experience</h2>
                             {isEditMode && editing && setEditing ? (
-                                <EducationEditor
-                                    education={editing.education || []}
-                                    onChange={(v) => setEditing({ ...editing, education: v })}
+                                <ExperienceEditor
+                                    experiences={editing.experience || []}
+                                    onChange={(v) => setEditing({ ...editing, experience: v })}
                                 />
                             ) : (
-                                <div className="text-sm text-slate-700 space-y-2">
-                                    {(resume.education || []).length > 0
-                                        ? (resume.education || []).map((ed) => (
-                                            <div key={ed.id}>
-                                                <div className="font-medium">{ed.school || 'School'}</div>
-                                                <div className="text-xs text-slate-500">{ed.degree ? `${ed.degree} • ${fmtRange(ed)}` : `${fmtRange(ed)}`}</div>
+                                <div className="space-y-4 text-sm text-slate-700">
+                                    {(resume.experience || []).length > 0 ? (resume.experience || []).map((ex) => (
+                                        <div key={ex.id} className="pt-2 border-t first:pt-0 first:border-0">
+                                            <div className="flex items-start justify-between">
+                                                <div>
+                                                    <div className="font-medium text-slate-900">{ex.role || 'Role'} <span className="text-slate-500">· {ex.company || 'Company'}</span></div>
+                                                    <div className="text-xs text-slate-500">{ex.location || ''}</div>
+                                                </div>
+                                                <div className="text-xs text-slate-500">{fmtRange(ex)}</div>
+                                            </div>
+                                            {ex.bullets && ex.bullets.length > 0 && (
+                                                <ul className="list-disc list-inside mt-2 text-sm text-slate-700">
+                                                    {ex.bullets.map((b: any, i: number) => <li key={i}>{b}</li>)}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    )) : <div className="text-sm text-slate-500">No experience yet</div>}
+                                </div>
+                            )}
+                        </section>
+                    )}
+
+                    {((resume.projects || []).length > 0 || (isEditMode && editing)) && (
+                        <section className="p-5 rounded border">
+                            <h2 className="text-base font-semibold text-slate-800 mb-3">Projects</h2>
+                            {isEditMode && editing && setEditing ? (
+                                <ProjectEditor
+                                    projects={editing.projects || []}
+                                    onChange={(v) => setEditing({ ...editing, projects: v })}
+                                />
+                            ) : (
+                                <div className="space-y-3 text-sm">
+                                    {(resume.projects || []).length > 0
+                                        ? (resume.projects || []).map((p: any, i: number) => (
+                                            <div key={i}>
+                                                <div className="font-medium text-slate-900">{p.title || p.name || 'Project'}</div>
+                                                {p.link && <div className="text-xs text-indigo-600"><a href={p.link} target="_blank" rel="noreferrer" className="underline">{p.link}</a></div>}
+                                                <div className="mt-1 text-slate-700">{p.description}</div>
                                             </div>
                                         ))
-                                        : <div className="text-sm text-slate-500">No education listed</div>
+                                        : <div className="text-sm text-slate-500">No projects listed</div>
                                     }
                                 </div>
                             )}
                         </section>
+                    )}
 
-                        <section className="p-5 rounded border">
-                            <h2 className="text-sm font-semibold text-slate-800 mb-2">Certifications</h2>
-                            <div className="text-sm text-slate-700 space-y-1">
-                                {(resume.sections || []).filter(s => s.type === 'certifications').flatMap(s => s.items || []).length > 0
-                                    ? (resume.sections || []).filter(s => s.type === 'certifications').flatMap(s => s.items || []).map((c: any, i: number) => <div key={i}>{c}</div>)
-                                    : <div className="text-sm text-slate-500">No certifications</div>
-                                }
-                            </div>
-                        </section>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {((resume.education || []).length > 0 || (isEditMode && editing)) && (
+                            <section className="p-5 rounded border">
+                                <h2 className="text-sm font-semibold text-slate-800 mb-2">Education</h2>
+                                {isEditMode && editing && setEditing ? (
+                                    <EducationEditor
+                                        education={editing.education || []}
+                                        onChange={(v) => setEditing({ ...editing, education: v })}
+                                    />
+                                ) : (
+                                    <div className="text-sm text-slate-700 space-y-2">
+                                        {(resume.education || []).length > 0
+                                            ? (resume.education || []).map((ed) => (
+                                                <div key={ed.id}>
+                                                    <div className="font-medium">{ed.school || 'School'}</div>
+                                                    <div className="text-xs text-slate-500">{ed.degree ? `${ed.degree} • ${fmtRange(ed)}` : `${fmtRange(ed)}`}</div>
+                                                </div>
+                                            ))
+                                            : <div className="text-sm text-slate-500">No education listed</div>
+                                        }
+                                    </div>
+                                )}
+                            </section>
+                        )}
+
+                        {((resume.sections || []).filter(s => s.type === 'certifications').flatMap(s => s.items || []).length > 0 || (isEditMode && editing)) && (
+                            <section className="p-5 rounded border">
+                                <h2 className="text-sm font-semibold text-slate-800 mb-2">Certifications</h2>
+                                <div className="text-sm text-slate-700 space-y-1">
+                                    {(resume.sections || []).filter(s => s.type === 'certifications').flatMap(s => s.items || []).length > 0
+                                        ? (resume.sections || []).filter(s => s.type === 'certifications').flatMap(s => s.items || []).map((c: any, i: number) => <div key={i}>{c}</div>)
+                                        : <div className="text-sm text-slate-500">No certifications</div>
+                                    }
+                                </div>
+                            </section>
+                        )}
                     </div>
 
                     <footer className="text-xs text-slate-400">

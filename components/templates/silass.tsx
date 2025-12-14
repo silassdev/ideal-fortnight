@@ -177,50 +177,54 @@ export default function SilassDevTemplate({ resume, className = '' }: TemplateCo
             </div>
 
             {/* Skills */}
-            <div className="w-full bg-white p-4 rounded border">
-              <h3 className="text-sm font-semibold text-slate-700 mb-2">Skills</h3>
-              {isEditMode && editing && setEditing ? (
-                <SkillsEditor
-                  skills={editing.skills || []}
-                  onChange={(v) => setEditing({ ...editing, skills: v })}
-                />
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {(resume.skills && resume.skills.length > 0)
-                    ? resume.skills.map((s, i) => (
-                      <span key={i} className="text-xs px-2 py-1 bg-slate-100 rounded">{s}</span>
-                    ))
-                    : (
-                      <>
-                        <span className="text-xs px-2 py-1 bg-slate-100 rounded">JavaScript</span>
-                        <span className="text-xs px-2 py-1 bg-slate-100 rounded">TypeScript</span>
-                        <span className="text-xs px-2 py-1 bg-slate-100 rounded">React</span>
-                        <span className="text-xs px-2 py-1 bg-slate-100 rounded">Node.js</span>
-                      </>
-                    )}
-                </div>
-              )}
-            </div>
+            {((resume.skills && resume.skills.length > 0) || (isEditMode && editing)) && (
+              <div className="w-full bg-white p-4 rounded border">
+                <h3 className="text-sm font-semibold text-slate-700 mb-2">Skills</h3>
+                {isEditMode && editing && setEditing ? (
+                  <SkillsEditor
+                    skills={editing.skills || []}
+                    onChange={(v) => setEditing({ ...editing, skills: v })}
+                  />
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {(resume.skills && resume.skills.length > 0)
+                      ? resume.skills.map((s, i) => (
+                        <span key={i} className="text-xs px-2 py-1 bg-slate-100 rounded">{s}</span>
+                      ))
+                      : (
+                        <>
+                          <span className="text-xs px-2 py-1 bg-slate-100 rounded">JavaScript</span>
+                          <span className="text-xs px-2 py-1 bg-slate-100 rounded">TypeScript</span>
+                          <span className="text-xs px-2 py-1 bg-slate-100 rounded">React</span>
+                          <span className="text-xs px-2 py-1 bg-slate-100 rounded">Node.js</span>
+                        </>
+                      )}
+                  </div>
+                )}
+              </div>
+            )}
 
-            {/* Certifications */}
-            <div className="w-full bg-white p-4 rounded border">
-              <h3 className="text-sm font-semibold text-slate-700 mb-2">Certifications</h3>
-              {isEditMode && editing && setEditing ? (
-                <CertificationsEditor
-                  certifications={editing.certifications || []}
-                  onChange={(v) => setEditing({ ...editing, certifications: v })}
-                />
-              ) : (
-                <ul className="text-sm list-disc list-inside text-slate-600">
-                  {(resume.certifications && resume.certifications.length > 0)
-                    ? resume.certifications.map((c, i) => (
-                      <li key={i}>{c}</li>
-                    ))
-                    : <li>No certifications listed</li>
-                  }
-                </ul>
-              )}
-            </div>
+            {/* Certifications - Sidebar */}
+            {((resume.certifications && resume.certifications.length > 0) || (isEditMode && editing)) && (
+              <div className="w-full bg-white p-4 rounded border">
+                <h3 className="text-sm font-semibold text-slate-700 mb-2">Certifications</h3>
+                {isEditMode && editing && setEditing ? (
+                  <CertificationsEditor
+                    certifications={editing.certifications || []}
+                    onChange={(v) => setEditing({ ...editing, certifications: v })}
+                  />
+                ) : (
+                  <ul className="text-sm list-disc list-inside text-slate-600">
+                    {(resume.certifications && resume.certifications.length > 0)
+                      ? resume.certifications.map((c, i) => (
+                        <li key={i}>{c}</li>
+                      ))
+                      : <li>No certifications listed</li>
+                    }
+                  </ul>
+                )}
+              </div>
+            )}
 
             <div className="text-xs text-slate-400">Template: SilasSDev</div>
           </div>
@@ -241,108 +245,118 @@ export default function SilassDevTemplate({ resume, className = '' }: TemplateCo
           </section>
 
           {/* Experience */}
-          <section className="bg-white p-6 rounded border">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Experience</h2>
-              {/* <div className="text-sm text-slate-500">{(resume.experience?.length || 0)} items</div> */}
-            </div>
-
-            {isEditMode && editing && setEditing ? (
-              <ExperienceEditor
-                experiences={editing.experience || []}
-                onChange={(v) => setEditing({ ...editing, experience: v })}
-              />
-            ) : (
-              <div className="space-y-4">
-                {(resume.experience || []).length > 0 ? (resume.experience || []).map((ex) => (
-                  <article key={ex.id} className="pt-2 border-t first:pt-0 first:border-0">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-medium">{ex.role || 'Role'} <span className="text-slate-500">— {ex.company || 'Company'}</span></h3>
-                        <div className="text-xs text-slate-500">{ex.location || ''}</div>
-                      </div>
-                      <div className="text-xs text-slate-500">{fmtRange(ex)}</div>
-                    </div>
-
-                    {ex.bullets && ex.bullets.length > 0 && (
-                      <ul className="list-disc list-inside mt-2 text-sm text-slate-700">
-                        {ex.bullets.map((b, i) => <li key={i}>{b}</li>)}
-                      </ul>
-                    )}
-                  </article>
-                )) : (
-                  <div className="text-sm text-slate-600">No experience entries yet.</div>
-                )}
+          {((resume.experience || []).length > 0 || (isEditMode && editing)) && (
+            <section className="bg-white p-6 rounded border">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">Experience</h2>
+                {/* <div className="text-sm text-slate-500">{(resume.experience?.length || 0)} items</div> */}
               </div>
-            )}
-          </section>
+
+              {isEditMode && editing && setEditing ? (
+                <ExperienceEditor
+                  experiences={editing.experience || []}
+                  onChange={(v) => setEditing({ ...editing, experience: v })}
+                />
+              ) : (
+                <div className="space-y-4">
+                  {(resume.experience || []).length > 0 ? (resume.experience || []).map((ex) => (
+                    <article key={ex.id} className="pt-2 border-t first:pt-0 first:border-0">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-medium">{ex.role || 'Role'} <span className="text-slate-500">— {ex.company || 'Company'}</span></h3>
+                          <div className="text-xs text-slate-500">{ex.location || ''}</div>
+                        </div>
+                        <div className="text-xs text-slate-500">{fmtRange(ex)}</div>
+                      </div>
+
+                      {ex.bullets && ex.bullets.length > 0 && (
+                        <ul className="list-disc list-inside mt-2 text-sm text-slate-700">
+                          {ex.bullets.map((b, i) => <li key={i}>{b}</li>)}
+                        </ul>
+                      )}
+                    </article>
+                  )) : (
+                    <div className="text-sm text-slate-600">No experience entries yet.</div>
+                  )}
+                </div>
+              )}
+            </section>
+          )}
 
           {/* Projects */}
-          <section className="bg-white p-6 rounded border">
-            <h2 className="text-lg font-semibold mb-3">Projects</h2>
-            {isEditMode && editing && setEditing ? (
-              <ProjectEditor
-                projects={editing.projects || []}
-                onChange={(v) => setEditing({ ...editing, projects: v })}
-              />
-            ) : (
-              <div className="space-y-3">
-                {(resume.projects || []).length > 0
-                  ? (resume.projects || []).map((p: any, i: number) => (
-                    <div key={i} className="text-sm">
-                      <div className="font-medium">{p.title || p.name || 'Project'}</div>
-                      <div className="text-xs text-slate-500">{p.link ? <a href={p.link} className="underline text-sky-600">{p.link}</a> : null}</div>
-                      <div className="mt-1">{p.description}</div>
-                    </div>
-                  ))
-                  : <div className="text-sm text-slate-600">No projects listed.</div>
-                }
-              </div>
-            )}
-          </section>
+          {((resume.projects || []).length > 0 || (isEditMode && editing)) && (
+            <section className="bg-white p-6 rounded border">
+              <h2 className="text-lg font-semibold mb-3">Projects</h2>
+              {isEditMode && editing && setEditing ? (
+                <ProjectEditor
+                  projects={editing.projects || []}
+                  onChange={(v) => setEditing({ ...editing, projects: v })}
+                />
+              ) : (
+                <div className="space-y-3">
+                  {(resume.projects || []).length > 0
+                    ? (resume.projects || []).map((p: any, i: number) => (
+                      <div key={i} className="text-sm">
+                        <div className="font-medium">{p.title || p.name || 'Project'}</div>
+                        <div className="text-xs text-slate-500">{p.link ? <a href={p.link} className="underline text-sky-600">{p.link}</a> : null}</div>
+                        <div className="mt-1">{p.description}</div>
+                      </div>
+                    ))
+                    : <div className="text-sm text-slate-600">No projects listed.</div>
+                  }
+                </div>
+              )}
+            </section>
+          )}
 
           {/* Education & Certifications */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <section className="bg-white p-6 rounded border">
-              <h2 className="text-lg font-semibold mb-3">Education</h2>
-              {isEditMode && editing && setEditing ? (
-                <EducationEditor
-                  education={editing.education || []}
-                  onChange={(v) => setEditing({ ...editing, education: v })}
-                />
-              ) : (
-                <div className="space-y-3 text-sm text-slate-700">
-                  {(resume.education || []).length > 0
-                    ? (resume.education || []).map((ed) => (
-                      <div key={ed.id}>
-                        <div className="font-medium">{ed.school || 'School'}</div>
-                        <div className="text-xs text-slate-500">{ed.degree ? `${ed.degree} • ${fmtRange(ed)}` : `${fmtRange(ed)}`}</div>
-                      </div>
-                    ))
-                    : <div className="text-sm text-slate-600">No education entries yet.</div>
-                  }
-                </div>
-              )}
-            </section>
+            {((resume.education || []).length > 0 || (isEditMode && editing)) && (
+              <section className="bg-white p-6 rounded border">
+                <h2 className="text-lg font-semibold mb-3">Education</h2>
+                {isEditMode && editing && setEditing ? (
+                  <EducationEditor
+                    education={editing.education || []}
+                    onChange={(v) => setEditing({ ...editing, education: v })}
+                  />
+                ) : (
+                  <div className="space-y-3 text-sm text-slate-700">
+                    {(resume.education || []).length > 0
+                      ? (resume.education || []).map((ed) => (
+                        <div key={ed.id}>
+                          <div className="font-medium">{ed.school || 'School'}</div>
+                          <div className="text-xs text-slate-500">{ed.degree ? `${ed.degree} • ${fmtRange(ed)}` : `${fmtRange(ed)}`}</div>
+                        </div>
+                      ))
+                      : <div className="text-sm text-slate-600">No education entries yet.</div>
+                    }
+                  </div>
+                )}
+              </section>
+            )}
 
-            <section className="bg-white p-6 rounded border">
-              <h2 className="text-lg font-semibold mb-3">Certifications</h2>
-              {isEditMode && editing && setEditing ? (
-                <CertificationsEditor
-                  certifications={editing.certifications || []}
-                  onChange={(v) => setEditing({ ...editing, certifications: v })}
-                />
-              ) : (
-                <div className="space-y-2 text-sm text-slate-700">
-                  {(resume.certifications && resume.certifications.length > 0)
-                    ? resume.certifications.map((c, i) => (
-                      <div key={i} className="font-medium">{c}</div>
-                    ))
-                    : <div className="text-sm text-slate-600">No certifications listed.</div>
-                  }
-                </div>
-              )}
-            </section>
+            {/* Certifications - Main Content Area */}
+            {/* Some users prefer certs in main area. If duplicates, we might want to hide one. For now hiding both if empty. */}
+            {((resume.certifications && resume.certifications.length > 0) || (isEditMode && editing)) && (
+              <section className="bg-white p-6 rounded border">
+                <h2 className="text-lg font-semibold mb-3">Certifications</h2>
+                {isEditMode && editing && setEditing ? (
+                  <CertificationsEditor
+                    certifications={editing.certifications || []}
+                    onChange={(v) => setEditing({ ...editing, certifications: v })}
+                  />
+                ) : (
+                  <div className="space-y-2 text-sm text-slate-700">
+                    {(resume.certifications && resume.certifications.length > 0)
+                      ? resume.certifications.map((c, i) => (
+                        <div key={i} className="font-medium">{c}</div>
+                      ))
+                      : <div className="text-sm text-slate-600">No certifications listed.</div>
+                    }
+                  </div>
+                )}
+              </section>
+            )}
           </div>
 
           {/* Footer / meta */}

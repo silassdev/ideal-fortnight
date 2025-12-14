@@ -180,33 +180,35 @@ export default function PolarisTemplate({ resume, className = '' }: TemplateComp
                         </motion.div>
 
                         {/* Skills card */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.08 }}
-                            className="rounded-2xl p-4 bg-white border shadow-sm"
-                        >
-                            <h3 className="text-sm font-semibold text-slate-700 mb-2">Skills</h3>
-                            {isEditMode && editing && setEditing ? (
-                                <SkillsEditor
-                                    skills={editing.skills || []}
-                                    onChange={(v) => setEditing({ ...editing, skills: v })}
-                                />
-                            ) : (
-                                <div className="flex flex-wrap gap-2">
-                                    {skills.length > 0 ? skills.map((s, i) => (
-                                        <span key={i} className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700">{s}</span>
-                                    )) : (
-                                        <>
-                                            <span className="text-xs px-2 py-1 rounded-full bg-slate-100">JavaScript</span>
-                                            <span className="text-xs px-2 py-1 rounded-full bg-slate-100">TypeScript</span>
-                                            <span className="text-xs px-2 py-1 rounded-full bg-slate-100">React</span>
-                                            <span className="text-xs px-2 py-1 rounded-full bg-slate-100">Node.js</span>
-                                        </>
-                                    )}
-                                </div>
-                            )}
-                        </motion.div>
+                        {(skills.length > 0 || (isEditMode && editing)) && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.08 }}
+                                className="rounded-2xl p-4 bg-white border shadow-sm"
+                            >
+                                <h3 className="text-sm font-semibold text-slate-700 mb-2">Skills</h3>
+                                {isEditMode && editing && setEditing ? (
+                                    <SkillsEditor
+                                        skills={editing.skills || []}
+                                        onChange={(v) => setEditing({ ...editing, skills: v })}
+                                    />
+                                ) : (
+                                    <div className="flex flex-wrap gap-2">
+                                        {skills.length > 0 ? skills.map((s, i) => (
+                                            <span key={i} className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700">{s}</span>
+                                        )) : (
+                                            <>
+                                                <span className="text-xs px-2 py-1 rounded-full bg-slate-100">JavaScript</span>
+                                                <span className="text-xs px-2 py-1 rounded-full bg-slate-100">TypeScript</span>
+                                                <span className="text-xs px-2 py-1 rounded-full bg-slate-100">React</span>
+                                                <span className="text-xs px-2 py-1 rounded-full bg-slate-100">Node.js</span>
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+                            </motion.div>
+                        )}
 
                         {/* Quick highlights / badges */}
                         <motion.div className="rounded-2xl p-4 bg-white border shadow-sm">
@@ -230,94 +232,102 @@ export default function PolarisTemplate({ resume, className = '' }: TemplateComp
                 {/* Right column (content) */}
                 <main className="col-span-12 lg:col-span-8 space-y-6">
                     {/* Experience */}
-                    <section className="bg-white p-6 rounded-2xl border shadow-sm">
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-lg font-semibold">Experience</h2>
-                            {/* <div className="text-sm text-slate-500">{(resume.experience?.length || 0)} items</div> */}
-                        </div>
-
-                        {isEditMode && editing && setEditing ? (
-                            <ExperienceEditor
-                                experiences={editing.experience || []}
-                                onChange={(v) => setEditing({ ...editing, experience: v })}
-                            />
-                        ) : (
-                            <div className="space-y-5">
-                                {(resume.experience || []).length > 0 ? (resume.experience || []).map((ex: any) => (
-                                    <article key={ex.id || ex.company || Math.random()} className="pt-2">
-                                        <div className="flex items-start justify-between gap-4">
-                                            <div className="flex-1">
-                                                <h3 className="font-medium text-slate-800">{ex.role || 'Role'} <span className="text-slate-500">— {ex.company || 'Company'}</span></h3>
-                                                <div className="text-xs text-slate-500 mt-1">{ex.location || ''}</div>
-                                                {ex.summary && <div className="text-sm text-slate-700 mt-2">{ex.summary}</div>}
-                                            </div>
-                                            <div className="text-xs text-slate-500">{fmtRange(ex)}</div>
-                                        </div>
-
-                                        {ex.bullets && ex.bullets.length > 0 && (
-                                            <ul className="list-disc list-inside mt-3 text-sm text-slate-700">
-                                                {ex.bullets.map((b: string, i: number) => <li key={i}>{b}</li>)}
-                                            </ul>
-                                        )}
-                                    </article>
-                                )) : (
-                                    <div className="text-sm text-slate-600">No experience entries yet.</div>
-                                )}
+                    {((resume.experience || []).length > 0 || (isEditMode && editing)) && (
+                        <section className="bg-white p-6 rounded-2xl border shadow-sm">
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-lg font-semibold">Experience</h2>
+                                {/* <div className="text-sm text-slate-500">{(resume.experience?.length || 0)} items</div> */}
                             </div>
-                        )}
-                    </section>
+
+                            {isEditMode && editing && setEditing ? (
+                                <ExperienceEditor
+                                    experiences={editing.experience || []}
+                                    onChange={(v) => setEditing({ ...editing, experience: v })}
+                                />
+                            ) : (
+                                <div className="space-y-5">
+                                    {(resume.experience || []).length > 0 ? (resume.experience || []).map((ex: any) => (
+                                        <article key={ex.id || ex.company || Math.random()} className="pt-2">
+                                            <div className="flex items-start justify-between gap-4">
+                                                <div className="flex-1">
+                                                    <h3 className="font-medium text-slate-800">{ex.role || 'Role'} <span className="text-slate-500">— {ex.company || 'Company'}</span></h3>
+                                                    <div className="text-xs text-slate-500 mt-1">{ex.location || ''}</div>
+                                                    {ex.summary && <div className="text-sm text-slate-700 mt-2">{ex.summary}</div>}
+                                                </div>
+                                                <div className="text-xs text-slate-500">{fmtRange(ex)}</div>
+                                            </div>
+
+                                            {ex.bullets && ex.bullets.length > 0 && (
+                                                <ul className="list-disc list-inside mt-3 text-sm text-slate-700">
+                                                    {ex.bullets.map((b: string, i: number) => <li key={i}>{b}</li>)}
+                                                </ul>
+                                            )}
+                                        </article>
+                                    )) : (
+                                        <div className="text-sm text-slate-600">No experience entries yet.</div>
+                                    )}
+                                </div>
+                            )}
+                        </section>
+                    )}
 
                     {/* Projects + Education grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <section className="bg-white p-6 rounded-2xl border shadow-sm">
-                            <h2 className="text-lg font-semibold mb-3">Projects</h2>
-                            {isEditMode && editing && setEditing ? (
-                                <ProjectEditor
-                                    projects={editing.projects || []}
-                                    onChange={(v) => setEditing({ ...editing, projects: v })}
-                                />
-                            ) : (
-                                <div className="space-y-3">
-                                    {(resume.projects || []).length > 0 ? (resume.projects || []).map((p: any, i: number) => (
-                                        <div key={i} className="text-sm">
-                                            <div className="font-medium">{p.title || p.name || 'Project'}</div>
-                                            {p.link && <div className="text-xs text-sky-600 underline"><a href={p.link} target="_blank" rel="noreferrer">{p.link}</a></div>}
-                                            <div className="mt-1 text-slate-700">{p.description}</div>
-                                        </div>
-                                    )) : <div className="text-sm text-slate-600">No projects listed.</div>}
-                                </div>
-                            )}
-                        </section>
+                        {((resume.projects || []).length > 0 || (isEditMode && editing)) && (
+                            <section className="bg-white p-6 rounded-2xl border shadow-sm">
+                                <h2 className="text-lg font-semibold mb-3">Projects</h2>
+                                {isEditMode && editing && setEditing ? (
+                                    <ProjectEditor
+                                        projects={editing.projects || []}
+                                        onChange={(v) => setEditing({ ...editing, projects: v })}
+                                    />
+                                ) : (
+                                    <div className="space-y-3">
+                                        {(resume.projects || []).length > 0 ? (resume.projects || []).map((p: any, i: number) => (
+                                            <div key={i} className="text-sm">
+                                                <div className="font-medium">{p.title || p.name || 'Project'}</div>
+                                                {p.link && <div className="text-xs text-sky-600 underline"><a href={p.link} target="_blank" rel="noreferrer">{p.link}</a></div>}
+                                                <div className="mt-1 text-slate-700">{p.description}</div>
+                                            </div>
+                                        )) : <div className="text-sm text-slate-600">No projects listed.</div>}
+                                    </div>
+                                )}
+                            </section>
+                        )}
 
-                        <section className="bg-white p-6 rounded-2xl border shadow-sm">
-                            <h2 className="text-lg font-semibold mb-3">Education</h2>
-                            {isEditMode && editing && setEditing ? (
-                                <EducationEditor
-                                    education={editing.education || []}
-                                    onChange={(v) => setEditing({ ...editing, education: v })}
-                                />
-                            ) : (
-                                <div className="space-y-3 text-sm text-slate-700">
-                                    {(resume.education || []).length > 0 ? (resume.education || []).map((ed: any) => (
-                                        <div key={ed.id || ed.school}>
-                                            <div className="font-medium">{ed.school || 'School'}</div>
-                                            <div className="text-xs text-slate-500">{ed.degree ? `${ed.degree} • ${fmtRange(ed)}` : `${fmtRange(ed)}`}</div>
-                                        </div>
-                                    )) : <div className="text-sm text-slate-600">No education entries yet.</div>}
-                                </div>
-                            )}
-                        </section>
+                        {((resume.education || []).length > 0 || (isEditMode && editing)) && (
+                            <section className="bg-white p-6 rounded-2xl border shadow-sm">
+                                <h2 className="text-lg font-semibold mb-3">Education</h2>
+                                {isEditMode && editing && setEditing ? (
+                                    <EducationEditor
+                                        education={editing.education || []}
+                                        onChange={(v) => setEditing({ ...editing, education: v })}
+                                    />
+                                ) : (
+                                    <div className="space-y-3 text-sm text-slate-700">
+                                        {(resume.education || []).length > 0 ? (resume.education || []).map((ed: any) => (
+                                            <div key={ed.id || ed.school}>
+                                                <div className="font-medium">{ed.school || 'School'}</div>
+                                                <div className="text-xs text-slate-500">{ed.degree ? `${ed.degree} • ${fmtRange(ed)}` : `${fmtRange(ed)}`}</div>
+                                            </div>
+                                        )) : <div className="text-sm text-slate-600">No education entries yet.</div>}
+                                    </div>
+                                )}
+                            </section>
+                        )}
                     </div>
 
                     {/* Certifications & Extra sections */}
-                    <section className="bg-white p-6 rounded-2xl border shadow-sm">
-                        <h2 className="text-lg font-semibold mb-3">Certifications & Extras</h2>
-                        <div className="text-sm text-slate-700 space-y-2">
-                            {(resume.sections || []).filter(s => s.type === 'certifications').flatMap((s: any) => s.items || []).length > 0 ? (resume.sections || []).filter(s => s.type === 'certifications').flatMap((s: any) => s.items || []).map((c: any, i: number) => (
-                                <div key={i} className="font-medium">{c}</div>
-                            )) : <div className="text-sm text-slate-600">No certifications listed.</div>}
-                        </div>
-                    </section>
+                    {((resume.sections || []).filter(s => s.type === 'certifications').flatMap((s: any) => s.items || []).length > 0 || (isEditMode && editing)) && (
+                        <section className="bg-white p-6 rounded-2xl border shadow-sm">
+                            <h2 className="text-lg font-semibold mb-3">Certifications & Extras</h2>
+                            <div className="text-sm text-slate-700 space-y-2">
+                                {(resume.sections || []).filter(s => s.type === 'certifications').flatMap((s: any) => s.items || []).length > 0 ? (resume.sections || []).filter(s => s.type === 'certifications').flatMap((s: any) => s.items || []).map((c: any, i: number) => (
+                                    <div key={i} className="font-medium">{c}</div>
+                                )) : <div className="text-sm text-slate-600">No certifications listed.</div>}
+                            </div>
+                        </section>
+                    )}
 
                     {/* Footer */}
                     <footer className="mt-2 text-xs text-slate-400 text-center">
