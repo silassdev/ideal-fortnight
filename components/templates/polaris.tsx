@@ -47,7 +47,7 @@ export default function PolarisTemplate({ resume, className = '' }: TemplateComp
     const skills = resume.skills || [];
 
     return (
-        <div className={`max-w-[980px] mx-auto bg-white text-slate-900 ${className}`}>
+        <div id="resume-preview" className={`max-w-[980px] mx-auto bg-white text-slate-900 ${className}`}>
             <div className="grid grid-cols-12 gap-6 p-8 lg:p-12">
                 <aside className="col-span-12 lg:col-span-4">
                     <div className="sticky top-6 space-y-4">

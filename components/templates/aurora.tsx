@@ -416,7 +416,7 @@ export default function AuroraEditor({ resume, editorState }: { resume?: ResumeD
 
       {/* Resume Frame */}
       <div
-        id="resume-frame"
+        id="resume-preview"
         className={`bg-white shadow-xl w-full max-w-[210mm] min-h-[297mm] relative flex flex-col print:shadow-none print:mx-auto print:w-full print:h-auto print:overflow-visible ${isPreview ? 'pointer-events-none' : ''}`}
         style={{ padding: '40px 50px' }}
       >
@@ -592,7 +592,7 @@ export default function AuroraEditor({ resume, editorState }: { resume?: ResumeD
             print-color-adjust: exact;
           }
           /* Ensure the resume frame matches A4 exactly in print */
-          #resume-frame {
+          #resume-preview {
             width: 210mm;
             min-height: 297mm;
             padding: 40px 50px !important;

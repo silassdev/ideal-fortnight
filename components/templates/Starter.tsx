@@ -109,7 +109,7 @@ export default function Starter({ editorState }: StarterProps) {
     );
 
     return (
-        <div className="font-sans text-slate-800 max-w-[210mm] mx-auto min-h-[297mm]">
+        <div id="resume-preview" className="font-sans text-slate-800 max-w-[210mm] mx-auto min-h-[297mm]">
             {/* Header (Minimal: Centered) */}
             <div className="text-center mb-10 border-b pb-6 border-slate-200">
                 <InlineInput value={data.name} onChange={(v) => updateRoot('name', v)} className="text-4xl font-light tracking-wide text-slate-900 text-center mb-2" placeholder="Your Name" isPreview={isPreview} />
