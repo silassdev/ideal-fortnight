@@ -277,7 +277,7 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
                 {/* Preview Modal */}
                 <PreviewModal open={previewOpen} onClose={() => setPreviewOpen(false)}>
                     <div id="resume-preview-modal" className="p-4 bg-white min-h-[800px]">
-                        <TemplateRenderer templateKey={templateKey} resume={data} editorState={editorState} />
+                        <TemplateRenderer templateKey={templateKey} resume={data} editorState={{ ...editorState, isPreview: true }} />
                     </div>
                 </PreviewModal>
 
