@@ -141,10 +141,10 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
     );
 
     return (
-        <div className={`max-w-[800px] bg-white p-6 text-slate-900 min-h-[1100px] ${className}`} id="resume-preview">
+        <div className={`w-full max-w-[210mm] mx-auto bg-white px-8 py-6 text-slate-900 print:px-12 print:py-8 ${className}`} id="resume-preview">
 
             {/* Header */}
-            <header className="flex items-center gap-4 pb-4 border-b border-slate-200">
+            <header className="flex items-center gap-4 pb-4 border-b border-slate-200 break-after-avoid">
 
                 <div className="flex-grow">
                     <InlineInput value={data.name} onChange={(v) => updateRoot('name', v)} className="text-2xl font-extrabold text-slate-900" placeholder="Full Name" isPreview={isPreview} />
@@ -157,13 +157,13 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
                 </div>
             </header>
 
-            <section className="grid grid-cols-3 gap-8 mt-8">
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-8">
                 {/* Left Column (Main) */}
-                <div className="col-span-2 space-y-8">
+                <div className="md:col-span-2 space-y-6 md:space-y-8 break-inside-avoid">
 
                     {/* Summary */}
                     {(data.summary || !isPreview) && (
-                        <div>
+                        <div className="break-inside-avoid">
                             <SectionHeader title={data.sectionTitles?.summary || "Summary"} onChange={(v) => updateSectionTitle('summary', v)} isPreview={isPreview} className="border-none mb-2 text-slate-400 text-sm font-bold uppercase tracking-wider" />
                             <InlineInput value={data.summary} onChange={(v) => updateRoot('summary', v)} multiline className="text-sm text-slate-700 leading-relaxed" placeholder="Professional summary..." isPreview={isPreview} />
                         </div>
@@ -171,7 +171,7 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
 
                     {/* Experience */}
                     {(data.experience?.length > 0 || !isPreview) && (
-                        <div>
+                        <div className="break-inside-avoid">
                             <div className="flex justify-between items-center mb-3">
                                 <SectionHeader title={data.sectionTitles?.experience || "Experience"} onChange={(v) => updateSectionTitle('experience', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-400 text-sm font-bold uppercase tracking-wider" />
                                 {!isPreview && (
@@ -192,7 +192,7 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
 
                     {/* Projects */}
                     {(data.projects?.length > 0 || !isPreview) && (
-                        <div>
+                        <div className="break-inside-avoid">
                             <div className="flex justify-between items-center mb-3">
                                 <SectionHeader title={data.sectionTitles?.projects || "Projects"} onChange={(v) => updateSectionTitle('projects', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-400 text-sm font-bold uppercase tracking-wider" />
                                 {!isPreview && (
@@ -213,11 +213,11 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
                 </div>
 
                 {/* Right Column (Sidebar) */}
-                <aside className="col-span-1 space-y-8">
+                <aside className="md:col-span-1 space-y-6 md:space-y-8 break-inside-avoid">
 
                     {/* Education */}
                     {(data.education?.length > 0 || !isPreview) && (
-                        <div>
+                        <div className="break-inside-avoid">
                             <div className="flex justify-between items-center mb-3">
                                 <SectionHeader title={data.sectionTitles?.education || "Education"} onChange={(v) => updateSectionTitle('education', v)} isPreview={isPreview} className="border-none mb-0 pb-0 text-slate-400 text-sm font-bold uppercase tracking-wider" />
                                 {!isPreview && (
@@ -238,7 +238,7 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
 
                     {/* Skills */}
                     {(data.skills?.length > 0 || !isPreview) && (
-                        <div>
+                        <div className="break-inside-avoid">
                             <SectionHeader title={data.sectionTitles?.skills || "Skills"} onChange={(v) => updateSectionTitle('skills', v)} isPreview={isPreview} className="border-none mb-3 text-slate-400 text-sm font-bold uppercase tracking-wider" />
 
                             {/* Apela style skills: Freeform list tags? Or Structured?
@@ -257,7 +257,7 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
                                     }
                                     // New Object Schema
                                     return (
-                                        <div key={cat.id} className="w-full mb-2">
+                                        <div key={cat.id} className="w-full mb-2 break-inside-avoid">
                                             <InlineInput value={cat.name} onChange={(v) => updateItem('skills', cat.id, 'name', v)} className="font-bold text-xs text-slate-800 mb-1" placeholder="Category" isPreview={isPreview} />
                                             <InlineInput value={cat.skills} onChange={(v) => updateItem('skills', cat.id, 'skills', v)} className="text-xs text-slate-600" placeholder="Skills..." multiline isPreview={isPreview} />
                                             {!isPreview && <button onClick={() => removeItem('skills', cat.id)} className="text-[10px] text-red-500">Remove</button>}
