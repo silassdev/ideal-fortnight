@@ -141,7 +141,7 @@ export default function ApelaTemplate({ resume, editorState, className = '' }: T
     );
 
     return (
-        <div className={`w-full max-w-[210mm] mx-auto bg-white px-8 py-6 text-slate-900 print:px-12 print:py-8 ${className}`} id="resume-preview">
+        <div className={`w-full max-w-[210mm] mx-auto bg-white px-12 py-6 text-slate-900 print:px-16 print:py-8 ${className}`} id="resume-preview">
 
             {/* Header */}
             <header className="flex items-center gap-4 pb-4 border-b border-slate-200 break-after-avoid">
