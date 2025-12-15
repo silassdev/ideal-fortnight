@@ -27,8 +27,8 @@ body {
 
 @media print {
   @page {
-    margin: 0;
-    size: auto;
+    margin: 0.5cm;
+    size: A4;
   }
   
   body {
@@ -61,14 +61,31 @@ body {
     print-color-adjust: exact !important;
   }
   
-  /* Page breaks */
-  section, article, .card, li {
+  /* Prevent page breaks inside important elements */
+  section, article, .card, li, .group {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+  
+  /* Prevent orphans and widows */
+  p, div {
+    orphans: 3;
+    widows: 3;
   }
   
   h1, h2, h3, h4, h5, h6 {
     break-after: avoid;
     page-break-after: avoid;
+  }
+
+  /* Hide interactive elements */
+  button, .toolbar, .print-hidden, [contenteditable="true"] {
+    display: none !important;
+  }
+
+  /* Force content to fit properly */
+  .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 }
