@@ -8,9 +8,8 @@ export default function PreviewModal({ open, onClose, children }: { open: boolea
 
     useEffect(() => {
         const handleResize = () => {
-            // Calculate scale based on viewport width
-            const viewportWidth = window.innerWidth - 64; // Account for padding
-            const a4Width = 794; // A4 width in pixels
+            const viewportWidth = window.innerWidth - 64;
+            const a4Width = 794;
 
             if (viewportWidth < a4Width) {
                 setScale(viewportWidth / a4Width);
