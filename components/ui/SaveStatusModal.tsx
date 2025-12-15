@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { X } from 'lucide-react';
 
 interface SaveStatusModalProps {
@@ -33,12 +33,12 @@ export default function SaveStatusModal({
     }, [isOpen, status, autoCloseDelay, onClose]);
 
     // Animation variants
-    const backdropVariants = {
+    const backdropVariants: Variants = {
         hidden: { opacity: 0 },
         visible: { opacity: 1 },
     };
 
-    const modalVariants = {
+    const modalVariants: Variants = {
         hidden: { scale: 0.8, opacity: 0, y: 20 },
         visible: {
             scale: 1,
@@ -49,7 +49,7 @@ export default function SaveStatusModal({
         exit: { scale: 0.8, opacity: 0, y: 20, transition: { duration: 0.2 } },
     };
 
-    const iconVariants = {
+    const iconVariants: Variants = {
         hidden: { pathLength: 0, opacity: 0 },
         visible: {
             pathLength: 1,
@@ -58,7 +58,7 @@ export default function SaveStatusModal({
         }
     };
 
-    const circleVariants = {
+    const circleVariants: Variants = {
         hidden: { scale: 0, opacity: 0 },
         visible: {
             scale: 1,
