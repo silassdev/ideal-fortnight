@@ -174,7 +174,7 @@ const InlineInput = ({
     return (
       <textarea
         ref={textareaRef}
-        value={value}
+        value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={`${baseStyles} resize-none overflow-hidden ${className}`}
@@ -186,7 +186,7 @@ const InlineInput = ({
   return (
     <input
       type="text"
-      value={value}
+      value={value ?? ""}
       onChange={(e) => onChange(e.target.value)}
       onBlur={onBlur}
       className={`${baseStyles} ${className}`}
@@ -206,7 +206,7 @@ const SectionHeader = ({ title, onChange, className = "", isPreview }: { title: 
   return (
     <div className={`mb-4 border-b border-slate-100 pb-2 ${className}`}>
       <input
-        value={title}
+        value={title ?? ""}
         onChange={(e) => onChange(e.target.value)}
         className="text-xs font-bold text-slate-400 uppercase tracking-widest bg-transparent border-none outline-none focus:ring-1 focus:ring-indigo-200 rounded px-1 w-full"
       />
