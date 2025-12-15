@@ -43,11 +43,13 @@ export const InlineInput = ({
         }
     }, [value, multiline]);
 
+    const safeValue = value ?? "";
+
     if (multiline) {
         return (
             <textarea
                 ref={textareaRef}
-                value={value}
+                value={safeValue}
                 onChange={(e) => onChange(e.target.value)}
                 onBlur={onBlur}
                 className={`${baseStyles} resize-none overflow-hidden ${className}`}
@@ -59,7 +61,7 @@ export const InlineInput = ({
     return (
         <input
             type="text"
-            value={value}
+            value={safeValue}
             onChange={(e) => onChange(e.target.value)}
             onBlur={onBlur}
             className={`${baseStyles} ${className}`}
