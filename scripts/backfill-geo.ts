@@ -1,4 +1,3 @@
-// scripts/backfill-geo.ts
 import 'dotenv/config';
 import geoip from 'geoip-lite';
 import { MongoClient } from 'mongodb';
