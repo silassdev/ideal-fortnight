@@ -5,6 +5,7 @@ import { flushSync } from 'react-dom';
 import TemplateRenderer from '@/components/templates/TemplateRenderer';
 import PreviewModal from './PreviewModal';
 import SaveStatusModal from '@/components/ui/SaveStatusModal';
+import ShareModal from '@/components/ui/ShareModal';
 
 import { useResumeEditor } from '@/hooks/useResumeEditor';
 import useResume from '@/hooks/useResume'; // Keeping for initial fetch if needed, OR we can utilize useResumeEditor's fetch? 
@@ -63,6 +64,7 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
 
     // Local state for UI only (modals etc)
     const [previewOpen, setPreviewOpen] = useState(false);
+    const [shareOpen, setShareOpen] = useState(false);
     const [scale, setScale] = useState(1);
 
     // Auto-scale for mobile
@@ -129,8 +131,14 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
 
 
     async function handleSaveAndLink() {
+        setShareOpen(true);
+    }
+
+    async function handleTogglePublic() {
+        const newStatus = !data.isPublic;
+        editorState.updateRoot('isPublic', newStatus);
+        // Force a save to persist the public status immediately
         await handleSave();
-        alert('Saved — resume link updated in your dashboard.');
     }
 
 
@@ -285,6 +293,15 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
                     isOpen={saveStatus.isOpen}
                     status={saveStatus.status}
                     onClose={() => editorState.handleSaveStatusClose()}
+                />
+
+                <ShareModal
+                    isOpen={shareOpen}
+                    onClose={() => setShareOpen(false)}
+                    isPublic={data.isPublic || false}
+                    onTogglePublic={handleTogglePublic}
+                    publicUrl={`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/resume/${data.publicId || ''}`}
+                    isSaving={isSaving}
                 />
             </div>
         </EditingContext.Provider>

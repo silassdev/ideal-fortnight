@@ -17,7 +17,7 @@ export async function GET() {
     }
 
     return NextResponse.json({
-        envVarJson: JSON.stringify(process.env), // DANGEROUS? No, process.env isn't fully serialized usually in Next.js edge/serverless, but let's be careful.
+        envVarJson: JSON.stringify(process.env),
         // Better:
         mongoUriSet: isSet,
         mongoUriPrefix: isSet ? uri?.split(':')[0] : null,
