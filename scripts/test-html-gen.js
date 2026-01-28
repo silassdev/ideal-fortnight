@@ -1,4 +1,4 @@
-const { renderStarterHTML } = require('./lib/templates/html/starter');
+1078const { renderStarterHTML } = require('./lib/templates/html/starter');
 const fs = require('fs');
 const path = require('path');
 

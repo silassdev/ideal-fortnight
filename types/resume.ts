@@ -73,14 +73,7 @@ export type ResumeShape = {
     certifications?: string[];
     sections?: Section[];
     projects?: Project[];
-    sectionTitles?: {
-        summary?: string;
-        experience?: string;
-        education?: string;
-        projects?: string;
-        skills?: string;
-        certifications?: string;
-    };
+    sectionTitles?: Record<string, string>;
     createdAt?: string;
     updatedAt?: string;
     [key: string]: any;
