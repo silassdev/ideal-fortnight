@@ -59,7 +59,53 @@ A professional, modern resume builder enhanced with AI capabilities. Build ATS-f
 
 ---
 
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ and npm
+- MongoDB instance (local or Atlas)
+- Google/GitHub OAuth credentials (for social login)
+
+### Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/resume-app.git
+   cd resume-app
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**:
+   ```bash
+   cp .env.example .env.local
+   ```
+   Then configure your `.env.local` with:
+   - `MONGODB_URI`: Your MongoDB connection string
+   - `NEXTAUTH_SECRET`: Generate with `openssl rand -base64 32`
+   - `NEXTAUTH_URL`: Your app URL (http://localhost:3000 for local)
+   - OAuth credentials (Google, GitHub)
+
+4. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+5. **Open** [http://localhost:3000](http://localhost:3000) in your browser
+
+### Optional: Seed Admin User
+```bash
+npm run seed:admin
+```
+
+---
+
 ## 🤝 Contributing
+
+We welcome contributions! Here's how to get started:
 
 1. Fork the repo.
 2. Create a feature branch: `git checkout -b feature-name`.
@@ -67,4 +113,15 @@ A professional, modern resume builder enhanced with AI capabilities. Build ATS-f
 4. Push to the branch.
 5. Submit a pull request.
 
+### Contributing Templates
 
+Want to add a new resume template? Check out our detailed guide:
+
+📖 **[Template Contributing Guide](./CONTRIBUTING_TEMPLATES.md)**
+
+This guide covers:
+- Template structure and requirements
+- Metadata configuration
+- Styling guidelines
+- PDF export considerations
+- Submission checklist

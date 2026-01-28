@@ -17,6 +17,7 @@ export type ExperienceSubdoc = {
     endYear?: string;
     location?: string;
     bullets?: string[];
+    description?: string;
     currentlyWorking?: boolean;
 };
 
@@ -35,6 +36,7 @@ export type EducationSubdoc = {
     endYear?: string;
     location?: string;
     notes?: string;
+    description?: string;
 };
 
 /**
@@ -66,10 +68,19 @@ export interface IResume extends Document {
     name?: string;
     summary?: string;
     contact?: ContactInfo;
+    // Flat fields for compatibility
+    email?: string;
+    phone?: string;
+    location?: string;
+    website?: string;
+    linkedin?: string;
+    github?: string;
+
     experience?: ExperienceSubdoc[];
     education?: EducationSubdoc[];
     skills?: string[];
     sections?: ExtraSection[];
+    sectionTitles?: Record<string, string>;
     pages?: any[];
     meta?: Record<string, any>;
     downloadCount?: number;
@@ -100,6 +111,7 @@ const ExperienceSchema = new Schema<ExperienceSubdoc>(
         endYear: { type: String, default: '' },
         location: { type: String, default: '' },
         bullets: { type: [String], default: [] },
+        description: { type: String, default: '' },
         currentlyWorking: { type: Boolean, default: false },
     },
     { _id: false }
@@ -118,6 +130,7 @@ const EducationSchema = new Schema<EducationSubdoc>(
         endYear: { type: String, default: '' },
         location: { type: String, default: '' },
         notes: { type: String, default: '' },
+        description: { type: String, default: '' },
     },
     { _id: false }
 );
@@ -160,11 +173,20 @@ const ResumeSchema = new Schema<IResume>(
         summary: { type: String, default: '' },
         contact: { type: ContactSchema, default: {} },
 
+        // Flat fields compatibility
+        email: { type: String, default: '' },
+        phone: { type: String, default: '' },
+        location: { type: String, default: '' },
+        website: { type: String, default: '' },
+        linkedin: { type: String, default: '' },
+        github: { type: String, default: '' },
+
         // sections
         experience: { type: [ExperienceSchema], default: [] },
         education: { type: [EducationSchema], default: [] },
         skills: { type: [Schema.Types.Mixed], default: [] },
         sections: { type: [ExtraSectionSchema], default: [] }, // custom sections like projects, awards
+        sectionTitles: { type: Map, of: String, default: {} },
 
         // pages or additional layout info
         pages: { type: [Schema.Types.Mixed], default: [] },

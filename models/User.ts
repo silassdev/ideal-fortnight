@@ -18,7 +18,7 @@ export interface IUser extends Document {
     createdAt?: Date;
     updatedAt?: Date;
 
-    // Reset Password fields
+
     resetToken?: string | null;
     resetRequestedAt?: Date | null;
     lastResetRequestIp?: string | null;
@@ -42,7 +42,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     lastLoginAt: { type: Date, default: null },
     verifiedAt: { type: Date, default: null },
 
-    // Reset Password fields
+
     resetToken: { type: String, default: null },
     resetRequestedAt: { type: Date, default: null },
     lastResetRequestIp: { type: String, default: null },

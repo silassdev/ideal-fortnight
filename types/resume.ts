@@ -23,6 +23,7 @@ export interface Experience {
     endYear?: string;
     current?: boolean;
     bullets?: string[];
+    description?: string;
 }
 
 export interface Education {
@@ -37,6 +38,7 @@ export interface Education {
     endYear?: string;
     current?: boolean;
     notes?: string;
+    description?: string;
 }
 
 export interface Section {
@@ -71,6 +73,14 @@ export type ResumeShape = {
     certifications?: string[];
     sections?: Section[];
     projects?: Project[];
+    sectionTitles?: {
+        summary?: string;
+        experience?: string;
+        education?: string;
+        projects?: string;
+        skills?: string;
+        certifications?: string;
+    };
     createdAt?: string;
     updatedAt?: string;
     [key: string]: any;

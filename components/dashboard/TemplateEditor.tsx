@@ -64,7 +64,11 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
 
     // Local state for UI only (modals etc)
     const [previewOpen, setPreviewOpen] = useState(false);
+<<<<<<< HEAD
     const [shareOpen, setShareOpen] = useState(false);
+=======
+    const [shareModalOpen, setShareModalOpen] = useState(false);
+>>>>>>> bf91622a3607463691f397f654a191374ddbebd0
     const [scale, setScale] = useState(1);
 
     // Auto-scale for mobile
@@ -131,6 +135,7 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
 
 
     async function handleSaveAndLink() {
+<<<<<<< HEAD
         setShareOpen(true);
     }
 
@@ -139,11 +144,24 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
         editorState.updateRoot('isPublic', newStatus);
         // Force a save to persist the public status immediately
         await handleSave();
+=======
+        // Ensure the resume is marked as public
+        editorState.updateRoot('isPublic', true);
+        await handleSave();
+        setShareModalOpen(true);
+>>>>>>> bf91622a3607463691f397f654a191374ddbebd0
     }
 
 
 
     function handleDownloadPdf() {
+        if (templateKey === 'starter') {
+            import('@/lib/downloadResume').then(({ downloadPdfFromHtml }) => {
+                downloadPdfFromHtml(data);
+            });
+            return;
+        }
+
         try {
             flushSync(() => {
                 editorState.setIsPreview(true);
@@ -296,12 +314,19 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
                 />
 
                 <ShareModal
+<<<<<<< HEAD
                     isOpen={shareOpen}
                     onClose={() => setShareOpen(false)}
                     isPublic={data.isPublic || false}
                     onTogglePublic={handleTogglePublic}
                     publicUrl={`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/resume/${data.publicId || ''}`}
                     isSaving={isSaving}
+=======
+                    isOpen={shareModalOpen}
+                    onClose={() => setShareModalOpen(false)}
+                    resumeId={data._id}
+                    publicId={data.publicId}
+>>>>>>> bf91622a3607463691f397f654a191374ddbebd0
                 />
             </div>
         </EditingContext.Provider>
