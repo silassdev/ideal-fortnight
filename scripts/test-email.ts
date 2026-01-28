@@ -6,10 +6,7 @@ import { createTransporter } from "../lib/email";
 async function runTest() {
     console.log("Testing SMTP connection...");
 
-    // Optionally override for local dev (uncomment to test with MailHog)
-    // const t = createTransporter({ host: "127.0.0.1", port: 1025, secure: false });
 
-    // Use the app transporter by default
     const t = createTransporter();
 
     try {
