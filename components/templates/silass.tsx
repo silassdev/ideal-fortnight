@@ -204,6 +204,31 @@ export default function SilassDevTemplate({ resume, editorState, className = '' 
             </DndContext>
             {!isPreview && <button onClick={() => addItem('education', { school: '', degree: '', startYear: '', endYear: '', description: '' })} className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-wider">+ Add Education</button>}
           </div>
+
+          {/* Certifications Sidebar */}
+          <div>
+            <SectionHeader title={sectionTitles.certifications} onChange={(v) => updateSectionTitle('certifications', v)} isPreview={isPreview} />
+            <div className="flex flex-col gap-2">
+              {data.certifications?.map((cert: string, i: number) => (
+                <div key={i} className="group relative flex items-center gap-2">
+                  <div className="w-1 h-1 bg-indigo-400 rounded-full shrink-0" />
+                  <InlineInput value={cert} onChange={(v) => {
+                    const updated = [...data.certifications];
+                    updated[i] = v;
+                    updateRoot('certifications', updated);
+                  }} className="text-[13px] text-slate-600" placeholder="Certification Name" isPreview={isPreview} />
+                  {!isPreview && (
+                    <button onClick={() => {
+                      const updated = [...data.certifications];
+                      updated.splice(i, 1);
+                      updateRoot('certifications', updated);
+                    }} className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-opacity whitespace-nowrap">×</button>
+                  )}
+                </div>
+              ))}
+              {!isPreview && <button onClick={() => updateRoot('certifications', [...(data.certifications || []), ''])} className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-wider">+ Add Certification</button>}
+            </div>
+          </div>
         </aside>
 
         {/* Right Column - Content Side */}

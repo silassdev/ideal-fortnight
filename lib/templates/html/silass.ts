@@ -265,6 +265,13 @@ export function renderSilassHTML(data: ResumeShape): string {
         </div>
     `).join('');
 
+    const certificationsHtml = (data.certifications || []).map(cert => `
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; color: #475569;">
+            <div style="width: 4px; height: 4px; background: #818cf8; border-radius: 50%;"></div>
+            <div>${cert}</div>
+        </div>
+    `).join('');
+
     return `
 <!DOCTYPE html>
 <html lang="en">
@@ -324,6 +331,13 @@ export function renderSilassHTML(data: ResumeShape): string {
                 <div class="section-header">${sectionTitles.education}</div>
                 <div class="edu-list">${educationHtml}</div>
             </section>
+
+            ${certificationsHtml ? `
+            <section class="section">
+                <div class="section-header">${sectionTitles.certifications}</div>
+                <div class="cert-list">${certificationsHtml}</div>
+            </section>
+            ` : ''}
         </aside>
 
         <main>
