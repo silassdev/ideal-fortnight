@@ -32,6 +32,7 @@ export default async function PublicResumePage({ params }: { params: Promise<{ i
         experience: resume.experience,
         education: resume.education,
         skills: resume.skills,
+        sectionTitles: resume.sectionTitles ? JSON.parse(JSON.stringify(resume.sectionTitles)) : undefined,
         createdAt: resume.createdAt?.toString(),
         updatedAt: resume.updatedAt?.toString(),
     };

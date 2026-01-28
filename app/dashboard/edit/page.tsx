@@ -20,15 +20,10 @@ export default async function EditResumePage() {
 
     await dbConnect();
 
-    // Fetch existing resume data
+    // Fetch existing resume data to see which template they used
     const resume = await Resume.findOne({ userId: session.user.id }).lean();
+    const template = resume?.template || 'starter';
 
-    // Serialize data
-    const initialData = resume ? JSON.parse(JSON.stringify(resume)) : null;
-
-    return (
-        <div className="min-h-screen bg-slate-50">
-            <ResumeEditorClient initialData={initialData} />
-        </div>
-    );
+    // Redirect to the new unified editor
+    redirect(`/dashboard/template/${template}`);
 }
