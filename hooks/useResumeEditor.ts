@@ -156,6 +156,12 @@ export const useResumeEditor = (initialData?: ResumeData | null) => {
                 body: JSON.stringify(data),
             });
             if (!res.ok) throw new Error('Save failed');
+
+            const savedData = await res.json();
+            if (savedData && typeof savedData === 'object') {
+                setData(prev => ({ ...prev, ...savedData }));
+            }
+
             setIsDirty(false);
             setSaveStatus({ isOpen: true, status: 'success' });
         } catch (error) {

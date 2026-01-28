@@ -5,6 +5,7 @@ import { flushSync } from 'react-dom';
 import TemplateRenderer from '@/components/templates/TemplateRenderer';
 import PreviewModal from './PreviewModal';
 import SaveStatusModal from '@/components/ui/SaveStatusModal';
+import ShareModal from '@/components/ui/ShareModal';
 
 import { useResumeEditor } from '@/hooks/useResumeEditor';
 import useResume from '@/hooks/useResume'; // Keeping for initial fetch if needed, OR we can utilize useResumeEditor's fetch? 
@@ -63,6 +64,7 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
 
     // Local state for UI only (modals etc)
     const [previewOpen, setPreviewOpen] = useState(false);
+    const [shareModalOpen, setShareModalOpen] = useState(false);
     const [scale, setScale] = useState(1);
 
     // Auto-scale for mobile
@@ -129,13 +131,22 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
 
 
     async function handleSaveAndLink() {
+        // Ensure the resume is marked as public
+        editorState.updateRoot('isPublic', true);
         await handleSave();
-        alert('Saved — resume link updated in your dashboard.');
+        setShareModalOpen(true);
     }
 
 
 
     function handleDownloadPdf() {
+        if (templateKey === 'starter') {
+            import('@/lib/downloadResume').then(({ downloadPdfFromHtml }) => {
+                downloadPdfFromHtml(data);
+            });
+            return;
+        }
+
         try {
             flushSync(() => {
                 editorState.setIsPreview(true);
@@ -285,6 +296,13 @@ function RenderEditor({ templateKey, initialData }: { templateKey: string, initi
                     isOpen={saveStatus.isOpen}
                     status={saveStatus.status}
                     onClose={() => editorState.handleSaveStatusClose()}
+                />
+
+                <ShareModal
+                    isOpen={shareModalOpen}
+                    onClose={() => setShareModalOpen(false)}
+                    resumeId={data._id}
+                    publicId={data.publicId}
                 />
             </div>
         </EditingContext.Provider>
