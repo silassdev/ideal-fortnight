@@ -17,7 +17,7 @@
 
 ## Quick Start
 
-### 1. Create Your Template File
+### 1. Creating Your Template File
 
 Place your template in `components/templates/` using a **lowercase, hyphenated filename** that matches your template key:
 
