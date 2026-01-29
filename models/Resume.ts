@@ -2,9 +2,6 @@ import mongoose, { Document, Model } from 'mongoose';
 
 const { Schema } = mongoose;
 
-/**
- * Experience subdocument
- */
 export type ExperienceSubdoc = {
     id: string;
     company?: string;
