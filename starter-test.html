@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Rivera - Senior Full Stack Developer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #4f46e5;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-600: #475569;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--slate-800);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: white;
+        }
+        
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            min-height: 297mm;
+            padding: 20mm;
+            box-sizing: border-box;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--slate-100);
+        }
+        
+        .name {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin: 0 0 8px 0;
+            letter-spacing: -0.02em;
+        }
+        
+        .title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 20px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 13px;
+            color: var(--slate-500);
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .contact-item svg {
+            width: 14px;
+            height: 14px;
+            color: var(--slate-400);
+        }
+        
+        .section {
+            margin-bottom: 32px;
+        }
+        
+        .section-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--slate-900);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: var(--slate-100);
+        }
+        
+        .summary {
+            font-size: 14px;
+            color: var(--slate-600);
+            white-space: pre-wrap;
+            text-align: justify;
+        }
+        
+        .item-row {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+        
+        .item-title {
+            font-weight: 600;
+            color: var(--slate-900);
+            font-size: 15px;
+        }
+        
+        .item-date {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--slate-400);
+            background: var(--slate-50);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        .item-subtitle {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .item-description {
+            font-size: 13.5px;
+            color: var(--slate-600);
+            white-space: pre-wrap;
+        }
+        
+        .skill-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .skill-category {
+            background: var(--slate-50);
+            padding: 12px;
+            border-radius: 8px;
+            flex: 1 1 200px;
+            border: 1px solid var(--slate-100);
+        }
+        
+        .skill-cat-name {
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--slate-900);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        
+        .skill-list {
+            font-size: 13px;
+            color: var(--slate-600);
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        @media print {
+            body { background: white; }
+            .container { padding: 15mm; width: 210mm; min-height: auto; }
+            .item-date { background: transparent; padding: 0; border: none; }
+            .section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="name">Alex Rivera</h1>
+            <div class="title">Senior Full Stack Developer</div>
+            <div class="contact-info">
+                
+                    <div class="contact-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        <span>alex.rivera@example.com</span>
+                    </div>
+                
+                    <div class="contact-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        <span>+1 (555) 000-1111</span>
+                    </div>
+                
+                    <div class="contact-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        <span>San Francisco, CA</span>
+                    </div>
+                
+            </div>
+        </header>
+
+        
+        <section class="section">
+            <div class="section-header">Professional Summary</div>
+            <div class="summary">Product-focused engineer with 8+ years of experience building scalable web applications. Expert in React, Node.js, and cloud architecture.</div>
+        </section>
+        
+
+        
+        <section class="section">
+            <div class="section-header">Experience</div>
+            <div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">Senior Software Engineer</div>
+                <div class="item-date">
+                    Jan 2020 — 
+                    Present
+                </div>
+            </div>
+            <div class="item-subtitle">TechFlow Systems • Remote</div>
+            <div class="item-description">Lead developer for the core dashboard, improving performance by 40%.</div>
+        </div>
+    </div>
+        </section>
+        
+
+        
+        <section class="section">
+            <div class="section-header">Education</div>
+            <div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">University of California, Berkeley</div>
+                <div class="item-date">
+                    2012 — 2016
+                </div>
+            </div>
+            <div class="item-subtitle">B.S. Computer Science</div>
+            <div class="item-description"></div>
+        </div>
+    </div>
+        </section>
+        
+
+        
+        <section class="section">
+            <div class="section-header">Skills</div>
+            <div class="skill-grid">
+        <div class="skill-category">
+            <div class="skill-cat-name">Frontend</div>
+            <div class="skill-list">React, Next.js, Tailwind CSS</div>
+        </div>
+    
+        <div class="skill-category">
+            <div class="skill-cat-name">Backend</div>
+            <div class="skill-list">Node.js, PostgreSQL, Redis</div>
+        </div>
+    </div>
+        </section>
+        
+
+        
+    </div>
+</body>
+</html>
