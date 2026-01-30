@@ -54,7 +54,7 @@ export default function ResumeEditorClient({ initialData }: ResumeEditorClientPr
 
             <EditorShell editorState={editorState}>
                 {/* Here we can dynamically render templates that support the new Architecture */}
-                <Starter editorState={editorState} />
+                <Starter editorState={editorState} resume={editorState.data} />
             </EditorShell>
         </div>
     );
