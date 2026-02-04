@@ -3,16 +3,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { authOptions } from './nextAuth';
 import { verifyJwt } from './jwt';
 
-/**
- * Try to obtain the currently authenticated user's id (server-side).
- * Order:
- *  1. NextAuth session (Google or other provider)
- *  2. Authorization: Bearer <token> (JWT issued by your email/password login)
- *
- * Returns: { userId } or null if unauthenticated.
- *
- * Use in API routes to protect endpoints.
- */
 export async function getServerUserId(req: NextApiRequest, res: NextApiResponse) {
     // 1. NextAuth session check
     try {
