@@ -9,8 +9,6 @@ export default async function PublicResumePage({ params }: { params: Promise<{ i
     const { id } = await params;
 
     await dbConnect();
-
-    // Try to find by _id first, then by publicId
     let resume = await Resume.findById(id).lean();
     if (!resume) {
         resume = await Resume.findOne({ publicId: id }).lean();
