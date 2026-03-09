@@ -18,9 +18,7 @@ export type ExperienceSubdoc = {
     currentlyWorking?: boolean;
 };
 
-/**
- * Education subdocument
- */
+
 export type EducationSubdoc = {
     id: string;
     school?: string;
